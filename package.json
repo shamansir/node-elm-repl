@@ -1,0 +1,25 @@
+{
+  "name": "node-elm-repl",
+  "version": "1.0.0",
+  "description": "a wrapper for elm-repl intended to be used from node.js",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shamansir/node-elm-repl.git"
+  },
+  "keywords": [
+    "elm"
+  ],
+  "author": "Anton 'shaman.sir' Kotenko <shaman.sir@gmail.com> (http://shamansir.github.io/blog)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shamansir/node-elm-repl/issues"
+  },
+  "homepage": "https://github.com/shamansir/node-elm-repl#readme",
+  "dependencies": {
+    "async": "^2.0.1"
+  }
+}

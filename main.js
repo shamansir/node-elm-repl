@@ -2,33 +2,56 @@
 
 const
     spawn = require( 'child_process' ).spawn,
+    async = require( 'async' ),
     repl = spawn( 'elm-repl' );
 
+const lines = [
+    'add b c = b + c',
+    'import String',
+    'other = String.join "a" ["H","w","ii","n"]'
+];
+
+let stdouts = [];
+
+let replStarted = false;
+
 repl.stdout.on( 'data', data => {
-    console.log( `stdout: ${data}` );
+    if (!replStarted) {
+        replStarted = true;
+        async.nextTick(writeLines);
+    }
+    if (data !== '>') stdouts.push(data);
+    console.log( `stdout: [[[ ${data} ]]] ` );
 });
 
 repl.stderr.on( 'data', data => {
-    console.log( `stderr: ${data}` );
+    console.log( `stderr: ${data} ` );
 });
 
 repl.on( 'close', code => {
-    console.log( `child process exited with code ${code}` );
+    console.log( `child process exited with code >>> ${code} }}}` );
 });
 
-repl.stdin.write('add b c = b + c\nimport String\nother = String.join "a" ["H","w","ii","n"]\n').end();
-
-//repl.stdin.write('String\n');
-
-//repl.kill();
-
-/* const spawnSync = require( 'child_process' ).spawnSync;
-
-const runResult = spawnSync('elm-repl', [], {
-    input: 'add b c = b + c\nimport String\nother = String.join "a" ["H","w","ii","n"]\n'
+var q = async.queue(function(data, callback) {
+    console.log( `sending line [[[ ${data.line} ]]]`);
+    repl.stdin.write(data.line + '\n', null, function() {
+        setTimeout(function() {
+            console.log( `${data.line} was executed, last stdout is [[[ ${stdouts[stdouts.length - 1]} ]]]`);
+            callback(stdouts[stdouts.length - 1]);
+        }, 500);
+    });
 });
 
-console.log('---- STDOUT -----');
-console.log(runResult.stdout.toString());
-console.log('---- STDERR -----');
-console.log(runResult.stderr.toString()); */
+// assign a callback
+q.drain = function() {
+    console.log('all lines were sent, killing repl');
+    repl.kill();
+};
+
+
+function writeLines() {
+    console.log('write lines called');
+    lines.forEach(function(line) {
+        q.push({ line: line });
+    });
+}
