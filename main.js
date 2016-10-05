@@ -15,13 +15,17 @@ let stdouts = [];
 
 let replStarted = false;
 
+let waitsForResponse = null;
+
 repl.stdout.on( 'data', data => {
+    console.log( `stdout: [[[ ${data} ]]] ` );
     if (!replStarted) {
         replStarted = true;
         async.nextTick(writeLines);
+    } else if (waitsForResponse) {
+        waitsForResponse(data);
+        waitsForResponse = null;
     }
-    if (data !== '>') stdouts.push(data);
-    console.log( `stdout: [[[ ${data} ]]] ` );
 });
 
 repl.stderr.on( 'data', data => {
@@ -29,20 +33,19 @@ repl.stderr.on( 'data', data => {
 });
 
 repl.on( 'close', code => {
-    console.log( `child process exited with code >>> ${code} }}}` );
+    console.log( `child process exited with code [[[ ${code} ]]]` );
 });
 
 var q = async.queue(function(data, callback) {
     console.log( `sending line [[[ ${data.line} ]]]`);
     repl.stdin.write(data.line + '\n', null, function() {
-        setTimeout(function() {
-            console.log( `${data.line} was executed, last stdout is [[[ ${stdouts[stdouts.length - 1]} ]]]`);
-            callback(stdouts[stdouts.length - 1]);
-        }, 500);
+        waitsForResponse = function(response) {
+            console.log( `${data.line} was executed, last stdout is [[[ ${response} ]]]`);
+            callback(response);
+        };
     });
 });
 
-// assign a callback
 q.drain = function() {
     console.log('all lines were sent, killing repl');
     repl.kill();
