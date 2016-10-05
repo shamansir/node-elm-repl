@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/shamansir/node-elm-repl#readme",
   "dependencies": {
-    "async": "^2.0.1"
+    "async": "^2.0.1",
+    "pty.js": "^0.3.1"
   }
 }
