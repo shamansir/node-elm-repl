@@ -11,39 +11,45 @@ fs.readFile('./Anagram.elmi', function(_, stream) {
         .vars
 
     console.dir(vars);
+    logInterface(vars);
 });
 
 
 function parseCompilerVersion() {
-    this.word64bs('patch')
+    this.word64bs('major')
         .word64bs('minor')
-        .word64bs('major');
+        .word64bs('patch');
 }
 
 function parsePackageName() {
     this.tap(parseBStringAs('user'))
-        .tap(parseBStringAs('project'));
+        .tap(parseBStringAs('name'));
 }
 
 function parseImports() {
-    this.word64bs('imports')
+    this.word64bs('count')
+        .tap(function(vars) {
+            vars.pos = vars.count;
+            vars.values = [];
+        })
         .loop(function(end, vars) {
-            var count = vars.imports;
-            console.log('count', count);
-            var imports = [];
-            while (count--) {
-                this.into('types', function() {
-                    this.word8bs('type');
-                });
-                console.log('pos', count);
-                //this.word8bs('type');
-                parseBString(this, function(v, len) {
-                    console.log('got', v, len);
-                    imports.push(v);
-                });
+            if (vars.pos <= 0) {
+                delete vars.pos;
+                delete vars.lastType;
+                end();
+                return;
             }
-            vars.imports = imports;
-            end();
+            vars.pos--;
+            this.word8bs('lastType')
+                .tap(function(vars) {
+                    parseBString(this, function(v) {
+                        vars.values.push({
+                            'type': vars.lastType,
+                            'name': v
+                        })
+                    });
+                })
+
         });
 }
 
@@ -75,4 +81,15 @@ function parseBStringAs(label) {
                 vars[label] = vars[label].toString();
             });
     }
+}
+
+function logInterface(iface) {
+    console.log('compiler version is', iface.version.major + '.' + iface.version.minor + '.' + iface.version.patch);
+    console.log('package name is', iface.package.user + '/' + iface.package.name);
+    console.log('imports:', iface.imports.count);
+    var i = iface.imports.count;
+    while (i--) {
+        console.log('- ', iface.imports.values[i].type, ' : ', iface.imports.values[i].name);
+    }
+
 }
