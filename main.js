@@ -8,3 +8,17 @@ var vars = binary.parse(buf)
     .vars
 ;
 console.dir(vars);
+
+const fs = require('fs');
+
+fs.readFile('./Anagram.elmi', function(_, stream) {
+    vars = binary.parse(stream)
+        .into('version', function() {
+            this.word64bs('patch')
+                .word64bs('minor')
+                .word64bs('major');
+        })
+        .vars
+
+    console.dir(vars);
+});
