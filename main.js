@@ -54,6 +54,42 @@ function parseImports() {
 }
 
 function parseExports() {
+    this.word64bs('count')
+        .tap(function(vars) {
+            vars.pos = vars.count;
+            vars.values = [];
+        })
+        .loop(function(end, vars) {
+            if (vars.pos <= 0) {
+                delete vars.pos;
+                end();
+                return;
+            }
+            vars.pos--;
+            this.word64bs('lastCount')
+                .tap(function(vars) {
+                    vars.innerPos = vars.lastCount;
+                    vars.collected = [];
+                    vars.values.push({
+                        'count': vars.lastCount,
+                        'name': []
+                    });
+                })
+                .loop(function(end, vars) {
+                    if (vars.innerPos <= 0) {
+                        delete vars.innerPos;
+                        delete vars.lastCount;
+                        delete vars.collected;
+                        end();
+                        return;
+                    }
+                    vars.innerPos--;
+                    parseBString(this, function(v) {
+                        vars.values[vars.values.length - 1].name.push(v);
+                    });
+                })
+
+        });
 }
 
 function parseTypes() {
@@ -89,7 +125,12 @@ function logInterface(iface) {
     console.log('imports:', iface.imports.count);
     var i = iface.imports.count;
     while (i--) {
-        console.log('- ', iface.imports.values[i].type, ' : ', iface.imports.values[i].name);
+        console.log('- ', '[' + i + ']', iface.imports.values[i].type, ' : ', iface.imports.values[i].name);
+    }
+    console.log('imports:', iface.exports.count);
+    i = iface.exports.count;
+    while (i--) {
+        console.log('- ', '[' + i + ']', iface.exports.values[i].count, ' : ', iface.exports.values[i].name.join('/'));
     }
 
 }
