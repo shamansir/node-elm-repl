@@ -13,12 +13,30 @@ const fs = require('fs');
 
 fs.readFile('./Anagram.elmi', function(_, stream) {
     vars = binary.parse(stream)
-        .into('version', function() {
-            this.word64bs('patch')
-                .word64bs('minor')
-                .word64bs('major');
+        .into('version', parseCompilerVersion)
+        .into('package', function() {
+            this.tap(parseBString('user'))
+                .tap(parseBString('project'));
         })
+
         .vars
 
     console.dir(vars);
 });
+
+
+function parseCompilerVersion() {
+    this.word64bs('patch')
+        .word64bs('minor')
+        .word64bs('major');
+}
+
+function parseBString(label) {
+    return function() {
+        this.word64bs(label)
+            .buffer(label, label)
+            .tap(function(vars) {
+                vars[label] = vars[label].toString();
+            });
+    }
+}
