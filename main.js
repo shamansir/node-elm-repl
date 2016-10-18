@@ -1,7 +1,33 @@
-const binary = require('binary');
+const Parser = require('binary-parser').Parser;
 const fs = require('fs');
 
+var versionParser = new Parser()
+                    .skip(4).int32('major')
+                    .skip(4).int32('minor')
+                    .skip(4).int32('patch');
+
+var packageInfoParser = new Parser();
+
+var importsParser = new Parser();
+
+var exportsParser = new Parser();
+
+var typesParser = new Parser();
+
+var elmiParser = new Parser()
+        .nest('version', { type: versionParser })
+        .nest('package', { type: packageInfoParser })
+        .nest('imports', { type: importsParser })
+        .nest('exports', { type: exportsParser })
+        .nest('types',   { type: typesParser });
+
 fs.readFile('./Anagram.elmi', function(_, stream) {
+    logInterface(elmiParser.parse(stream));
+});
+
+//logInterface(elmiParser.parse(fs.readFile('./Anagram.elmi')));
+
+/* fs.readFile('./Anagram.elmi', function(_, stream) {
     vars = binary.parse(stream)
         .into('version', parseCompilerVersion)
         .into('package', parsePackageName)
@@ -117,20 +143,21 @@ function parseBStringAs(label) {
                 vars[label] = vars[label].toString();
             });
     }
-}
+} */
 
 function logInterface(iface) {
+
     console.log('compiler version is', iface.version.major + '.' + iface.version.minor + '.' + iface.version.patch);
-    console.log('package name is', iface.package.user + '/' + iface.package.name);
-    console.log('imports:', iface.imports.count);
-    var i = iface.imports.count;
-    while (i--) {
-        console.log('- ', '[' + i + ']', iface.imports.values[i].type, ' : ', iface.imports.values[i].name);
-    }
-    console.log('imports:', iface.exports.count);
-    i = iface.exports.count;
-    while (i--) {
-        console.log('- ', '[' + i + ']', iface.exports.values[i].count, ' : ', iface.exports.values[i].name.join('/'));
-    }
+    // console.log('package name is', iface.package.user + '/' + iface.package.name);
+    // console.log('imports:', iface.imports.count);
+    // var i = iface.imports.count;
+    // while (i--) {
+    //     console.log('- ', '[' + i + ']', iface.imports.values[i].type, ' : ', iface.imports.values[i].name);
+    // }
+    // console.log('imports:', iface.exports.count);
+    // i = iface.exports.count;
+    // while (i--) {
+    //     console.log('- ', '[' + i + ']', iface.exports.values[i].count, ' : ', iface.exports.values[i].name.join('/'));
+    // }
 
 }
