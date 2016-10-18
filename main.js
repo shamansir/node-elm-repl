@@ -12,7 +12,17 @@ var packageInfoParser = new Parser()
     .skip(4).int32('nameLen')
     .string('name', { length: 'nameLen' });
 
-var importsParser = new Parser();
+var singleImportParser = new Parser()
+    .int8('type')
+    .skip(4).int32('nameLen')
+    .string('name', { length: 'nameLen' });
+
+var importsParser = new Parser()
+    .skip(4).int32('count')
+    .array('values', {
+        type: singleImportParser,
+        length: 'count'
+    });
 
 var exportsParser = new Parser();
 
@@ -26,7 +36,9 @@ var elmiParser = new Parser()
         .nest('types',   { type: typesParser });
 
 fs.readFile('./Anagram.elmi', function(_, stream) {
-    logInterface(elmiParser.parse(stream));
+    var interface = elmiParser.parse(stream);
+    console.dir(interface);
+    logInterface(interface);
 });
 
 //logInterface(elmiParser.parse(fs.readFile('./Anagram.elmi')));
@@ -153,11 +165,11 @@ function logInterface(iface) {
 
     console.log('compiler version is', iface.version.major + '.' + iface.version.minor + '.' + iface.version.patch);
     console.log('package name is', iface.package.user + '/' + iface.package.name);
-    // console.log('imports:', iface.imports.count);
-    // var i = iface.imports.count;
-    // while (i--) {
-    //     console.log('- ', '[' + i + ']', iface.imports.values[i].type, ' : ', iface.imports.values[i].name);
-    // }
+    console.log('imports:', iface.imports.count);
+    var i = iface.imports.count;
+    while (i--) {
+        console.log('- ', '[' + i + ']', iface.imports.values[i].type, ' : ', iface.imports.values[i].name);
+    }
     // console.log('imports:', iface.exports.count);
     // i = iface.exports.count;
     // while (i--) {
