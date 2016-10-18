@@ -1,16 +1,28 @@
 const Parser = require('binary-parser').Parser;
 const fs = require('fs');
 
+// version
+
 var versionParser = new Parser()
                     .skip(4).int32('major')
                     .skip(4).int32('minor')
                     .skip(4).int32('patch');
+
+// package info
 
 var packageInfoParser = new Parser()
     .skip(4).int32('userLen')
     .string('user', { length: 'userLen' })
     .skip(4).int32('nameLen')
     .string('name', { length: 'nameLen' });
+
+var packageInfoFormatter = function(v) {
+    return {
+        'user': v.user, 'name': v.name
+    };
+};
+
+// imports
 
 var singleImportParser = new Parser()
     .int8('type')
@@ -24,14 +36,35 @@ var importsParser = new Parser()
         length: 'count'
     });
 
+var importsFormatter = function(v) {
+    return v.values.map(function(iv) {
+        return { 'type': iv.type,
+                 'name': iv.name };
+    });
+};
+
+// exports
+
+var exportPathItemParser = new Parser();
+
+var exportPathParser = new Parser();
+
+var singleExportParser = new Parser();
+
 var exportsParser = new Parser();
+
+// types
 
 var typesParser = new Parser();
 
+// main
+
 var elmiParser = new Parser()
         .nest('version', { type: versionParser })
-        .nest('package', { type: packageInfoParser })
-        .nest('imports', { type: importsParser })
+        .nest('package', { type: packageInfoParser,
+                           formatter: packageInfoFormatter })
+        .nest('imports', { type: importsParser,
+                           formatter: importsFormatter })
         .nest('exports', { type: exportsParser })
         .nest('types',   { type: typesParser });
 
@@ -165,10 +198,10 @@ function logInterface(iface) {
 
     console.log('compiler version is', iface.version.major + '.' + iface.version.minor + '.' + iface.version.patch);
     console.log('package name is', iface.package.user + '/' + iface.package.name);
-    console.log('imports:', iface.imports.count);
-    var i = iface.imports.count;
+    console.log('imports:', iface.imports.length);
+    var i = iface.imports.length;
     while (i--) {
-        console.log('- ', '[' + i + ']', iface.imports.values[i].type, ' : ', iface.imports.values[i].name);
+        console.log('- ', '[' + i + ']', iface.imports[i].type, ' : ', iface.imports[i].name);
     }
     // console.log('imports:', iface.exports.count);
     // i = iface.exports.count;
