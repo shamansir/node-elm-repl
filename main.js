@@ -6,7 +6,11 @@ var versionParser = new Parser()
                     .skip(4).int32('minor')
                     .skip(4).int32('patch');
 
-var packageInfoParser = new Parser();
+var packageInfoParser = new Parser()
+    .skip(4).int32('userLen')
+    .string('user', { length: 'userLen' })
+    .skip(4).int32('nameLen')
+    .string('name', { length: 'nameLen' });
 
 var importsParser = new Parser();
 
@@ -148,7 +152,7 @@ function parseBStringAs(label) {
 function logInterface(iface) {
 
     console.log('compiler version is', iface.version.major + '.' + iface.version.minor + '.' + iface.version.patch);
-    // console.log('package name is', iface.package.user + '/' + iface.package.name);
+    console.log('package name is', iface.package.user + '/' + iface.package.name);
     // console.log('imports:', iface.imports.count);
     // var i = iface.imports.count;
     // while (i--) {
