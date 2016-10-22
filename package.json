@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/shamansir/node-elm-repl#readme",
   "dependencies": {
-    "binary-parser": "^1.1.5"
+    "binary-parser": "git://github.com/shamansir/binary-parser.git"
   }
 }
