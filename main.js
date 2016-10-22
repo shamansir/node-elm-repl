@@ -75,7 +75,76 @@ var exportsFormatter = function(v) {
 
 // types
 
-var typesParser = new Parser();
+var variableParser = new Parser()
+    .skip(4).int32('nameLen')
+    .string('name', { length: 'nameLen' });
+
+function variableFormatter(v) {
+    return v.name;
+}
+
+var typeNodeParser = new Parser().namely('self')
+    .int8('tagValue')
+    .choice('cell', {
+        tag: 'tagValue',
+        choices: {
+            // Lambda a b
+            0: Parser.start().nest('lambda', {
+                                type: Parser.start().nest('left',  { type: 'self' })
+                                                    .nest('right', { type: 'self'  })
+                             }),
+            // Var a
+            1: Parser.start().nest('var', { type: variableParser,
+                                            formatter: variableFormatter }),
+            // Type a
+            2: Parser.start().nest('type', { type: 'self' }),
+            // App a b
+            3: Parser.start().nest('app', {
+                                type: Parser.start().nest('left',  { type: 'self' })
+                                                    .nest('right', { type: 'self' })
+                             }),
+            // Record a b
+            4: Parser.start().nest('record', {
+                                type: Parser.start().nest('left',  { type: 'self' })
+                                                    .nest('right', { type: 'self' })
+                             }),
+            // Aliased a b c
+            5: Parser.start().nest('aliased', {
+                                type: Parser.start().nest('value', { type: 'self' })
+                                                    .nest('left',  { type: 'self' })
+                                                    .nest('right', { type: 'self' })
+                             })
+        }
+    });
+
+function singleTypeFormatter(typeObj) {
+    console.log(typeObj);
+    return typeObj.tagValue;
+}
+
+function typesFormatter(v) {
+    return v.values.map(function(tv) {
+        return {
+            name: tv.name,
+            value: tv.value
+        }
+    });
+}
+
+var singleTypeParser = new Parser()
+    .skip(4).int32('nameLen')
+    .string('name', { length: 'nameLen' })
+    .nest('value', {
+        type: typeNodeParser,
+        formatter: singleTypeFormatter
+    });
+
+var typesParser = new Parser()
+    .skip(4).int32('count')
+    .array('values', {
+        type: singleTypeParser,
+        length: 'count'
+    });
 
 // main
 
@@ -87,7 +156,8 @@ var elmiParser = new Parser()
                            formatter: importsFormatter })
         .nest('exports', { type: exportsParser,
                            formatter: exportsFormatter })
-        .nest('types',   { type: typesParser });
+        .nest('types',   { type: typesParser,
+                           formatter: typesFormatter });
 
 fs.readFile('./Anagram.elmi', function(_, stream) {
     var interface = elmiParser.parse(stream);
@@ -102,12 +172,17 @@ function logInterface(iface) {
     console.log('imports:', iface.imports.length);
     var i = iface.imports.length;
     while (i--) {
-        console.log('- ', '[' + i + ']', iface.imports[i].type, ' : ', iface.imports[i].name);
+        console.log('- ', '[' + i + ']', '(' + iface.imports[i].type + ')', iface.imports[i].name);
     }
     console.log('exports:', iface.exports.length);
     i = iface.exports.length;
     while (i--) {
         console.log('- ', '[' + i + ']', iface.exports[i].path.join('/'));
+    }
+    console.log('types:', iface.types.length);
+    i = iface.types.length;
+    while (i--) {
+        console.log('- ', '[' + i + ']', iface.types[i].name, iface.types[i].value );
     }
 
 }
