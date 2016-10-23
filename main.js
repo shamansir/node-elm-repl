@@ -83,68 +83,73 @@ function variableFormatter(v) {
     return v.name;
 }
 
-var typeNodeParser = new Parser().namely('self')
+var typeParser = new Parser()
+    .int8('isFilled')
+    .skip(4).int32('nameLen')
+    .string('name', { length: 'nameLen' });
+
+var nodeParser = new Parser().namely('node')
     .int8('tagValue')
     .choice('cell', {
         tag: 'tagValue',
         choices: {
             // Lambda a b
             0: Parser.start().nest('lambda', {
-                                type: Parser.start().nest('left',  { type: 'self' })
-                                                    .nest('right', { type: 'self'  })
+                                type: Parser.start().nest('left',  { type: 'node' })
+                                                    .nest('right', { type: 'node'  })
                              }),
             // Var a
             1: Parser.start().nest('var', { type: variableParser,
                                             formatter: variableFormatter }),
             // Type a
-            2: Parser.start().nest('type', { type: 'self' }),
+            2: Parser.start().nest('type', { type: typeParser }),
             // App a b
             3: Parser.start().nest('app', {
-                                type: Parser.start().nest('left',  { type: 'self' })
-                                                    .nest('right', { type: 'self' })
+                                type: Parser.start().nest('left',  { type: 'node' })
+                                                    .nest('right', { type: 'node' })
                              }),
             // Record a b
             4: Parser.start().nest('record', {
-                                type: Parser.start().nest('left',  { type: 'self' })
-                                                    .nest('right', { type: 'self' })
+                                type: Parser.start().nest('left',  { type: 'node' })
+                                                    .nest('right', { type: 'node' })
                              }),
             // Aliased a b c
             5: Parser.start().nest('aliased', {
-                                type: Parser.start().nest('value', { type: 'self' })
-                                                    .nest('left',  { type: 'self' })
-                                                    .nest('right', { type: 'self' })
+                                type: Parser.start().nest('value', { type: 'node' })
+                                                    .nest('left',  { type: 'node' })
+                                                    .nest('right', { type: 'node' })
                              })
         }
     });
 
-function singleTypeFormatter(typeObj) {
-    console.log(typeObj);
-    return typeObj.tagValue;
+function singleNodeFormatter(nodeObj) {
+    console.log(nodeObj);
+    return nodeObj.tagValue;
 }
 
-function typesFormatter(v) {
-    return v.values.map(function(tv) {
-        return {
-            name: tv.name,
-            value: tv.value
-        }
-    });
-}
-
-var singleTypeParser = new Parser()
+var singleNodeParser = new Parser()
     .skip(4).int32('nameLen')
     .string('name', { length: 'nameLen' })
     .nest('value', {
-        type: typeNodeParser,
-        formatter: singleTypeFormatter
+        type: nodeParser,
+        formatter: singleNodeFormatter
     });
 
 var typesParser = new Parser()
     .skip(4).int32('count')
     .array('values', {
-        type: singleTypeParser,
+        type: singleNodeParser,
         length: 'count'
     });
+
+function typesFormatter(v) {
+    return v.values.map(function(nv) {
+        return {
+            name: nv.name,
+            value: nv.value
+        }
+    });
+}
 
 // main
 
