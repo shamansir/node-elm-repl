@@ -87,20 +87,40 @@ function variableFormatter(v) {
     return v.name;
 }
 
-var typeParser = new Parser()
-    .int8('isFilled')
+var holleyTypeParser = new Parser()
+    .skip(4).int32('nameLen')
+    .string('name', { length: 'nameLen' });
+
+var filledTypeParser = new Parser()
+    .skip(4).int32('userLen')
+    .string('user', { length: 'userLen' })
+    .skip(4).int32('projectLen')
+    .string('project', { length: 'projectLen' })
+    .skip(4).int32('filler1')
     .skip(4).int32('nameLen')
     .string('name', { length: 'nameLen' })
+    .skip(4).int32('name2Len')
+    .string('name2', { length: 'name2Len' });
+
+var typeParser = new Parser()
+    .int8('isFilled')
     .choice('inner', {
         tag: 'isFilled',
         choices: {
-            0: stop,
-            1: stop // TODO
+            0: holleyTypeParser,
+            1: filledTypeParser
         }
     });
 
+
+
 function typeFormatter(t) {
-    return t.name;
+    return t.isFilled
+        ? { user: t.inner.user,
+            project: t.inner.project,
+            name: t.inner.name,
+            name2: t.inner.name2 }
+        : { name: t.inner.name };
 }
 
 var appRightSideParser = new Parser()
