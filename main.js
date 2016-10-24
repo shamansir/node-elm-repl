@@ -99,6 +99,10 @@ var typeParser = new Parser()
         }
     });
 
+function typeFormatter(t) {
+    return t.name;
+}
+
 var appRightSideParser = new Parser()
    .skip(4).int32('count')
    .array('values', {
@@ -107,9 +111,9 @@ var appRightSideParser = new Parser()
    });
 
 nodeParser
-    .int8('tagValue')
+    .int8('tag')
     .choice('cell', {
-        tag: 'tagValue',
+        tag: 'tag',
         choices: {
             // Lambda a b
             0: Parser.start().nest('lambda', {
@@ -120,11 +124,12 @@ nodeParser
             1: Parser.start().nest('var', { type: variableParser,
                                             formatter: variableFormatter }),
             // Type a
-            2: Parser.start().nest('type', { type: typeParser }),
+            2: Parser.start().nest('type', { type: typeParser,
+                                             formatter: typeFormatter }),
             // App a b
             3: Parser.start().nest('app', {
-                                type: Parser.start().nest('left',  { type: 'node' })
-                                                    .nest('right', { type: appRightSideParser })
+                                type: Parser.start().nest('object',  { type: 'node' })
+                                                    .nest('subject', { type: appRightSideParser })
                              }),
             // Record a b
             4: Parser.start().nest('record', {
@@ -137,12 +142,43 @@ nodeParser
                                                     .nest('left',  { type: 'node' })
                                                     .nest('right', { type: 'node' })
                              })
-        }
+        }/*,
+        defaultChoice: stop,*/
     });
 
-function singleNodeFormatter(nodeObj) {
-    console.log(nodeObj);
-    return nodeObj.tagValue;
+function singleNodeFormatter(n) {
+    var cell = n.cell;
+    switch (n.tag) {
+        case 0: return {
+            type: 'lambda',
+            left: singleNodeFormatter(cell.lambda.left),
+            right: singleNodeFormatter(cell.lambda.right),
+        };
+        case 1: return {
+            type: 'var',
+            name: n.var
+        };
+        case 2: return {
+            type: 'type',
+            name: cell.type
+        };
+        case 3: return {
+            type: 'app',
+            object: singleNodeFormatter(cell.app.object),
+            subject: cell.app.subject
+        };
+        case 4: return {
+            type: 'record',
+            left: singleNodeFormatter(cell.record.left),
+            right: singleNodeFormatter(cell.record.right)
+        };
+        case 5: return {
+            type: 'aliased',
+            left: singleNodeFormatter(cell.aliased.left),
+            right: singleNodeFormatter(cell.aliased.right),
+            value: singleNodeFormatter(cell.aliased.value)
+        };
+    }
 }
 
 var singleNodeParser = new Parser()
@@ -162,6 +198,10 @@ var typesParser = new Parser()
 
 function typesFormatter(v) {
     return v.values.map(function(nv) {
+        console.dir({
+            name: nv.name,
+            value: nv.value
+        });
         return {
             name: nv.name,
             value: nv.value
