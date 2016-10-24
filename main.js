@@ -127,7 +127,8 @@ var appRightSideParser = new Parser()
    .skip(4).int32('count')
    .array('values', {
        type: 'node',
-       length: 'count'
+       length: 'count'/*,
+       formatter: nodeArrayFormatter FIXME*/
    });
 
 nodeParser
@@ -148,8 +149,11 @@ nodeParser
                                              formatter: typeFormatter }),
             // App a b
             3: Parser.start().nest('app', {
-                                type: Parser.start().nest('object',  { type: 'node' })
-                                                    .nest('subject', { type: appRightSideParser })
+                                type: Parser.start().nest('subject',  { type: 'node' })
+                                                    .nest('object', { type: appRightSideParser,
+                                                                      formatter: function(rs) {
+                                                                          return rs.values;
+                                                                      } })
                              }),
             // Record a b
             4: Parser.start().nest('record', {
@@ -176,16 +180,16 @@ function singleNodeFormatter(n) {
         };
         case 1: return {
             type: 'var',
-            name: n.var
+            name: cell.var
         };
         case 2: return {
             type: 'type',
-            name: cell.type
+            def: cell.type
         };
         case 3: return {
             type: 'app',
-            object: singleNodeFormatter(cell.app.object),
-            subject: cell.app.subject
+            subject: singleNodeFormatter(cell.app.subject),
+            object: cell.app.object
         };
         case 4: return {
             type: 'record',
@@ -218,10 +222,6 @@ var typesParser = new Parser()
 
 function typesFormatter(v) {
     return v.values.map(function(nv) {
-        console.dir({
-            name: nv.name,
-            value: nv.value
-        });
         return {
             name: nv.name,
             value: nv.value
@@ -244,12 +244,39 @@ var elmiParser = new Parser()
 
 fs.readFile('./Anagram.elmi', function(_, stream) {
     var interface = elmiParser.parse(stream);
+    console.log(':::: DIR ::::');
     console.dir(interface);
+    console.log(':::: /DIR ::::');
+    console.log('');
     logInterface(interface);
 });
 
-function logInterface(iface) {
+function unwrapTypeNode(node) {
+    if (node.type === 'lambda') {
+        return '(lambda ' + unwrapTypeNode(node.left) + ' '
+            + unwrapTypeNode(node.right) + ')';
+    } else if (node.type === 'var') {
+        return '(var ' + node.name + ')';
+    } if (node.type === 'type') {
+        if (node.def.user) {
+            return '(type ' + node.def.user + '/' + node.def.project + ' ' +
+                             node.def.name + ' ' + node.def.name2 + ')';
+        } else {
+            return '(type ' + node.def.name + ')';
+        };
+    } else if (node.type === 'app') {
+        return '(app ' + unwrapTypeNode(node.subject) + ' ' +
+                         node.object.map(singleNodeFormatter).map(unwrapTypeNode).join(' ') + ' )';
+    } else if (node.type === 'record') {
+        return '(record ' + unwrapTypeNode(node.left) + ' '
+            + unwrapTypeNode(node.right) + ')';
+    } else if (node.type === 'aliased') {
+        return '(record ' + unwrapTypeNode(node.left) + ' '
+            + unwrapTypeNode(node.right) + ' ' + unwrapTypeNode(node.value) + ')';
+    }
+}
 
+function logInterface(iface) {
     console.log('compiler version is', iface.version.major + '.' + iface.version.minor + '.' + iface.version.patch);
     console.log('package name is', iface.package.user + '/' + iface.package.name);
     console.log('imports:', iface.imports.length);
@@ -265,7 +292,7 @@ function logInterface(iface) {
     console.log('types:', iface.types.length);
     i = iface.types.length;
     while (i--) {
-        console.log('- ', '[' + i + ']', iface.types[i].name, iface.types[i].value );
+        console.log('- ', '[' + i + ']', iface.types[i].name, unwrapTypeNode(iface.types[i].value));
     }
 
 }
