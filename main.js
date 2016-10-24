@@ -75,6 +75,10 @@ var exportsFormatter = function(v) {
 
 // types
 
+var nodeParser = new Parser().namely('node');
+
+var stop = new Parser();
+
 var variableParser = new Parser()
     .skip(4).int32('nameLen')
     .string('name', { length: 'nameLen' });
@@ -86,9 +90,23 @@ function variableFormatter(v) {
 var typeParser = new Parser()
     .int8('isFilled')
     .skip(4).int32('nameLen')
-    .string('name', { length: 'nameLen' });
+    .string('name', { length: 'nameLen' })
+    .choice('inner', {
+        tag: 'isFilled',
+        choices: {
+            0: stop,
+            1: stop // TODO
+        }
+    });
 
-var nodeParser = new Parser().namely('node')
+var appRightSideParser = new Parser()
+   .skip(4).int32('count')
+   .array('values', {
+       type: 'node',
+       length: 'count'
+   });
+
+nodeParser
     .int8('tagValue')
     .choice('cell', {
         tag: 'tagValue',
@@ -106,7 +124,7 @@ var nodeParser = new Parser().namely('node')
             // App a b
             3: Parser.start().nest('app', {
                                 type: Parser.start().nest('left',  { type: 'node' })
-                                                    .nest('right', { type: 'node' })
+                                                    .nest('right', { type: appRightSideParser })
                              }),
             // Record a b
             4: Parser.start().nest('record', {
