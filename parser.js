@@ -1,5 +1,5 @@
 const Parser = require('binary-parser').Parser;
-const fs = require('fs');
+//const fs = require('fs');
 
 // version
 
@@ -242,7 +242,11 @@ var elmiParser = new Parser()
         .nest('types',   { type: typesParser,
                            formatter: typesFormatter });
 
-fs.readFile('./Anagram.elmi', function(_, stream) {
+
+
+module.exports = elmiParser;
+
+/* fs.readFile('./Anagram.elmi', function(_, stream) {
     var interface = elmiParser.parse(stream);
     console.log(':::: DIR ::::');
     console.dir(interface);
@@ -295,4 +299,4 @@ function logInterface(iface) {
         console.log('- ', '[' + i + ']', iface.types[i].name, unwrapTypeNode(iface.types[i].value));
     }
 
-}
+} */
