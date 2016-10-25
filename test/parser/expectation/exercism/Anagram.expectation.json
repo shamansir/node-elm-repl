@@ -1,0 +1,125 @@
+{
+    "version": {
+        "major": 0,
+        "minor": 17,
+        "patch": 1
+    },
+    "package": {
+        "user": "user",
+        "name": "project"
+    },
+    "exports": [
+        { "path": [ "Basics" ] },
+        { "path": [ "Debug" ] },
+        { "path": [ "List" ] },
+        { "path": [ "Maybe" ] },
+        { "path": [ "Platform" ] },
+        { "path": [ "Platform", "Cmd" ] },
+        { "path": [ "Platform", "Sub" ] },
+        { "path": [ "Result" ] },
+        { "path": [ "String" ] }
+    ],
+    "imports": [
+        { "type": 0, "name": "sortChars" },
+        { "type": 0, "name": "isAnagram" },
+        { "type": 0, "name": "detect" }
+    ],
+    "types": [
+        {
+            "name": "::",
+            "value": {
+                "type": "lambda",
+                "left": { "type": "var", "name": "a" },
+                "right": {
+                    "type": "lambda",
+                    "left": {
+                        "type": "app",
+                        "subject": {
+                            "type": "type",
+                            "def": { "name": "List" }
+                        },
+                        "object": [ { "type": "var", "name": "a" } ]
+                    },
+                    "right": {
+                        "type": "app",
+                        "subject": {
+                            "type": "type",
+                            "def": { "name": "List" }
+                        },
+                        "object": [ { "type": "var", "name": "a" } ]
+                    }
+                }
+            }
+        },
+        {
+            "name": "detect",
+            "value": {
+                "type": "lambda",
+                "left": { "type": "type", "def": { "name": "String" } },
+                "right": {
+                    "type": "lambda",
+                    "left": {
+                        "type": "app",
+                        "subject": {
+                            "type": "type",
+                            "def": { "name": "List" }
+                        },
+                        "object": [ { "type": "type", "def": { "name": "String" } } ]
+                    },
+                    "right": {
+                        "type": "app",
+                        "subject": {
+                            "type": "type",
+                            "def": { "name": "List" }
+                        },
+                        "object": [ { "type": "type", "def": { "name": "String" } } ]
+                    }
+                }
+            }
+        },
+        {
+            "name": "isAnagram",
+            "value": {
+                "type": "lambda",
+                "left": {
+                    "type": "type",
+                    "def": { "name": "String" }
+                },
+                "right": {
+                    "type": "lambda",
+                    "left": {
+                        "type": "type",
+                        "def": { "name": "String" }
+                    },
+                    "right": {
+                        "type": "app",
+                        "subject": {
+                            "type": "type",
+                            "def": {
+                                "user": "elm-lang",
+                                "project": "core",
+                                "name": "Maybe",
+                                "name2": "Maybe"
+                            }
+                        },
+                        "object": [ { "type": "type", "def": { "name": "String" } } ]
+                    }
+                }
+            }
+        },
+        {
+            "name": "sortChars",
+            "value": {
+                "type": "lambda",
+                "left": {
+                    "type": "type",
+                    "def": { "name": "String" }
+                },
+                "right": {
+                    "type": "type",
+                    "def": { "name": "String" }
+                }
+            }
+        }
+    ]
+}

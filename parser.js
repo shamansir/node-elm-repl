@@ -112,8 +112,6 @@ var typeParser = new Parser()
         }
     });
 
-
-
 function typeFormatter(t) {
     return t.isFilled
         ? { user: t.inner.user,
@@ -189,7 +187,7 @@ function singleNodeFormatter(n) {
         case 3: return {
             type: 'app',
             subject: singleNodeFormatter(cell.app.subject),
-            object: cell.app.object
+            object: cell.app.object.map(singleNodeFormatter)
         };
         case 4: return {
             type: 'record',
@@ -242,9 +240,15 @@ var elmiParser = new Parser()
         .nest('types',   { type: typesParser,
                            formatter: typesFormatter });
 
+function ElmiParser() {
+    this.binaryPatser = elmiParser;
+}
 
+ElmiParser.prototype.parse = function(stream) {
+   return this.binaryPatser.parse(stream);
+}
 
-module.exports = elmiParser;
+module.exports = new ElmiParser();
 
 /* fs.readFile('./Anagram.elmi', function(_, stream) {
     var interface = elmiParser.parse(stream);

@@ -17,8 +17,10 @@ describe('Parser', function() {
     describe('Anagram.elmi', function() {
 
         it('should be able to parse Anagram.elmi file', function() {
-            return readFile('./test/parser/binary/exercism/Anagram.elmi').then(parseStream)
-                .should.be.fullfilled;
+            var expectation = require('./expectation/exercism/Anagram.expectation.json');
+            return readFile('./test/parser/binary/exercism/Anagram.elmi')
+                   .then(parseStream)
+                   .should.eventually.deep.equal(expectation);
         });
 
         /* it('should properly parse Anagram.elmi', function() {
