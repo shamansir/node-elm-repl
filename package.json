@@ -4,7 +4,7 @@
   "description": "a wrapper for elm-repl intended to be used from node.js",
   "main": "main.js",
   "scripts": {
-    "test": "mocha ./test/parser/parser.spec.js ./test/repl/repl.spec.js"
+    "test": "mocha ./test/*.spec.js"
   },
   "repository": {
     "type": "git",

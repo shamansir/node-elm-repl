@@ -17,7 +17,7 @@ describe('Parser', function() {
     describe('Anagram.elmi', function() {
 
         it('should be able to parse Anagram.elmi file', function() {
-            var expectation = require('./expectations/Anagram.expectation.json');
+            var expectation = require('./expectations/Anagram.expectation.js');
             return readFile('./test/samples/elmi/Anagram.elmi')
                    .then(parseStream)
                    .should.eventually.deep.equal(expectation);
