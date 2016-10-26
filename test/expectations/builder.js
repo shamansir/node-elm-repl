@@ -16,10 +16,20 @@ module.exports = {
 
     imports: function(list) {
         return list.map(function(item) {
-            return {
-                type: 0,
-                name: item
+            if (typeof item === 'string' || item instanceof String) {
+                return {
+                    type: 0,
+                    name: item
+                }
+            } else {
+                var name = Object.keys(item)[0];
+                return {
+                    type: 2,
+                    name: name,
+                    values: item[name]
+                }
             }
+
         })
     },
 
@@ -53,14 +63,14 @@ module.exports = {
         };
     },
 
-    complexType: function(user, project, name) {
+    complexType: function(user, project, name, subName) {
         return {
             type: 'type',
             def: {
                 user: user,
                 project: project,
                 name: name,
-                name2: name
+                subName: subName || name
             }
         };
     }

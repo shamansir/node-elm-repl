@@ -1,5 +1,7 @@
 const Parser = require('binary-parser').Parser;
 
+var stop = new Parser();
+
 // version
 
 var versionParser = new Parser()
@@ -23,10 +25,37 @@ var packageInfoFormatter = function(v) {
 
 // imports
 
+var importPathItemParser = new Parser()
+    .skip(4).int32('itemLen')
+    .string('item', { length: 'itemLen' });
+
+var importPathParser = new Parser()
+    .skip(4).int32('count')
+    .array('path', {
+        type: importPathItemParser,
+        length: 'count'
+    })
+    .skip(1);
+
+function importPathFormatter(v) {
+    if (!v.path) return v;
+    return v.path.map(function(data) {
+        return data.item;
+    });
+}
+
 var singleImportParser = new Parser()
     .int8('type')
     .skip(4).int32('nameLen')
-    .string('name', { length: 'nameLen' });
+    .string('name', { length: 'nameLen' })
+    .choice('values', {
+        tag: 'type',
+        choices: {
+            0: stop,
+            2: importPathParser
+        },
+        formatter: importPathFormatter
+    });
 
 var importsParser = new Parser()
     .skip(4).int32('count')
@@ -37,8 +66,14 @@ var importsParser = new Parser()
 
 var importsFormatter = function(v) {
     return v.values.map(function(iv) {
-        return { 'type': iv.type,
-                 'name': iv.name };
+        if (iv.type !== 2) {
+            return { 'type': iv.type,
+                     'name': iv.name };
+        } else {
+            return { 'type': iv.type,
+                     'name': iv.name,
+                     'values': iv.values };
+        }
     });
 };
 
@@ -76,8 +111,6 @@ var exportsFormatter = function(v) {
 
 var nodeParser = new Parser().namely('node');
 
-var stop = new Parser();
-
 var variableParser = new Parser()
     .skip(4).int32('nameLen')
     .string('name', { length: 'nameLen' });
@@ -98,8 +131,8 @@ var filledTypeParser = new Parser()
     .skip(4).int32('filler1')
     .skip(4).int32('nameLen')
     .string('name', { length: 'nameLen' })
-    .skip(4).int32('name2Len')
-    .string('name2', { length: 'name2Len' });
+    .skip(4).int32('subNameLen')
+    .string('subName', { length: 'subNameLen' });
 
 var typeParser = new Parser()
     .int8('isFilled')
@@ -116,7 +149,7 @@ function typeFormatter(t) {
         ? { user: t.inner.user,
             project: t.inner.project,
             name: t.inner.name,
-            name2: t.inner.name2 }
+            subName: t.inner.subName }
         : { name: t.inner.name };
 }
 

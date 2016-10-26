@@ -16,7 +16,8 @@ var samples = [
     'Anagram',
     'HelloWorld',
     'Leap',
-    'DifferenceOfSquares'
+    'DifferenceOfSquares',
+    'Bob'
 ]
 
 describe('Parser', function() {
