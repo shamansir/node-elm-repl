@@ -15,7 +15,8 @@ function parseStream(stream) {
 var samples = [
     'Anagram',
     'HelloWorld',
-    'Leap'
+    'Leap',
+    'DifferenceOfSquares'
 ]
 
 describe('Parser', function() {
