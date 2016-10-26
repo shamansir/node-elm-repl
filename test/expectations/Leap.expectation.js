@@ -14,13 +14,13 @@ var expectation = {
         [ 'Platform' ],
         [ 'Platform', 'Cmd' ],
         [ 'Platform', 'Sub' ],
-        [ 'Result' ],
-        [ 'String' ]
+        [ 'Result' ]
     ]),
     imports: b.imports([
-        'sortChars',
-        'isAnagram',
-        'detect'
+        'evenlyDivisibleBy4',
+        'evenlyDivisibleBy100',
+        'evenlyDivisibleBy400',
+        'isLeapYear'
     ]),
     types: [
         {
@@ -34,33 +34,31 @@ var expectation = {
             )
         },
         {
-            name: 'detect',
+            name: 'evenlyDivisibleBy100',
             value: b.lambda(
-                b.type('String'),
-                b.lambda(
-                    b.app(b.type('List'), [ b.type('String') ]),
-                    b.app(b.type('List'), [ b.type('String') ])
-                )
+                b.type('Int'),
+                b.type('Bool')
             )
         },
         {
-            name: 'isAnagram',
+            name: 'evenlyDivisibleBy4',
             value: b.lambda(
-                b.type('String'),
-                b.lambda(
-                    b.type('String'),
-                    b.app(
-                        b.complexType('elm-lang', 'core', 'Maybe'),
-                        [ b.type('String') ]
-                    )
-                )
+                b.type('Int'),
+                b.type('Bool')
             )
         },
         {
-            name: 'sortChars',
+            name: 'evenlyDivisibleBy400',
             value: b.lambda(
-                b.type('String'),
-                b.type('String')
+                b.type('Int'),
+                b.type('Bool')
+            )
+        },
+        {
+            name: 'isLeapYear',
+            value: b.lambda(
+                b.type('Int'),
+                b.type('Bool')
             )
         }
     ]

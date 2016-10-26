@@ -12,15 +12,25 @@ function parseStream(stream) {
     return elmiParser.parse(stream);
 }
 
+var samples = [
+    'Anagram',
+    'HelloWorld',
+    'Leap'
+]
+
 describe('Parser', function() {
 
-    describe('Anagram.elmi', function() {
+    samples.forEach(function(sampleName) {
 
-        it('should be able to parse Anagram.elmi file', function() {
-            var expectation = require('./expectations/Anagram.expectation.js');
-            return readFile('./test/samples/elmi/Anagram.elmi')
-                   .then(parseStream)
-                   .should.eventually.deep.equal(expectation);
+        describe(sampleName + '.elmi', function() {
+
+            it('should be able to parse ' + sampleName + '.elmi file', function() {
+                var expectation = require('./expectations/' + sampleName + '.expectation.js');
+                return readFile('./test/samples/elmi/' + sampleName + '.elmi')
+                       .then(parseStream)
+                       .should.eventually.deep.equal(expectation);
+            });
+
         });
 
     });
