@@ -20,7 +20,8 @@ var samples = [
     'Bob',
     'Raindrops',
     'SpaceAge',
-    'Pangram'
+    'Pangram',
+    'Triangle'
 ]
 
 describe('Parser', function() {

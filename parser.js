@@ -52,6 +52,7 @@ var singleImportParser = new Parser()
         tag: 'type',
         choices: {
             0: stop,
+            1: stop,
             2: importPathParser
         },
         formatter: importPathFormatter

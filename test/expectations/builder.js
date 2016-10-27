@@ -21,6 +21,11 @@ module.exports = {
                     type: 0,
                     name: item
                 }
+            } else if (Array.isArray(item)) {
+                return {
+                    type: 1,
+                    name: item[0]
+                }
             } else {
                 var name = Object.keys(item)[0];
                 return {
