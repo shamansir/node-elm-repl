@@ -6,7 +6,7 @@ const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 chai.should();
 
-const elmiParser = require('../parser.js');
+const elmiParser = require('../src/parser.js');
 
 function parseStream(stream) {
     return elmiParser.parse(stream);
@@ -22,7 +22,7 @@ var samples = [
     'SpaceAge',
     'Pangram',
     'Triangle'
-]
+];
 
 describe('Parser', function() {
 
