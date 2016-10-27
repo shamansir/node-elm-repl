@@ -19,7 +19,8 @@ var samples = [
     'DifferenceOfSquares',
     'Bob',
     'Raindrops',
-    'SpaceAge'
+    'SpaceAge',
+    'Pangram'
 ]
 
 describe('Parser', function() {

@@ -161,6 +161,28 @@ var appRightSideParser = new Parser()
        formatter: nodeArrayFormatter FIXME*/
    });
 
+function appRightSideFormatter(rs) {
+    return rs.values;
+}
+
+var aliasedTypeParser = Parser.start()
+    .nest('type', { type: typeParser,
+                    formatter: typeFormatter })
+    .skip(1)
+    .skip(4).int32('count')
+    .array('list', {
+        type: 'node',
+        length: 'count'/*,
+        formatter: nodeArrayFormatter FIXME*/
+    });
+
+function aliasedTypeFormatter(at) {
+    return {
+        type: at.type,
+        list: at.list
+    };
+}
+
 nodeParser
     .int8('tag')
     .choice('cell', {
@@ -181,9 +203,7 @@ nodeParser
             3: Parser.start().nest('app', {
                                 type: Parser.start().nest('subject',  { type: 'node' })
                                                     .nest('object', { type: appRightSideParser,
-                                                                      formatter: function(rs) {
-                                                                          return rs.values;
-                                                                      } })
+                                                                      formatter: appRightSideFormatter })
                              }),
             // Record a b
             4: Parser.start().nest('record', {
@@ -192,9 +212,8 @@ nodeParser
                              }),
             // Aliased a b c
             5: Parser.start().nest('aliased', {
-                                type: Parser.start().nest('value', { type: 'node' })
-                                                    .nest('left',  { type: 'node' })
-                                                    .nest('right', { type: 'node' })
+                                type: aliasedTypeParser,
+                                formatter: aliasedTypeFormatter
                              })
         }/*,
         defaultChoice: stop,*/
@@ -228,9 +247,8 @@ function singleNodeFormatter(n) {
         };
         case 5: return {
             type: 'aliased',
-            left: singleNodeFormatter(cell.aliased.left),
-            right: singleNodeFormatter(cell.aliased.right),
-            value: singleNodeFormatter(cell.aliased.value)
+            def: cell.aliased.type,
+            list: cell.aliased.list.map(singleNodeFormatter)
         };
     }
 }

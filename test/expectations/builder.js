@@ -73,6 +73,14 @@ module.exports = {
                 subName: subName || name
             }
         };
-    }
+    },
+
+    aliased: function(type, list) {
+        return {
+            type: 'aliased',
+            def: type.def,
+            list: list
+        };
+    },
 
 };
