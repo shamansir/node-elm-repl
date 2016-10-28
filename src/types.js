@@ -20,17 +20,19 @@ function stringify(t) {
             + ' -> ' + stringify(t.right);
     }
     if (t.type === 'app') {
-        return stringify(t.subject)
-            + ' ' + t.object.map(stringify).join('.');
+        if ((t.subject.type === 'type') && (t.subject.def.name.indexOf('_Tuple') === 0)) {
+            return '( ' + t.object.map(stringify).join(', ') + ' )';
+        } else {
+            return stringify(t.subject)
+                + ' ' + t.object.map(stringify).join('.');
+        }
     }
 }
 
 Types.stringify = stringify;
 
 Types.stringifyAll = function(types) {
-    return types.map(function(t, idx) {
-        return Types.stringify(t)
-    });
+    return types.map(Types.stringify);
 }
 
 function extractTypes(ifaceTypes) {

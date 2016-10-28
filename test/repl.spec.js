@@ -13,7 +13,8 @@ const repl = new Repl('./test/samples/elm');
 const expectations = [
     'SimpleTypes',
     'Lambdas',
-    'Lists'
+    'Lists',
+    'Tuples'
 ];
 
 describe('Repl', function() {

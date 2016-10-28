@@ -6,3 +6,4 @@ List.map (\n -> n^2) [1..100]	List number
 ::	a -> List a -> List a
 List.repeat	Int -> a -> List a
 \a fn -> List.map fn a	List a -> (a -> b) -> List b
+List.partition	(a -> Bool) -> List a -> ( List a, List a )
