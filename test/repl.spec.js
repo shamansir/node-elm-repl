@@ -8,10 +8,11 @@ chai.should();
 
 const Repl = require('../src/repl.js')
 
-const repl = new Repl('./samples/elm');
+const repl = new Repl('./test/samples/elm');
 
-var expectations = [
-    'SimpleTypes'
+const expectations = [
+    'SimpleTypes',
+    'Lambdas'
 ];
 
 describe('Repl', function() {
@@ -21,7 +22,7 @@ describe('Repl', function() {
         describe('Repl.' + expectationsGroupName, function() {
 
             it('should properly parse ' + expectationsGroupName, function() {
-                var expectationsPath = './test/expectations/Repl.' + expectationsGroupName + '.expectation';
+                const expectationsPath = './test/expectations/Repl.' + expectationsGroupName + '.expectation';
                 return readFile(expectationsPath)
                        .then(function(buffer) {
                            return buffer.toString()
@@ -34,13 +35,11 @@ describe('Repl', function() {
                                             }
                                         });
                        }).then(function(specs) {
-                           var expressions = specs.map(function(s) {
-                               return s.expression;
-                           });
-                           var expectedTypes = specs.map(function(s) {
-                               return s.expectation;
-                           });
-                           return repl.getTypes(expressions).should.eventually.deep.equal(expectedTypes);
+                           const expressions   = specs.map(function(s) { return s.expression; });
+                           const expectedTypes = specs.map(function(s) { return s.expectation; });
+                           return repl.getTypes([], expressions)
+                                      .then(Repl.stringifyAll)
+                                      .should.eventually.deep.equal(expectedTypes);
                        });
             });
 

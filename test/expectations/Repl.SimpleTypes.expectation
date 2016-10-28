@@ -1,4 +1,10 @@
-1	Int
+1	number
 1.01	Float
-1 + 1	Int
-\a b -> a + b	Int -> Int -> Int
+1 + 1	number
+"Foo"	String
+"""Foo"""	String
+'f'	Char
+False	Bool
+"f"++"a"	String
+100 // 2	Int
+1 / 2	Float
