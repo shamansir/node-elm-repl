@@ -16,17 +16,21 @@ function stringify(t) {
     if (t.type === 'var') return t.name;
     if (t.type === 'type') return t.def.name;
     if (t.type === 'lambda') {
-        return stringify(t.left) + ' -> ' + stringify(t.right);
+        return ((t.left.type !== 'lambda') ? stringify(t.left) : '(' + stringify(t.left) + ')')
+            + ' -> ' + stringify(t.right);
     }
     if (t.type === 'app') {
-        return stringify(t.subject) + ' ' + t.object.map(stringify).join('.');
+        return stringify(t.subject)
+            + ' ' + t.object.map(stringify).join('.');
     }
 }
 
 Types.stringify = stringify;
 
 Types.stringifyAll = function(types) {
-    return types.map(Types.stringify);
+    return types.map(function(t, idx) {
+        return Types.stringify(t)
+    });
 }
 
 function extractTypes(ifaceTypes) {
