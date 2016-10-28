@@ -1,0 +1,7 @@
+[1..4]	List number
+[1,2,3,4]	List number
+1 :: [2,3,4]	List number
+1 :: 2 :: 3 :: 4 :: []	List number
+List.map (\n -> n^2) [1..100]	List number
+::	a -> List a -> List a
+List.repeat	Int -> a -> List a

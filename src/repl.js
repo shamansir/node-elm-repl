@@ -50,13 +50,9 @@ Repl.prototype.getTypes = function(imports, expressions) {
     });
 }
 
-Repl.stringify = function(type) {
-    return type.join(' -> ');
-}
+Repl.stringify = Types.stringify;
 
-Repl.stringifyAll = function(types) {
-    return types.map(Repl.stringify);
-}
+Repl.stringifyAll = Types.stringifyAll;
 
 function getElmiPath(elmVer, iterationId) {
     return './elm-stuff/build-artifacts/' + elmVer +

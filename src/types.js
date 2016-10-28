@@ -12,31 +12,29 @@ Types.prototype.findAll = function(list) {
     }.bind(this))
 }
 
+function stringify(t) {
+    if (t.type === 'var') return t.name;
+    if (t.type === 'type') return t.def.name;
+    if (t.type === 'lambda') {
+        return stringify(t.left) + ' -> ' + stringify(t.right);
+    }
+    if (t.type === 'app') {
+        return stringify(t.subject) + ' ' + t.object.map(stringify).join('.');
+    }
+}
+
+Types.stringify = stringify;
+
+Types.stringifyAll = function(types) {
+    return types.map(Types.stringify);
+}
+
 function extractTypes(ifaceTypes) {
     var typeTable = {};
     ifaceTypes.forEach(function(typeData) {
-        typeTable[typeData.name] = extractType(typeData.value);
+        typeTable[typeData.name] = typeData.value;
     });
     return typeTable;
-}
-
-const extractionTable = {
-    'var': function(v) { return [ v.name ]; },
-    'type': function(t) { return [ t.def.name ]; },
-    'lambda': function(l) {
-        return extractionTable[l.right.type](l.right)
-            .concat(extractionTable[l.left.type](l.left)); },
-    'app': function(a) {
-        return extractionTable[a.subject.type](a.subject)
-            .concat(a.object.map(function(obj) {
-                return extractionTable[obj.type](obj); })
-            );
-    },
-    'record': function(r) { return [ r ]; }
-}
-
-function extractType(ifaceType) {
-    return extractionTable[ifaceType.type](ifaceType);
 }
 
 module.exports = Types;
