@@ -1,4 +1,4 @@
-Anagram Pangram Triangle
+Anagram	Pangram	Triangle
 Anagram.isAnagram	String -> String -> Maybe.Maybe String
 Pangram.isLetter	Char.KeyCode -> Bool
 Triangle.version	Int

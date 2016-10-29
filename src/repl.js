@@ -57,8 +57,8 @@ Repl.prototype.getTypes = function(imports, expressions) {
         process.chdir(initialDir);
         return new Types(parsedIface).findAll(varsNames);
     }).catch(function(e) {
-        console.error(e);
         process.chdir(initialDir);
+        throw e;
     });
 }
 

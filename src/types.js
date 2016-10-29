@@ -35,7 +35,7 @@ function stringify(t) {
 Types.stringify = stringify;
 
 Types.stringifyAll = function(types) {
-    return types.map(Types.stringify);
+    return types ? types.map(Types.stringify) : [];
 }
 
 function extractTypes(ifaceTypes) {

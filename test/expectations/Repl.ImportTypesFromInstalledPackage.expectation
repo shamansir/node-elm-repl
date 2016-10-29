@@ -1,0 +1,2 @@
+Html.App
+Html.App.map	(a -> msg) -> Html a -> Html msg

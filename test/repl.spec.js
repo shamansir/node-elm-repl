@@ -18,6 +18,8 @@ const expectations = [
     'Lambdas',
     'Lists',
     'Tuples',
+    'ImportCoreTypes',
+    //'ImportTypesFromInstalledPackage',
     'ImportUserTypes'
 ];
 
@@ -32,7 +34,7 @@ describe('Repl', function() {
                 return readFile(expectationsPath)
                        .then(function(buffer) {
                            var lines = buffer.toString().split('\n');
-                           const imports = lines.shift().split(' ');
+                           const imports = lines.shift().split('\t');
                            const pairs = lines.slice(0,-1);
                            return {
                                imports: imports,
