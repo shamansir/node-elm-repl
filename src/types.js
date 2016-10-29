@@ -13,8 +13,11 @@ Types.prototype.findAll = function(list) {
 }
 
 function stringify(t) {
-    if (t.type === 'var') return t.name;
-    if (t.type === 'type') return t.def.name;
+    if (t.type === 'var') { return t.name; }
+    if ((t.type === 'type') ||
+        (t.type === 'aliased')) {
+        return t.def.subName ? (t.def.name + '.' + t.def.subName) : t.def.name;
+    }
     if (t.type === 'lambda') {
         return ((t.left.type !== 'lambda') ? stringify(t.left) : '(' + stringify(t.left) + ')')
             + ' -> ' + stringify(t.right);
@@ -24,7 +27,7 @@ function stringify(t) {
             return '( ' + t.object.map(stringify).join(', ') + ' )';
         } else {
             return stringify(t.subject)
-                + ' ' + t.object.map(stringify).join('.');
+                + ' ' + t.object.map(stringify).join(' ');
         }
     }
 }

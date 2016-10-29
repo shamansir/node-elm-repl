@@ -1,0 +1,8 @@
+Anagram Pangram Triangle
+Anagram.isAnagram	String -> String -> Maybe.Maybe String
+Pangram.isLetter	Char.KeyCode -> Bool
+Triangle.version	Int
+Triangle.Equilateral	Triangle.Triangle
+Triangle.triangleKind	Float -> Float -> Float -> Result.Result Triangle.ErrorDescription Triangle.Triangle
+Triangle.triangleKind 0.4 0.6	Float -> Result.Result Triangle.ErrorDescription Triangle.Triangle
+Triangle.triangleKind 0.4 0.6 0.3	Result.Result Triangle.ErrorDescription Triangle.Triangle
