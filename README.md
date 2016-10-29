@@ -10,13 +10,119 @@ And it calculates all the expressions types you asked for just with one single c
 
 This makes this REPL three times faster and three times awesomer, since it gives you access to the JSONified structure of the type, instead of just string.
 
+How it got to be so fast and good? Read [How it was done?](#how-it-was-done) below for the nice story and some technical details.
+
+NB: It's work-in-progress, so at some moment you could discover that it's not parsing records, for example (just for example!) or something even worse. If you find such case, please don't panic, just please follow at least some of the steps described in [Contribute](#how-to-contribute) section.
+
 ## How to use it with Node.js?
 
+It's not yet published to `npm.js` (if ever will), but you may install it using:
 
+```
+npm install git://github.com/shamansir/node-elm-repl.git
+```
+
+It's better to ensure that binary parser works with your elm version etc.,
+so please first run this in the directory where you've installed the package:
+
+```
+npm test
+```
+
+Then, in your JS file, and in the same directory where you have `elm-package.json` or where you store your `.elm` modules, if you have any, just do something like:
+
+```javascript
+const Repl = require('node-elm-repl');
+
+new Repl({ // options, defaults are listed:
+    workDir: '.', // working directory
+    elmVer: '0.17.1', // your exact elm-compiler version
+    user: 'user', // specify github username you used in elm-package.json
+    project: 'project', // specify project name you used in elm-package.json
+    projectVer: '1.0.0' // specify project version you used in elm-package.json
+}).getTypes(
+    [ // imports:
+        'List as L',
+        'Maybe exposing ( Maybe(..) )'
+    ],
+    [ // expressions:
+        'L.map',
+        'L.foldl',
+        'Just',
+        'Nothing',
+        '1 + 1',
+        '\\a b -> a + b'
+    ]
+).then(function(types) { // getTypes returns the Promise which resolves to array
+    console.log(Repl.stringifyAll(types).join('\n'));
+}).catch(console.error);
+```
+
+And when you run this script in the console you should see something like:
+
+```
+(a -> b) -> List a -> List b
+(a -> b -> b) -> b -> List a -> b
+a -> Maybe.Maybe a
+Maybe.Maybe a
+number
+number -> number -> number
+```
+
+`Repl` constructor accepts several options:
+
+* `workDir` — specify working directory for execution, for example where the `.elm` files you use are located, or where you have your `elm-package.json`;
+* `elmVer` — the exact elm-version you use (default: `'0.17.1'`);
+* `user` — your github username specified in `elm-package.json` (default: `'user'`);
+* `project` — your github project specified in `elm-package.json` (default: `'project'`);
+* `projectVer` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
+* `keepTempFile` — for debugging purposes, if _truthy_, then do not delete `.elm` files after compilation;
+* `keepElmiFile` — for debugging purposes, if _truthy_, then do not delete `.elmi` files after compilation;
 
 ## How to use it with CLI?
 
+CLI interface is a bit different, to use it, you need to create a file with expressions listed.
 
+If you need imports, list them in the first line starting with `;` and splitting them with `;`.
+
+For example (the contents of `src/cli-example`):
+
+```
+;List as L;Maybe exposing ( Maybe(..) );String
+L.map
+L.foldl
+Just
+Nothing
+1 + 1
+\a b -> a + b
+```
+
+Then run `node src/cli.js --from <your-file-name>`.
+
+And you should get:
+
+```
+(a -> b) -> List a -> List b
+(a -> b -> b) -> b -> List a -> b
+a -> Maybe.Maybe a
+Maybe.Maybe a
+number
+number -> number -> number
+```
+
+Repl-CLI accepts several options:
+
+* `--work-dir` — specify working directory for execution, for example where the `.elm` files you use are located, or where you have your `elm-package.json`;
+* `--elm-ver` — the exact elm-version you use (default: `'0.17.1'`);
+* `--user` — your github username specified in `elm-package.json` (default: `'user'`);
+* `--project` — your github project specified in `elm-package.json` (default: `'project'`);
+* `--project-ver` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
+* `--keep-temp-file` — for debugging purposes, if specified, then do not delete `.elm` files after compilation;
+* `--keep-elmi-file` — for debugging purposes, if specified, then do not delete `.elmi` files after compilation;
+
+## How to contribute?
+
+Write a test which fails with `npm test`, file an issue, fork the repository, make a pull request — just any of that or all together.
 
 ## How it was done?
 

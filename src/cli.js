@@ -35,6 +35,7 @@ if (!argv.from) {
     console.log('--elm-ver — exact elm-version you use (default: 0.17.1), required to be known if you import your own modules');
     console.log('--user — your github username specified in elm-package.json (default: user), required to be known if you import your own modules');
     console.log('--project — your github project specified in elm-package.json (default: project), required to be known if you import your own modules');
+    console.log('--project-ver — your project version specified in elm-package.json (default: project), required to be known if you import your own modules');
     console.log('');
 } else {
 
@@ -45,6 +46,7 @@ if (!argv.from) {
         elmVer: argv['elm-ver'],
         user: argv['user'],
         project: argv['project'],
+        projectVer: argv['project-ver'],
         keepTempFile: argv.hasOwnProperty('keep-temp') || false,
         keepElmiFile: argv.hasOwnProperty('keep-elmi') || false
     });
