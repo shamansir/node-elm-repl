@@ -2,7 +2,7 @@
   "name": "node-elm-repl",
   "version": "1.0.0",
   "description": "a wrapper for elm-repl intended to be used from node.js",
-  "main": "main.js",
+  "main": "src/repl.js",
   "scripts": {
     "test": "cd ./test/samples/elm/ && elm-package install && cd ../../.. && mocha ./test/*.spec.js"
   },
@@ -14,13 +14,17 @@
     "elm"
   ],
   "author": "Anton 'shaman.sir' Kotenko <shaman.sir@gmail.com> (http://shamansir.github.io/blog)",
+  "contributors": [
+      { "name": "Mukesh Soni" }
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/shamansir/node-elm-repl/issues"
   },
   "homepage": "https://github.com/shamansir/node-elm-repl#readme",
   "dependencies": {
-    "binary-parser": "git://github.com/shamansir/binary-parser.git"
+    "binary-parser": "git://github.com/shamansir/binary-parser.git",
+    "minimist": "^1.2.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

@@ -4,9 +4,12 @@ const Types = require('./types.js');
 const fs = require('fs');
 const cp = require('child_process');
 
+const DEFAULT_ELM_VER = '0.17.1';
+const DEFAULT_USER = 'user';
+const DEFAULT_PROJECT = 'project';
+const DEFAULT_PROJECT_VER = '1.0.0';
+
 function Repl(options) {
-    options.keepTempFile = true;
-    options.keepElmiFile = true;
     this.options = options || {};
     /*if (!this.options.user || !this.options.project) {
         this.options = injectOptionsFromPackageJson(options);
@@ -18,7 +21,7 @@ Repl.prototype.getTypes = function(imports, expressions) {
     const varsMap = mapToVariables(expressions);
     const varsNames = Object.keys(varsMap);
 
-    const elmVer = this.options.elmVer;
+    const elmVer = this.options.elmVer || DEFAULT_ELM_VER;
     const workDir = this.options.workDir;
 
     const keepTempFile = this.options.keepTempFile || false;
@@ -43,7 +46,7 @@ Repl.prototype.getTypes = function(imports, expressions) {
                     return varName + ' = (' + varsMap[varName] + ')';
                 })
             );
-            process.chdir(workDir);
+            if (workDir) process.chdir(workDir);
             fs.writeFileSync(tempFilePath, fileContent.join('\n') + '\n');
             cp.execSync('elm-make ' + tempFilePath, { cwd: process.cwd() });
             resolve(tempFilePath);
@@ -54,10 +57,10 @@ Repl.prototype.getTypes = function(imports, expressions) {
         return elmiParser.parse(buffer);
     }).then(function(parsedIface) {
         if (!keepElmiFile) fs.unlinkSync(elmiPath);
-        process.chdir(initialDir);
+        if (workDir) process.chdir(initialDir);
         return new Types(parsedIface).findAll(varsNames);
     }).catch(function(e) {
-        process.chdir(initialDir);
+        if (workDir) process.chdir(initialDir);
         throw e;
     });
 }
@@ -67,10 +70,10 @@ Repl.stringify = Types.stringify;
 Repl.stringifyAll = Types.stringifyAll;
 
 function getElmiPath(options, iterationId) {
-    return './elm-stuff/build-artifacts/' + options.elmVer + '/' +
-            (options.user || 'user') + '/' +
-            (options.project || 'project') + '/' +
-            (options.projectVer || '1.1.0') + '/' +
+    return './elm-stuff/build-artifacts/' + (options.elmVer || DEFAULT_ELM_VER) + '/' +
+            (options.user || DEFAULT_USER) + '/' +
+            (options.project || DEFAULT_PROJECT) + '/' +
+            (options.projectVer || DEFAULT_PROJECT_VER) + '/' +
             'NodeRepl' + iterationId + '.elmi';
 }
 
