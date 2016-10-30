@@ -14,6 +14,8 @@ How it got to be so fast and good? Read [How it was done?](#how-it-was-done) bel
 
 NB: It's work-in-progress, so at some moment you could discover that it parses no records, for example (just for example!) or something even worse. If you find such case, please don't panic, please just follow at least some of the steps described in [Contribute](#how-to-contribute) section.
 
+![Example from CLI](https://raw.githubusercontent.com/shamansir/node-elm-repl/master/img/cli-example.png)
+
 ## How to use it with Node.js?
 
 It's not yet published to `npm.js` (if ever will), but you may install it using:
