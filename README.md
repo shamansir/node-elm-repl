@@ -4,15 +4,15 @@ This package is a very specific weird package.
 
 So if you (yet) don't care about [Elm language](http://elm-lang.org), you shouldn't be interested. Actually, even if you are a big fan of the [Elm language](http://elm-lang.org) (like me, since 0.15), there's totally no guarantee that this package could be interesting to you too.
 
-Why? Because it actually does exactly what [`elm-repl`](https://github.com/elm-lang/elm-repl) does. Even less. It just gets the types of expressions, no values. But... what... changes... everything... is... this package does it completely in node.js!!
+Why? Because it actually does exactly what [`elm-repl`](https://github.com/elm-lang/elm-repl) does. Even less. It just gets the types of expressions, no values. But... what... changes... everything... is... this package does it completely with node.js!!
 
 And it calculates all the expressions types you asked for just with one single call of `elm-make` (original `elm-repl` currently recompiles everything on every new input).
 
-This makes this REPL three times faster and three times awesomer, since it gives you access to the JSONified structure of the type, instead of just string.
+This makes this REPL three times faster and three times awesomer, since it gives you access to the JSONified structure of the type, instead of just a boring string.
 
 How it got to be so fast and good? Read [How it was done?](#how-it-was-done) below for the nice story and some technical details.
 
-NB: It's work-in-progress, so at some moment you could discover that it's not parsing records, for example (just for example!) or something even worse. If you find such case, please don't panic, just please follow at least some of the steps described in [Contribute](#how-to-contribute) section.
+NB: It's work-in-progress, so at some moment you could discover that it parses no records, for example (just for example!) or something even worse. If you find such case, please don't panic, please just follow at least some of the steps described in [Contribute](#how-to-contribute) section.
 
 ## How to use it with Node.js?
 
@@ -122,7 +122,7 @@ Repl-CLI accepts several options:
 
 ## How to contribute?
 
-Write a test which fails with `npm test`, file an issue, fork the repository, make a pull request — just any of that or all together.
+Write a test which fails with `npm test`, file an issue, fork the repository, make a pull request — just any of that or all together will help.
 
 ## How it was done?
 
