@@ -1,2 +1,3 @@
 Html.App
 Html.App.map	(a -> msg) -> Html a -> Html msg
+Html.App.beginnerProgram	{ model : a, update : b -> a -> a, view : a -> Html.Html b } -> Platform.Program Basics.Never

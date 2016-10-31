@@ -11,13 +11,16 @@ const repl = new Repl({ workDir: './test/samples/elm/',
                         elmVer: '0.17.1',
                         user: 'shaman-sir',
                         project: 'test-node-elm-repl',
-                        projectVer: '0.0.1' });
+                        projectVer: '0.0.1',
+                        keepTempFile: true,
+                        keepElmiFile: true });
 
 const expectations = [
     'SimpleTypes',
     'Lambdas',
     'Lists',
     'Tuples',
+    'Records',
     'ImportCoreTypes',
     //'ImportTypesFromInstalledPackage',
     'ImportUserTypes'

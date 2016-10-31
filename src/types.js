@@ -30,6 +30,11 @@ function stringify(t) {
                 + ' ' + t.object.map(stringify).join(' ');
         }
     }
+    if (t.type === 'record') {
+        return '{ ' + t.fields.map(function(pair) {
+            return pair.name + ' : ' + stringify(pair.node);
+        }).join(', ') + ' }';
+    }
 }
 
 Types.stringify = stringify;

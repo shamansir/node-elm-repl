@@ -166,7 +166,27 @@ function appRightSideFormatter(rs) {
     return rs.values;
 }
 
-var aliasedTypeParser = Parser.start()
+var recordPairParser = new Parser()
+    .skip(4).int32('nameLen')
+    .string('name', { length: 'nameLen' })
+    .nest('node', {
+        type: 'node'
+    });
+
+var recordParser = new Parser()
+    .skip(4).int32('count')
+    .array('fields', {
+        type: recordPairParser,
+        length: 'count',/*,
+        formatter: nodeMapFormatter FIXME*/
+    })
+    .skip(1);
+
+function recordFormatter(r) {
+    return r.fields;
+}
+
+var aliasedTypeParser = new Parser()
     .nest('type', { type: typeParser,
                     formatter: typeFormatter })
     .skip(1)
@@ -207,10 +227,8 @@ nodeParser
                                                                       formatter: appRightSideFormatter })
                              }),
             // Record a b
-            4: Parser.start().nest('record', {
-                                type: Parser.start().nest('left',  { type: 'node' })
-                                                    .nest('right', { type: 'node' })
-                             }),
+            4: Parser.start().nest('record', { type: recordParser,
+                                               formatter: recordFormatter }),
             // Aliased a b c
             5: Parser.start().nest('aliased', {
                                 type: aliasedTypeParser,
@@ -243,8 +261,9 @@ function singleNodeFormatter(n) {
         };
         case 4: return {
             type: 'record',
-            left: singleNodeFormatter(cell.record.left),
-            right: singleNodeFormatter(cell.record.right)
+            fields: cell.record.map(function(pair) {
+                return { name: pair.name, node: singleNodeFormatter(pair.node) };
+            })
         };
         case 5: return {
             type: 'aliased',
