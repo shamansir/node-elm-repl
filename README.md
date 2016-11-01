@@ -1,6 +1,14 @@
 # node-elm-repl
 
-This package is a very specific weird package.
+* [Description](#Description)
+* [How to use it with Node.js?](#how-to-use-it-with-nodejs)
+* [How to use it with CLI?](#how-to-use-it-with-cli)
+* [How to contribute?](#how-to-contribute)
+* [How it was done?](#how-it-was-done)
+
+# Description
+
+This package is a very specific and weird package.
 
 So if you (yet) don't care about [Elm language](http://elm-lang.org), you shouldn't be interested. Actually, even if you are a big fan of the [Elm language](http://elm-lang.org) (like me, since 0.15), there's totally no guarantee that this package could be interesting to you too.
 
