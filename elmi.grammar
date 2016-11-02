@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ufwb version="1.17">
+    <grammar name="elm-interface" start="id:1" author="Anton Kotenko" email="shaman.sir@gmail.com" fileextension="elmi">
+        <description>The grammar to parse Elm Interface files. Elm-Compiler Version: 0.17. Made with Synalize It! (https://www.synalysis.net/) a.k.a. Hexinator (https://hexinator.com/).</description>
+        <structure name="PackageInfo" id="2" length="0" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structure name="Version" id="3" length="0" fillcolor="A1FFA5">
+                <number name="Major" id="4" fillcolor="8FFF9F" type="integer" length="8"/>
+                <number name="Minor" id="5" fillcolor="8FFF9F" type="integer" length="8"/>
+                <number name="Patch" id="6" fillcolor="8FFF9F" type="integer" length="8"/>
+            </structure>
+            <structure name="Name" id="8">
+                <number name="UserNameLen" id="9" type="integer" length="8"/>
+                <string name="UserName" id="10" fillcolor="FFDA36" type="fixed-length" length="UserNameLen"/>
+                <number name="ProjectNameLen" id="11" type="integer" length="8"/>
+                <string name="ProjectName" id="12" fillcolor="FFDA36" type="fixed-length" length="ProjectNameLen"/>
+            </structure>
+        </structure>
+        <structure name="ImportCell" id="15" encoding="ISO_8859-1:1987" endian="big" signed="no" order="variable" valueexpression="ImportName">
+            <structref name="JustNameImport" id="17" repeatmin="0" structure="id:16"/>
+            <structref name="ImportWithPath" id="19" repeatmin="0" structure="id:18"/>
+        </structure>
+        <structure name="ImportKind" id="21" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="ImportName">
+            <number name="ImportType" id="22" fillcolor="8FFF9F" type="integer" length="1"/>
+            <number name="ImportNameLen" id="23" type="integer" length="8"/>
+            <string name="ImportName" id="24" fillcolor="FFFCCB" type="fixed-length" length="ImportNameLen"/>
+        </structure>
+        <structure name="JustNameImport" id="16" length="0" alignment="0" extends="id:21" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="ImportType" mustmatch="yes" id="26" type="integer">
+                <fixedvalues>
+                    <fixedvalue name="just_name" value="0"/>
+                    <fixedvalue name="just_name" value="1"/>
+                </fixedvalues>
+            </number>
+            <string name="ImportName" id="28" type="fixed-length"/>
+        </structure>
+        <structure name="ImportWithPath" id="18" length="0" alignment="0" extends="id:21" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="ImportType" mustmatch="yes" id="30" type="integer">
+                <fixedvalues>
+                    <fixedvalue name="with_path" value="2"/>
+                </fixedvalues>
+            </number>
+            <string name="ImportName" id="32" type="fixed-length"/>
+            <number name="PathLen" id="33" type="integer" length="8"/>
+            <structure name="Path" id="34" repeat="id:33" repeatmin="0" repeatmax="-1">
+                <number name="PathItemNameLen" id="35" type="integer" length="8"/>
+                <string name="PathItemName" id="36" fillcolor="E7FF39" type="fixed-length" length="PathItemNameLen"/>
+            </structure>
+            <number name="Reserved" id="38" type="integer" length="1"/>
+        </structure>
+        <structure name="Imports" id="40" consists-of="id:41" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="ImportsCount">
+            <number name="ImportsCount" id="42" fillcolor="FFACAE" type="integer" length="8"/>
+            <structure name="List" id="43" repeat="id:42" repeatmin="0" repeatmax="-1">
+                <structref name="ImportCell" id="44" structure="id:15"/>
+            </structure>
+        </structure>
+        <structure name="Exports" id="47" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="ExportsCount">
+            <number name="ExportsCount" id="48" fillcolor="FFACAE" type="integer" length="8"/>
+            <structure name="ExportItem" id="49" repeat="id:48" repeatmin="0" repeatmax="-1" valueexpression="PathItem">
+                <number name="PathLen" id="50" type="integer" length="8"/>
+                <structure name="PathItem" id="51" repeat="id:50" repeatmin="0" repeatmax="-1" valueexpression="PathItemName">
+                    <number name="PathItemNameLen" id="52" type="integer" length="8"/>
+                    <string name="PathItemName" id="53" fillcolor="FFFCCB" type="fixed-length" length="PathItemNameLen"/>
+                </structure>
+            </structure>
+        </structure>
+        <structure name="TypeCell" id="57" encoding="ISO_8859-1:1987" endian="big" signed="no" order="variable">
+            <structref name="HolleyType" id="59" repeatmin="0" structure="id:58"/>
+            <structref name="FilledType" id="61" repeatmin="0" structure="id:60"/>
+        </structure>
+        <structure name="TypeKind" id="63" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="Kind" id="64" fillcolor="FBA5FF" type="integer" length="1"/>
+        </structure>
+        <structure name="HolleyType" id="58" extends="id:63" valueexpression="HolleyTypeName">
+            <number name="Kind" mustmatch="yes" id="66" type="integer">
+                <fixedvalues>
+                    <fixedvalue name="holley" value="0"/>
+                </fixedvalues>
+            </number>
+            <number name="HolleyTypeNameLen" id="67" type="integer" length="8"/>
+            <string name="HolleyTypeName" id="68" fillcolor="FFFCCB" type="fixed-length" length="HolleyTypeNameLen"/>
+        </structure>
+        <structure name="FilledType" id="60" extends="id:63" valueexpression="Name">
+            <number name="Kind" mustmatch="yes" id="70" type="integer">
+                <fixedvalues>
+                    <fixedvalue name="filled" value="1"/>
+                </fixedvalues>
+            </number>
+            <number name="UserNameLen" id="71" type="integer" length="8"/>
+            <string name="UserName" id="72" fillcolor="FFFCCB" type="fixed-length" length="UserNameLen"/>
+            <number name="ProjectNameLen" id="73" type="integer" length="8"/>
+            <string name="ProjectName" id="74" fillcolor="FFFCCB" type="fixed-length" length="ProjectNameLen"/>
+            <number name="Reserved" id="75" type="integer" length="8"/>
+            <number name="NameLen" id="76" type="integer" length="8"/>
+            <string name="Name" id="77" fillcolor="FFFCCB" type="fixed-length" length="NameLen"/>
+            <number name="SubNameLen" id="78" type="integer" length="8"/>
+            <string name="SubName" id="79" fillcolor="FFFCCB" type="fixed-length" length="SubNameLen"/>
+        </structure>
+        <structure name="RecordCell" id="81" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="Name">
+            <number name="NameLen" id="82" type="integer" length="8"/>
+            <string name="Name" id="83" type="fixed-length" length="NameLen"/>
+            <structref name="Node" id="85" structure="id:84"/>
+        </structure>
+        <structure name="NodeBase" id="87" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="NodeType" id="88" fillcolor="8FFF9F" type="integer" length="1"/>
+        </structure>
+        <structure name="LambdaNode" id="90" length="0" alignment="0" extends="id:87" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="Type">
+            <number name="NodeType" mustmatch="yes" id="91" type="integer">
+                <fixedvalues>
+                    <fixedvalue name="lambda" value="0"/>
+                </fixedvalues>
+            </number>
+            <structref name="Left" id="92" structure="id:84"/>
+            <structref name="Right" id="93" structure="id:84"/>
+        </structure>
+        <structure name="VariableNode" id="95" length="0" alignment="0" extends="id:87" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="VarName">
+            <number name="NodeType" mustmatch="yes" id="96" type="integer">
+                <fixedvalues>
+                    <fixedvalue name="variable" value="1"/>
+                </fixedvalues>
+            </number>
+            <number name="VarNameLen" id="97" type="integer" length="8"/>
+            <string name="VarName" id="98" fillcolor="FFFCCB" type="fixed-length" length="VarNameLen"/>
+        </structure>
+        <structure name="TypeNode" id="100" extends="id:87" valueexpression="TypeCell">
+            <number name="NodeType" mustmatch="yes" id="101" type="integer">
+                <fixedvalues>
+                    <fixedvalue name="type" value="2"/>
+                </fixedvalues>
+            </number>
+            <structref name="TypeCell" id="102" structure="id:57"/>
+        </structure>
+        <structure name="ApplicationNode" id="104" extends="id:87">
+            <number name="NodeType" mustmatch="yes" id="105" type="integer">
+                <fixedvalues>
+                    <fixedvalue name="application" value="3"/>
+                </fixedvalues>
+            </number>
+            <structref name="Subject" id="106" structure="id:84"/>
+            <structure name="Objects" id="107">
+                <number name="ObjectsCount" id="108" type="integer" length="8"/>
+                <structure name="List" id="109" repeat="id:108" repeatmin="0" repeatmax="-1">
+                    <structref name="Node" id="110" structure="id:84"/>
+                </structure>
+            </structure>
+        </structure>
+        <structure name="RecordNode" id="114" extends="id:87">
+            <number name="NodeType" mustmatch="yes" id="115" type="integer">
+                <fixedvalues>
+                    <fixedvalue name="record" value="4"/>
+                </fixedvalues>
+            </number>
+            <number name="FieldsCount" id="116" type="integer" length="8"/>
+            <structure name="Fields" id="117" repeat="id:116" repeatmin="0" repeatmax="-1">
+                <structref name="RecordCell" id="118" structure="id:81"/>
+            </structure>
+            <number name="Reserved" id="120" type="integer" length="1"/>
+        </structure>
+        <structure name="AliasedNode" id="122" extends="id:87">
+            <number name="NodeType" mustmatch="yes" id="123" type="integer">
+                <fixedvalues>
+                    <fixedvalue name="aliased" value="5"/>
+                </fixedvalues>
+            </number>
+            <structref name="Type" id="124" structure="id:57"/>
+            <number name="Reserved" id="125" type="integer" length="1"/>
+            <structure name="Aliases" id="126">
+                <number name="AliasesCount" id="127" type="integer" length="8"/>
+                <structure name="List" id="128" length="0" repeat="id:127" repeatmin="0" repeatmax="-1">
+                    <structref name="Node" id="129" structure="id:84"/>
+                </structure>
+            </structure>
+        </structure>
+        <structure name="Node" id="84" encoding="ISO_8859-1:1987" endian="big" signed="no" order="variable" valueexpression="NodeType">
+            <structref name="LambdaNode" id="133" repeatmin="0" structure="id:90"/>
+            <structref name="VariableNode" id="134" repeatmin="0" structure="id:95"/>
+            <structref name="TypeNode" id="135" repeatmin="0" structure="id:100"/>
+            <structref name="ApplicationNode" id="136" repeatmin="0" structure="id:104"/>
+            <structref name="RecordNode" id="137" repeatmin="0" structure="id:114"/>
+            <structref name="AliasedNode" id="138" repeatmin="0" structure="id:122"/>
+        </structure>
+        <structure name="Definition" id="140" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="DefName">
+            <number name="DefNameLen" id="141" type="integer" length="8"/>
+            <string name="DefName" id="142" fillcolor="FFFCCB" type="fixed-length" length="DefNameLen"/>
+            <structref name="Tree" id="143" structure="id:84"/>
+        </structure>
+        <structure name="Definitions" id="145" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="DefinitionsCount">
+            <number name="DefinitionsCount" id="146" fillcolor="FFACAE" type="integer" length="8"/>
+            <structure name="List" id="147" repeat="id:146" repeatmin="0" repeatmax="-1" consists-of="id:145" order="variable">
+                <structref name="Definiton" id="148" structure="id:140"/>
+            </structure>
+        </structure>
+        <structure name="Union" id="151" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="UnionName">
+            <number name="UnionNameLen" id="152" type="integer" length="8"/>
+            <string name="UnionName" id="153" fillcolor="FFFCCB" type="fixed-length" length="UnionNameLen"/>
+            <number name="Reserved" id="154" type="integer" length="8"/>
+            <number name="ItemsCount" id="155" fillcolor="BEFFE1" type="integer" length="8"/>
+            <structure name="Items" id="156" repeat="id:155" repeatmin="0" repeatmax="-1" valueexpression="ItemName">
+                <number name="ItemNameLen" id="157" type="integer" length="8"/>
+                <string name="ItemName" id="158" fillcolor="FFFCCB" type="fixed-length" length="ItemNameLen"/>
+                <number name="Reserved" id="159" type="integer" length="8"/>
+            </structure>
+        </structure>
+        <structure name="Unions" id="162" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="UnionsCount">
+            <number name="UnionsCount" id="163" fillcolor="FFACAE" type="integer" length="8"/>
+            <structure name="List" id="164" repeat="id:163" repeatmin="0" repeatmax="-1" valueexpression="UnionName">
+                <structref name="Union" id="165" structure="id:151"/>
+            </structure>
+        </structure>
+        <structure name="Alias" id="180" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="AliasNameLen" id="182" type="integer" length="8"/>
+            <string name="AliasName" id="183" type="fixed-length" length="AliasNameLen"/>
+            <number name="Reserved" id="187" type="integer" length="8"/>
+            <structref name="Subject" id="191" structure="id:84"/>
+        </structure>
+        <structure name="Aliases" id="168" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="AliasesCount">
+            <number name="AliasesCount" id="169" fillcolor="FFACAE" type="integer" length="8"/>
+            <structure name="List" id="184" repeat="id:169" repeatmin="0" repeatmax="-1">
+                <structref name="Alias" id="186" structure="id:180"/>
+            </structure>
+        </structure>
+        <structure name="ELMI File" id="1" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structref name="PackageInfo" id="171" structure="id:2"/>
+            <structref name="Imports" id="172" structure="id:40"/>
+            <structref name="Exports" id="173" structure="id:47"/>
+            <structref name="Definitions" id="174" structure="id:145"/>
+            <structref name="Unions" id="175" structure="id:162"/>
+            <structref name="Aliases" id="176" structure="id:168"/>
+        </structure>
+    </grammar>
+</ufwb>
