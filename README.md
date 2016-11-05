@@ -129,6 +129,7 @@ Repl-CLI accepts several options:
 * `--project-ver` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
 * `--keep-temp-file` — for debugging purposes, if specified, then do not delete `.elm` files after compilation;
 * `--keep-elmi-file` — for debugging purposes, if specified, then do not delete `.elmi` files after compilation;
+* `--show-time` — additionally report the time was spent to extract types;
 
 ## How to contribute?
 
