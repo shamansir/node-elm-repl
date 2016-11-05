@@ -1,3 +1,8 @@
-Html.App
-Html.App.map	(a -> msg) -> Html a -> Html msg
-Html.App.beginnerProgram	{ model : a, update : b -> a -> a, view : a -> Html.Html b } -> Platform.Program Basics.Never
+Html exposing (Html, div, text)	Html.App as App
+div [] []	Html.Html a
+div []	List (Html.Html a) -> Html.Html a
+Html.a	List (Html.Attribute a) -> List (Html.Html a) -> Html.Html a
+div	List (Html.Attribute a) -> List (Html.Html a) -> Html.Html a
+text	String -> Html.Html a
+App.map	(a -> b) -> Html.Html a -> Html.Html b
+App.beginnerProgram	{ model : a, update : b -> a -> a, view : a -> Html.Html b } -> Platform.Program Basics.Never

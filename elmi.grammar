@@ -200,7 +200,11 @@
                     <structref name="Node" id="225" structure="id:84"/>
                 </structure>
                 <structure name="Aliases" id="215" repeatmin="0">
-                    <number name="Reserved" id="125" type="integer" length="1"/>
+                    <number name="Reserved" mustmatch="yes" id="125" type="integer" length="1">
+                        <fixedvalues>
+                            <fixedvalue name="passed" value="0"/>
+                        </fixedvalues>
+                    </number>
                     <number name="AliasesCount" id="127" type="integer" length="8"/>
                     <structure name="List" id="128" length="0" repeat="id:127" repeatmin="0" repeatmax="-1">
                         <structref name="Node" id="129" structure="id:84"/>

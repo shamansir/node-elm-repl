@@ -22,7 +22,7 @@ const expectations = [
     'Tuples',
     'Records',
     'ImportCoreTypes',
-    //'ImportTypesFromInstalledPackage',
+    'ImportTypesFromInstalledPackage',
     'ImportUserTypes'
 ];
 

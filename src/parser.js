@@ -189,19 +189,47 @@ function recordFormatter(r) {
 var aliasedTypeParser = new Parser()
     .nest('type', { type: typeParser,
                     formatter: typeFormatter })
-    .skip(1)
-    .skip(4).int32('count')
-    .array('list', {
-        type: 'node',
-        length: 'count'/*,
-        formatter: nodeArrayFormatter FIXME*/
-    });
+    //.buffer('testMsg', { clone: true, length: 8+8+3 }) FIXME: moves offset
+    .choice('fork', {
+        tag: function() {
+            const msgMarker = new Buffer('000000000000000100000000000000036D7367', 'hex');
+            return buffer.includes(msgMarker, offset) ? 1 : 0;
+        },
+        defaultChoice: stop,
+        choices: {
+            0: Parser.start()
+                     .skip(1)
+                     .skip(4).int32('count')
+                     .array('list', {
+                         type: 'node',
+                         length: 'count'/*,
+                         formatter: nodeArrayFormatter FIXME*/
+                     }),
+            1: Parser.start()
+                     .skip(8+8+3) // length of msgMarker
+                     .skip(1) // variable type marker
+                     .nest('msgvar', { type: variableParser,
+                                       formatter: variableFormatter })
+                     .skip(1)
+                     .nest('msgnode', {
+                         type: 'node'/*,
+                         formatter: singleNodeFormatter*/
+                     })
+        }
+    })
+    ;
 
 function aliasedTypeFormatter(at) {
-    return {
-        type: at.type,
-        list: at.list
-    };
+    return at.fork.list
+        ? {
+            type: at.type,
+            list: at.fork.list
+        }
+        : {
+            type: at.type,
+            msgvar: at.fork.msgvar,
+            msgnode: at.fork.msgnode
+        };
 }
 
 nodeParser
@@ -268,7 +296,9 @@ function singleNodeFormatter(n) {
         case 5: return {
             type: 'aliased',
             def: cell.aliased.type,
-            list: cell.aliased.list.map(singleNodeFormatter)
+            list: cell.aliased.list ? cell.aliased.list.map(singleNodeFormatter) : [],
+            msgvar: cell.aliased.msgvar || null,
+            msgnode: cell.aliased.msgnode ? singleNodeFormatter(cell.aliased.msgnode) : null,
         };
     }
 }

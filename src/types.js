@@ -16,7 +16,8 @@ function stringify(t) {
     if (t.type === 'var') { return t.name; }
     if ((t.type === 'type') ||
         (t.type === 'aliased')) {
-        return t.def.subName ? (t.def.name + '.' + t.def.subName) : t.def.name;
+        const name = t.def.subName ? (t.def.name + '.' + t.def.subName) : t.def.name;
+        return t.msgvar ? (name + ' ' + t.msgvar) : name;
     }
     if (t.type === 'lambda') {
         return ((t.left.type !== 'lambda') ? stringify(t.left) : '(' + stringify(t.left) + ')')
@@ -25,6 +26,10 @@ function stringify(t) {
     if (t.type === 'app') {
         if ((t.subject.type === 'type') && (t.subject.def.name.indexOf('_Tuple') === 0)) {
             return '( ' + t.object.map(stringify).join(', ') + ' )';
+        } else if ((t.subject.type === 'type') && (t.subject.def.name === 'List')) {
+            return 'List ' + t.object.map(function(t) {
+                return (t.type === 'aliased') ? '(' + stringify(t) + ')' : stringify(t);
+            }).join(' ');
         } else {
             return stringify(t.subject)
                 + ' ' + t.object.map(stringify).join(' ');

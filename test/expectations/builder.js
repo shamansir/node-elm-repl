@@ -84,7 +84,9 @@ module.exports = {
         return {
             type: 'aliased',
             def: type.def,
-            list: list
+            list: list,
+            msgvar: null,
+            msgnode: null
         };
     },
 
