@@ -1,8 +1,8 @@
 Html exposing (Html, div, text)	Html
-div [] []	Html.Html a	{ type = "node", tag = "div", facts = {}, children = {}, namespace = <internal structure>, descendantsCount = 0 }
-div []	List (Html.Html a) -> Html.Html a	<function>
-Html.a	List (Html.Attribute a) -> List (Html.Html a) -> Html.Html a	<function>
-div	List (Html.Attribute a) -> List (Html.Html a) -> Html.Html a	<function>
-text	String -> Html.Html a	<function:text>
-Html.map	(a -> b) -> Html.Html a -> Html.Html b	<function:map>
-Html.beginnerProgram	{ model : a, update : b -> a -> a, view : a -> Html.Html b } -> Platform.Program Basics.Never	<function>
+div [] []	Html.Html msg	{ type = "node", tag = "div", facts = {}, children = {}, namespace = <internal structure>, descendantsCount = 0 }
+div []	List (Html.Html msg) -> Html.Html msg	<function>
+Html.a	List (Html.Attribute msg) -> List (Html.Html msg) -> Html.Html msg	<function>
+div	List (Html.Attribute msg) -> List (Html.Html msg) -> Html.Html msg	<function>
+text	String -> Html.Html msg	<function:text>
+Html.map	(a -> msg) -> Html.Html a -> Html.Html msg	<function:map>
+Html.beginnerProgram	{ model : model, update : msg -> model -> model, view : model -> Html.Html msg } -> Platform.Program Basics.Never model msg	<function>

@@ -8,7 +8,7 @@ chai.should();
 
 const Repl = require('../src/repl.js')
 const repl = new Repl({ workDir: './test/samples/elm/',
-                        elmVer: '0.17.1',
+                        elmVer: '0.18.0',
                         user: 'shaman-sir',
                         project: 'test-node-elm-repl',
                         projectVer: '0.0.1',
@@ -32,7 +32,7 @@ describe('Repl', function() {
 
         describe('Repl.' + expectationsGroupName, function() {
 
-            it('should properly extract types for ' + expectationsGroupName, function() {
+            it.only('should properly extract types for ' + expectationsGroupName, function() {
                 const expectationsPath = './test/expectations/Repl.' + expectationsGroupName + '.expectation';
                 return readFile(expectationsPath)
                        .then(function(buffer) {
