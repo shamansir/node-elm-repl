@@ -32,22 +32,22 @@ describe('Repl', function() {
 
         describe('Repl.' + expectationsGroupName, function() {
 
-            it('should properly parse ' + expectationsGroupName, function() {
+            it('should properly extract types for ' + expectationsGroupName, function() {
                 const expectationsPath = './test/expectations/Repl.' + expectationsGroupName + '.expectation';
                 return readFile(expectationsPath)
                        .then(function(buffer) {
                            var lines = buffer.toString().split('\n');
                            const imports = lines.shift().split('\t');
-                           const pairs = lines.slice(0,-1);
+                           const triplets = lines.slice(0,-1);
                            return {
                                imports: imports,
-                               pairs: pairs.map(function(line) {
-                                                    const pair = line.split('\t');
-                                                    return {
-                                                        expression: pair[0],
-                                                        expectation: pair[1]
-                                                    }
-                                                })
+                               pairs: triplets.map(function(line) {
+                                                       const triplet = line.split('\t');
+                                                       return {
+                                                           expression: triplet[0],
+                                                           expectation: triplet[1]
+                                                       }
+                                                   })
                            };
                        }).then(function(spec) {
                            const imports = spec.imports;
@@ -56,6 +56,63 @@ describe('Repl', function() {
                            return repl.getTypes(imports, expressions)
                                       .then(Repl.stringifyAll)
                                       .should.eventually.deep.equal(expectedTypes);
+                       });
+            });
+
+            it.only('should properly extract values for ' + expectationsGroupName, function() {
+                const expectationsPath = './test/expectations/Repl.' + expectationsGroupName + '.expectation';
+                return readFile(expectationsPath)
+                       .then(function(buffer) {
+                           var lines = buffer.toString().split('\n');
+                           const imports = lines.shift().split('\t');
+                           const triplets = lines.slice(0,-1);
+                           return {
+                               imports: imports,
+                               pairs: triplets.map(function(line) {
+                                                       const triplet = line.split('\t');
+                                                       return {
+                                                           expression: triplet[0],
+                                                           expectation: triplet[2]
+                                                       }
+                                                   })
+                           };
+                       }).then(function(spec) {
+                           const imports = spec.imports;
+                           const expressions   = spec.pairs.map(function(s) { return s.expression; });
+                           const expectedValues = spec.pairs.map(function(s) { return s.expectation; });
+                           return repl.getValues(imports, expressions)
+                                      .should.eventually.deep.equal(expectedValues);
+                       });
+            });
+
+            it('should properly extract both types and values for ' + expectationsGroupName, function() {
+                const expectationsPath = './test/expectations/Repl.' + expectationsGroupName + '.expectation';
+                return readFile(expectationsPath)
+                       .then(function(buffer) {
+                           var lines = buffer.toString().split('\n');
+                           const imports = lines.shift().split('\t');
+                           const triplets = lines.slice(0,-1);
+                           return {
+                               imports: imports,
+                               triplets: triplets.map(function(line) {
+                                                          const triplet = line.split('\t');
+                                                          return {
+                                                              expression: triplet[0],
+                                                              type: triplet[1],
+                                                              value: triplet[2],
+                                                          }
+                                                      })
+                           };
+                       }).then(function(spec) {
+                           const imports = spec.imports;
+                           const expressions    = spec.triplet.map(function(s) { return s.expression; });
+                           const expectedTypes  = spec.triplet.map(function(s) { return s.type; });
+                           const expectedValues = spec.triplet.map(function(s) { return s.value; });
+                           return repl.getTypesAndValues(imports, expressions)
+                                      .should.eventually.deep.equal({
+                                          types: expectedTypes,
+                                          values: expectedValues
+                                      });
                        });
             });
 

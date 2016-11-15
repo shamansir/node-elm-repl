@@ -1,8 +1,8 @@
 
-\a b -> a + b	number -> number -> number
-\a b c d -> a + b + c + d	number -> number -> number -> number -> number
-\str1 str2 -> str1 ++ str2	appendable -> appendable -> appendable
-\str1 str2 -> "" ++ str1 ++ str2	String -> String -> String
-\fn -> fn	a -> a
-\fn a -> fn a	(a -> b) -> a -> b
-\fn a b -> fn a b	(a -> b -> c) -> a -> b -> c
+\a b -> a + b	number -> number -> number	<function>
+\a b c d -> a + b + c + d	number -> number -> number -> number -> number	<function>
+\str1 str2 -> str1 ++ str2	appendable -> appendable -> appendable	<function>
+\str1 str2 -> "" ++ str1 ++ str2	String -> String -> String	<function>
+\fn -> fn	a -> a	<function>
+\fn a -> fn a	(a -> b) -> a -> b	<function>
+\fn a b -> fn a b	(a -> b -> c) -> a -> b -> c	<function>

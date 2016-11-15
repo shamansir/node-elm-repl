@@ -1,11 +1,11 @@
 
-1	number
-1.01	Float
-1 + 1	number
-"Foo"	String
-"""Foo"""	String
-'f'	Char
-False	Bool
-"f"++"a"	String
-100 // 2	Int
-1 / 2	Float
+1	number	1
+1.01	Float	1.01
+1 + 1	number	2
+"Foo"	String	"Foo"
+"""Foo"""	String	"Foo"
+'f'	Char	'f'
+False	Bool	False
+"f"++"a"	String	"fa"
+100 // 2	Int	50
+1 / 2	Float	0.5

@@ -34,7 +34,6 @@ module.exports = {
                     values: item[name]
                 }
             }
-
         })
     },
 

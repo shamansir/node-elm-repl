@@ -1,6 +1,6 @@
 
-(,) True False	( Bool, Bool )
-(,) 1 2	( number, number' )
-(,,) 1 2 3	( number, number', number'' )
-(,,) 1 2 3.0	( number, number', Float )
-(1,True,'a',[])	( number, Bool, Char, List a )
+(,) True False	( Bool, Bool )	(True,False)
+(,) 1 2	( number, number' )	(1,2)
+(,,) 1 2 3	( number, number', number'' )	(1,2,3)
+(,,) 1 2 3.0	( number, number', Float )	(1,2,3)
+(1,True,'a',[])	( number, Bool, Char, List a )	(1,True,'a',[])

@@ -1,4 +1,4 @@
 
-{ x = 3, y = 4 }	{ x : number, y : number' }
-List.map .x [{ x = 3, y = 4 }, {x = 7, y = 11 }]	List number
-{ x = "a", y = "b", z = "c" }	{ x : String, y : String, z : String }
+{ x = 3, y = 4 }	{ x : number, y : number' }	{ x = 3, y = 4 }
+List.map .x [{ x = 3, y = 4 }, {x = 7, y = 11 }]	List number	[3,7]
+{ x = "a", y = "b", z = "c" }	{ x : String, y : String, z : String }	{ x = "a", y = "b", z = "c" }

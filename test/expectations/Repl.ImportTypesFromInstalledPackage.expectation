@@ -1,8 +1,8 @@
-Html exposing (Html, div, text)	Html.App as App
-div [] []	Html.Html a
-div []	List (Html.Html a) -> Html.Html a
-Html.a	List (Html.Attribute a) -> List (Html.Html a) -> Html.Html a
-div	List (Html.Attribute a) -> List (Html.Html a) -> Html.Html a
-text	String -> Html.Html a
-App.map	(a -> b) -> Html.Html a -> Html.Html b
-App.beginnerProgram	{ model : a, update : b -> a -> a, view : a -> Html.Html b } -> Platform.Program Basics.Never
+Html exposing (Html, div, text)	Html
+div [] []	Html.Html a	{ type = "node", tag = "div", facts = {}, children = {}, namespace = <internal structure>, descendantsCount = 0 }
+div []	List (Html.Html a) -> Html.Html a	<function>
+Html.a	List (Html.Attribute a) -> List (Html.Html a) -> Html.Html a	<function>
+div	List (Html.Attribute a) -> List (Html.Html a) -> Html.Html a	<function>
+text	String -> Html.Html a	<function:text>
+Html.map	(a -> b) -> Html.Html a -> Html.Html b	<function:map>
+Html.beginnerProgram	{ model : a, update : b -> a -> a, view : a -> Html.Html b } -> Platform.Program Basics.Never	<function>
