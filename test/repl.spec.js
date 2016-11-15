@@ -59,7 +59,7 @@ describe('Repl', function() {
                        });
             });
 
-            it.only('should properly extract values for ' + expectationsGroupName, function() {
+            it('should properly extract values for ' + expectationsGroupName, function() {
                 const expectationsPath = './test/expectations/Repl.' + expectationsGroupName + '.expectation';
                 return readFile(expectationsPath)
                        .then(function(buffer) {

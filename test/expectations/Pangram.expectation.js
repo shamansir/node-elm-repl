@@ -1,7 +1,7 @@
 var b = require('./builder.js');
 
 var expectation = {
-    version: b.version(0, 17, 1),
+    version: b.version(0, 18, 0),
     package: {
         user: 'user',
         name: 'project'
@@ -17,7 +17,8 @@ var expectation = {
         [ 'Platform', 'Sub' ],
         [ 'Result' ],
         [ 'Set' ],
-        [ 'String' ]
+        [ 'String' ],
+        [ 'Tuple' ]
     ]),
     imports: b.imports([
         'isPangram',
