@@ -35,11 +35,11 @@ if (!argv.from) {
     console.log('--elm-ver — exact elm-version you use (default: 0.18.0), required to be known if you import your own modules');
     console.log('--user — your github username specified in elm-package.json (default: user), required to be known if you import your own modules');
     console.log('--project — your github project specified in elm-package.json (default: project), required to be known if you import your own modules');
-    console.log('--project-ver — your project version specified in elm-package.json (default: project), required to be known if you import your own modules');
+    console.log('--project-ver — your project version specified in elm-package.json (default: 1.0.0), required to be known if you import your own modules');
     console.log('--show-time — show how much time it took to convert everyting');
-    console.log('--with-values — include values into the output (takes more time)');
+    console.log('--with-values — include values into the output (takes more time to extract them)');
     console.log('--only-values — report and extract only values, not the types (overrides --with-values)');
-    console.log('--values-below — has sense only when --with-values used: instead of putting types and values in lines like TYPE<TAB>VALUE, put a list of values line-by-line below the list of types, could be useful for parsing');
+    console.log('--values-below — has sense only when --with-values was used: instead of putting types and values in lines like TYPE<TAB>VALUE, put a list of values line-by-line below the list of types: could be useful for parsing');
     console.log('');
 } else {
 

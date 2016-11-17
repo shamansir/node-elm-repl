@@ -12,7 +12,7 @@ This package is a very specific and weird package.
 
 So if you (yet) don't care about [Elm language](http://elm-lang.org), you shouldn't be interested. Actually, even if you are a big fan of the [Elm language](http://elm-lang.org) (like me, since 0.15), there's totally no guarantee that this package could be interesting to you too.
 
-Why? Because it actually does exactly what [`elm-repl`](https://github.com/elm-lang/elm-repl) does. Even less. It just gets the types of expressions, no values. But... what... changes... everything... is... this package does it completely with node.js!!
+Why? Because it actually does exactly what [`elm-repl`](https://github.com/elm-lang/elm-repl) does. Even less. It just gets the types of expressions, no values (HAHA NO, with last updates it also extracts values, so now it has just the same functionality as REPL has, ensure to look through the documentation below!). But... what... changes... everything... is... this package does it completely with node.js!!
 
 And it calculates all the expressions types you asked for just with one single call of `elm-make` (original `elm-repl` currently recompiles everything on every new input).
 
@@ -20,7 +20,7 @@ This makes this REPL three times faster and three times awesomer, since it gives
 
 How it got to be so fast and good? Read [How it was done?](#how-it-was-done) below for the nice story and some technical details.
 
-NB: It's work-in-progress, so at some moment you could discover that it parses no records, for example (just for example!) or something even worse. If you find such case, please don't panic, please just follow at least some of the steps described in [Contribute](#how-to-contribute) section.
+NB: It's work-in-progress, so at some moment you could discover that it parses no records, for example (just for example, of course it parses records!) or something even worse. If you find such case, please don't panic, please just follow at least some of the steps described in [Contribute](#how-to-contribute) section.
 
 ![Example from CLI](https://raw.githubusercontent.com/shamansir/node-elm-repl/master/img/cli-example.png)
 
@@ -42,11 +42,11 @@ npm test
 Then, in your JS file, and in the same directory where you have `elm-package.json` or where you store your `.elm` modules, if you have any, just do something like:
 
 ```javascript
-const Repl = require('node-elm-repl');
+var Repl = require('node-elm-repl');
 
 new Repl({ // options, defaults are listed:
     workDir: '.', // working directory
-    elmVer: '0.17.1', // your exact elm-compiler version
+    elmVer: '0.18.0', // your exact elm-compiler version
     user: 'user', // specify github username you used in elm-package.json
     project: 'project', // specify project name you used in elm-package.json
     projectVer: '1.0.0' // specify project version you used in elm-package.json
@@ -82,16 +82,104 @@ number -> number -> number
 `Repl` constructor accepts several options:
 
 * `workDir` — specify working directory for execution, for example where the `.elm` files you use are located, or where you have your `elm-package.json`;
-* `elmVer` — the exact elm-version you use (default: `'0.17.1'`);
+* `elmVer` — the exact elm-version you use (default: `'0.18.0'`);
 * `user` — your github username specified in `elm-package.json` (default: `'user'`);
 * `project` — your github project specified in `elm-package.json` (default: `'project'`);
 * `projectVer` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
 * `keepTempFile` — for debugging purposes, if _truthy_, then do not delete `.elm` files after compilation;
 * `keepElmiFile` — for debugging purposes, if _truthy_, then do not delete `.elmi` files after compilation;
 
+It's not the only method of `Repl` class:
+
+`Repl.getValues` returns the array of values in the same manner, so:
+
+```javascript
+var Repl = require('node-elm-repl');
+
+new Repl({
+    // ... your options
+}).getValues(
+    [ // imports:
+        'List as L',
+        'Maybe exposing ( Maybe(..) )'
+    ],
+    [ // expressions:
+        'L.map',
+        'Nothing',
+        '1 + 1',
+        '1.01',
+        '"f"++"a"',
+        '100 // 2'
+        'L.range 1 4',
+        '\\a b -> a + b'
+    ]
+).then(function(values) { // getValues returns the Promise which resolves to array
+    console.log(values).join('\n');
+}).catch(console.error);
+```
+
+will show in console:
+
+```
+<function>
+Nothing
+2
+1.01
+"fa"
+[1,2,3,4]
+50
+<function>
+```
+
+`Repl.getTypesAndValues` returns both types and values for the cases when you need both. In this moment the Node-REPL becomes as powerful as it's father and, can't resist to mention it again, at least three times faster.
+
+```javascript
+var Repl = require('node-elm-repl');
+
+new Repl({
+    // ... your options
+}).getValues(
+    [ // imports:
+        'List as L',
+        'Maybe exposing ( Maybe(..) )'
+    ],
+    [ // expressions:
+        'L.map',
+        'Nothing',
+        '1 + 1',
+        '1.01',
+        '"f"++"a"',
+        '100 // 2'
+        'L.range 1 4',
+        '\\a b -> a + b'
+    ]
+).then(function(typesAndValues) { // getValues returns the Promise which resolves to array
+    var types = typesAndValues.types;
+    var values = typesAndValues.values;
+    types.forEach(function(type, idx) {
+        console.log('TYPE', type, 'VALUE', value);
+    });
+}).catch(console.error);
+```
+
+Will output:
+
+```
+TYPE (a -> b) -> List a -> List b VALUE <function>
+TYPE Maybe.Maybe a VALUE Nothing
+TYPE number VALUE 2
+TYPE Float VALUE 1.01
+TYPE String VALUE "fa"
+TYPE List Int VALUE [1,2,3,4]
+TYPE Int VALUE 50
+TYPE number -> number -> number VALUE <function>
+```
+
 ## How to use it with CLI?
 
 CLI interface is a bit different, to use it, you need to create a file with expressions listed.
+
+When you install the package through NPM, CLI should be accessible as `node-elm-repl` binary, which is actually an alias for `node ./src/cli.js`, so you may safely replace one with another.
 
 If you need imports, list them in the first line starting with `;` and splitting them with `;`.
 
@@ -107,7 +195,7 @@ Nothing
 \a b -> a + b
 ```
 
-Then run `node src/cli.js --from <your-file-name>`.
+Then run `node-elm-repl --from <your-file-name>`, `node-elm-repl ./src/cli-example` in this case.
 
 And you should get:
 
@@ -123,13 +211,16 @@ number -> number -> number
 Repl-CLI accepts several options:
 
 * `--work-dir` — specify working directory for execution, for example where the `.elm` files you use are located, or where you have your `elm-package.json`;
-* `--elm-ver` — the exact elm-version you use (default: `'0.17.1'`);
+* `--elm-ver` — the exact elm-version you use (default: `'0.18.0'`);
 * `--user` — your github username specified in `elm-package.json` (default: `'user'`);
 * `--project` — your github project specified in `elm-package.json` (default: `'project'`);
 * `--project-ver` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
 * `--keep-temp-file` — for debugging purposes, if specified, then do not delete `.elm` files after compilation;
 * `--keep-elmi-file` — for debugging purposes, if specified, then do not delete `.elmi` files after compilation;
 * `--show-time` — additionally report the time was spent to extract types;
+* `--with-values` — include values into the output (takes more time to extract them);
+* `--only-values` — report and extract only values, not the types (overrides `--with-values`);
+* `--values-below` — has sense only when `--with-values` was used: instead of putting types and values in lines like `TYPE<TAB>VALUE`, put a list of values line-by-line below the list of types: could be useful for parsing;
 
 ## How to contribute?
 
@@ -166,7 +257,9 @@ For the moments, tests for a packs of 10 expressions run from 30ms to 200ms each
 
 _Interesting fact_: If you remove `elm-html` dependency from `elm-package.json` in `test/samples/elm` and disable the corresponding tests for `Html` package, all other tests now run from 10ms to 90ms!
 
-P.S. Only today (2 Nov 2016), when everything was almost finished, while digging into some creepy `.elmi` file, I've found a nice tool named [Synalize it!](https://www.synalysis.net/) a.k.a. [Hexinator](https://hexinator.com/) which allows to build grammars for binary files in a nice visual way. You may find the resulting grammar right in the repository, under the name [`elmi.grammar`](https://github.com/shamansir/node-elm-repl/blob/master/elmi.grammar)
+P.S. Only today (2 Nov 2016), when everything was almost finished, while digging into some creepy `.elmi` file, I've found a nice tool named [Synalize it!](https://www.synalysis.net/) a.k.a. [Hexinator](https://hexinator.com/) which allows to build grammars for binary files in a nice visual way. You may find the resulting grammar right in the repository, under the name [`elmi.grammar`](https://github.com/shamansir/node-elm-repl/blob/master/elmi.grammar).
+
+P.P.S. Actually, with [update to Elm v0.18](https://github.com/shamansir/node-elm-repl/pull/3), one compilation cycle became a bit slower in my configuration (200-300ms instead of 60-120ms before), but it's surely not the REPL fault.
 
 Thanks to Mukesh @mukeshsoni Soni for huge-helping me in my findings, and leading me through trials and errors!
 
