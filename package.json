@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "description": "a wrapper for elm-repl intended to be used from node.js",
   "main": "./src/repl.js",
-  "bin": "./src/cli.js",
+  "bin": "./bin/cli",
   "scripts": {
     "test": "cd ./test/samples/elm/ && elm-package install && cd ../../.. && mocha ./test/*.spec.js"
   },
