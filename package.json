@@ -1,10 +1,10 @@
 {
   "name": "node-elm-repl",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "a wrapper for elm-repl intended to be used from node.js",
   "main": "./src/repl.js",
   "bin": {
-      "node-elm-repl": "./bin/cli"
+    "node-elm-repl": "./bin/cli"
   },
   "scripts": {
     "test": "cd ./test/samples/elm/ && elm-package install && cd ../../.. && mocha ./test/*.spec.js"
