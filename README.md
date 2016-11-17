@@ -1,5 +1,7 @@
 # node-elm-repl
 
+[![Build Status](https://travis-ci.org/shamansir/node-elm-repl.svg?branch=master)](https://travis-ci.org/shamansir/node-elm-repl)
+
 * [Installation](#installation)
 * [Description](#description)
 * [How to use it with Node.js?](#how-to-use-it-with-nodejs)
