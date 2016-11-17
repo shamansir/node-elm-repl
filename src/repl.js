@@ -100,36 +100,9 @@ Repl.prototype.getValues = function(imports, expressions) {
                 varsNames.map(function(varName) {
                     return varName + ' = (' + varsMap[varName] + ')';
                 })
-            ).concat([
-                '',
-                'port outcome : List String -> Cmd msg',
-                'port income : (Bool -> msg) -> Sub msg',
-                '',
-                'type alias Model = Maybe (List String)',
-                '',
-                'sendIt : List String',
-                'sendIt ='
-            ]).concat(
-                varsNames.map(function(varName, index) {
-                    return (index == 0)
-                        ? '    [ toString ' + varName
-                        : '    , toString ' + varName;
-                })
-            ).concat([
-                '    ]',
-                '',
-                'update : Bool -> Model -> (Model, Cmd msg)',
-                'update _ _ =',
-                '    (Just sendIt, outcome sendIt)',
-                '',
-                'main : Program Never Model Bool',
-                'main =',
-                '    program',
-                '        { init = (Nothing, Cmd.none)',
-                '        , update = update',
-                '        , subscriptions = (\\_ -> income (\\_ -> True))',
-                '        }'
-            ]);
+            ).concat(VALUES_EXTRACTION_INTRO)
+             .concat(getValuesExtractionBody(varsNames))
+             .concat(VALUES_EXTRACTION_OUTRO);
             if (workDir) process.chdir(workDir);
             fs.writeFileSync(tempFilePath, fileContent.join('\n') + '\n');
             cp.execSync('elm-make ' + tempFilePath + ' --output ' + jsOutputPath,
@@ -141,14 +114,7 @@ Repl.prototype.getValues = function(imports, expressions) {
         var srcJsContent = fs.readFileSync(jsOutputPath);
         var targetJsContent = Buffer.concat([
             srcJsContent,
-            new Buffer([
-                'var Elm = module.exports;',
-                'var app = Elm.' + moduleName + '.worker();',
-                'app.ports.outcome.subscribe(function(list) {',
-                '    console.log(JSON.stringify({ out: list }));',
-                '});',
-                'app.ports.income.send(true);'
-            ].join('\n'))
+            new Buffer(getValuesExtractionJs(moduleName).join('\n'))
         ]);
         fs.writeFileSync(jsOutputPath, targetJsContent + '\n');
         var cp = require('child_process');
@@ -205,36 +171,9 @@ Repl.prototype.getTypesAndValues = function(imports, expressions) {
                 varsNames.map(function(varName) {
                     return varName + ' = (' + varsMap[varName] + ')';
                 })
-            ).concat([
-                '',
-                'port outcome : List String -> Cmd msg',
-                'port income : (Bool -> msg) -> Sub msg',
-                '',
-                'type alias Model = Maybe (List String)',
-                '',
-                'sendIt : List String',
-                'sendIt ='
-            ]).concat(
-                varsNames.map(function(varName, index) {
-                    return (index == 0)
-                        ? '    [ toString ' + varName
-                        : '    , toString ' + varName;
-                })
-            ).concat([
-                '    ]',
-                '',
-                'update : Bool -> Model -> (Model, Cmd msg)',
-                'update _ _ =',
-                '    (Just sendIt, outcome sendIt)',
-                '',
-                'main : Program Never Model Bool',
-                'main =',
-                '    program',
-                '        { init = (Nothing, Cmd.none)',
-                '        , update = update',
-                '        , subscriptions = (\\_ -> income (\\_ -> True))',
-                '        }'
-            ]);
+            ).concat(VALUES_EXTRACTION_INTRO)
+             .concat(getValuesExtractionBody(varsNames))
+             .concat(VALUES_EXTRACTION_OUTRO);
             if (workDir) process.chdir(workDir);
             fs.writeFileSync(tempFilePath, fileContent.join('\n') + '\n');
             cp.execSync('elm-make ' + tempFilePath + ' --output ' + jsOutputPath,
@@ -252,14 +191,7 @@ Repl.prototype.getTypesAndValues = function(imports, expressions) {
         var srcJsContent = fs.readFileSync(jsOutputPath);
         var targetJsContent = Buffer.concat([
             srcJsContent,
-            new Buffer([
-                'var Elm = module.exports;',
-                'var app = Elm.' + moduleName + '.worker();',
-                'app.ports.outcome.subscribe(function(list) {',
-                '    console.log(JSON.stringify({ out: list }));',
-                '});',
-                'app.ports.income.send(true);'
-            ].join('\n'))
+            new Buffer(getValuesExtractionJs(moduleName).join('\n'))
         ]);
         fs.writeFileSync(jsOutputPath, targetJsContent + '\n');
         var cp = require('child_process');
@@ -282,6 +214,52 @@ Repl.prototype.getTypesAndValues = function(imports, expressions) {
         if (workDir) process.chdir(initialDir);
         throw e;
     });
+}
+
+var VALUES_EXTRACTION_INTRO = [
+    '',
+    'port outcome : List String -> Cmd msg',
+    'port income : (Bool -> msg) -> Sub msg',
+    '',
+    'type alias Model = Maybe (List String)',
+    '',
+    'sendIt : List String',
+    'sendIt ='
+];
+
+function getValuesExtractionBody(varsNames) {
+    return varsNames.map(function(varName, index) {
+        return (index == 0)
+            ? '    [ toString ' + varName
+            : '    , toString ' + varName;
+    });
+}
+
+var VALUES_EXTRACTION_OUTRO = [
+    '    ]',
+    '',
+    'update : Bool -> Model -> (Model, Cmd msg)',
+    'update _ _ =',
+    '    (Just sendIt, outcome sendIt)',
+    '',
+    'main : Program Never Model Bool',
+    'main =',
+    '    program',
+    '        { init = (Nothing, Cmd.none)',
+    '        , update = update',
+    '        , subscriptions = (\\_ -> income (\\_ -> True))',
+    '        }'
+];
+
+function getValuesExtractionJs(moduleName) {
+    return [
+        'var Elm = module.exports;',
+        'var app = Elm.' + moduleName + '.worker();',
+        'app.ports.outcome.subscribe(function(list) {',
+        '    console.log(JSON.stringify({ out: list }));',
+        '});',
+        'app.ports.income.send(true);'
+    ];
 }
 
 Repl.stringify = Types.stringify;
@@ -316,14 +294,6 @@ function mapToVariables(expressions) {
         varsMap[generateVarName()] = expression;
     });
     return varsMap;
-}
-
-function getJsIntro(varNames) {
-
-}
-
-function getJsOutro(varNames) {
-
 }
 
 module.exports = Repl;
