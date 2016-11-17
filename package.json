@@ -2,10 +2,14 @@
   "name": "node-elm-repl",
   "version": "1.0.0",
   "description": "a wrapper for elm-repl intended to be used from node.js",
-  "main": "src/repl.js",
+  "main": "./src/repl.js",
+  "bin" : "./src/cli.js",
   "scripts": {
     "test": "cd ./test/samples/elm/ && elm-package install && cd ../../.. && mocha ./test/*.spec.js"
   },
+  "files": [
+      "./src"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shamansir/node-elm-repl.git"
