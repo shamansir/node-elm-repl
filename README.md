@@ -33,7 +33,7 @@ touch ./index.js
 
 Add the minimal example (works only with defaults, when Elm configuration wasn't changed after `elm-package install` and `elm-package.json` also wasn't manually modified):
 
-```
+```javascript
 var Repl = require('node-elm-repl');
 
 new Repl({ // options
