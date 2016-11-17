@@ -109,7 +109,12 @@ describe('Repl', function() {
                            const expectedTypes  = spec.triplets.map(function(s) { return s.type; });
                            const expectedValues = spec.triplets.map(function(s) { return s.value; });
                            return repl.getTypesAndValues(imports, expressions)
-                                      .should.eventually.deep.equal({
+                                      .then(function(result) {
+                                        return {
+                                            types: Repl.stringifyAll(result.types),
+                                            values: result.values
+                                        }
+                                      }).should.eventually.deep.equal({
                                           types: expectedTypes,
                                           values: expectedValues
                                       });

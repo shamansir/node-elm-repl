@@ -49,9 +49,9 @@ Repl.prototype.getTypes = function(imports, expressions) {
             if (workDir) process.chdir(workDir);
             fs.writeFileSync(tempFilePath, fileContent.join('\n') + '\n');
             cp.execSync('elm-make ' + tempFilePath, { cwd: process.cwd() });
-            resolve(tempFilePath);
+            resolve();
         }.bind(this)
-    ).then(function(filePath) {
+    ).then(function() {
         if (!keepTempFile) fs.unlinkSync(tempFilePath);
         var buffer = fs.readFileSync(elmiPath);
         return elmiParser.parse(buffer);
@@ -94,13 +94,119 @@ Repl.prototype.getValues = function(imports, expressions) {
                     })
                 ).concat([
                     'import Platform exposing (..)',
-                    'import Json.Decode'
+                    'import Json.Decode', '',
                 ]);
             const fileContent = firstLines.concat(
                 varsNames.map(function(varName) {
                     return varName + ' = (' + varsMap[varName] + ')';
                 })
             ).concat([
+                '',
+                'port outcome : List String -> Cmd msg',
+                'port income : (Bool -> msg) -> Sub msg',
+                '',
+                'type alias Model = Maybe (List String)',
+                '',
+                'sendIt : List String',
+                'sendIt ='
+            ]).concat(
+                varsNames.map(function(varName, index) {
+                    return (index == 0)
+                        ? '    [ toString ' + varName
+                        : '    , toString ' + varName;
+                })
+            ).concat([
+                '    ]',
+                '',
+                'update : Bool -> Model -> (Model, Cmd msg)',
+                'update _ _ =',
+                '    (Just sendIt, outcome sendIt)',
+                '',
+                'main : Program Never Model Bool',
+                'main =',
+                '    program',
+                '        { init = (Nothing, Cmd.none)',
+                '        , update = update',
+                '        , subscriptions = (\\_ -> income (\\_ -> True))',
+                '        }'
+            ]);
+            if (workDir) process.chdir(workDir);
+            fs.writeFileSync(tempFilePath, fileContent.join('\n') + '\n');
+            cp.execSync('elm-make ' + tempFilePath + ' --output ' + jsOutputPath,
+                { cwd: process.cwd() });
+            resolve();
+        }.bind(this)
+    ).then(function() {
+        if (!keepTempFile) fs.unlinkSync(tempFilePath);
+        var srcJsContent = fs.readFileSync(jsOutputPath);
+        var targetJsContent = Buffer.concat([
+            srcJsContent,
+            new Buffer([
+                'var Elm = module.exports;',
+                'var app = Elm.' + moduleName + '.worker();',
+                'app.ports.outcome.subscribe(function(list) {',
+                '    console.log(JSON.stringify({ out: list }));',
+                '});',
+                'app.ports.income.send(true);'
+            ].join('\n'))
+        ]);
+        fs.writeFileSync(jsOutputPath, targetJsContent + '\n');
+        var cp = require('child_process');
+        return new Promise(function(resolve, reject) {
+            var childProcess = cp.fork(jsOutputPath, { silent: true });
+            var allValues;
+            childProcess.stdout.on('data', function(data) {
+                allValues = JSON.parse(data.toString()).out;
+            });
+            childProcess.on('error', reject);
+            childProcess.on('exit', function() {
+                if (workDir) process.chdir(initialDir);
+                resolve(allValues || []);
+            });
+        });
+    }).catch(function(e) {
+        if (workDir) process.chdir(initialDir);
+        throw e;
+    });
+}
+
+Repl.prototype.getTypesAndValues = function(imports, expressions) {
+    const varsMap = mapToVariables(expressions);
+    const varsNames = Object.keys(varsMap);
+
+    const elmVer = this.options.elmVer || DEFAULT_ELM_VER;
+    const workDir = this.options.workDir;
+
+    const keepTempFile = this.options.keepTempFile || false;
+    const keepElmiFile = this.options.keepElmiFile || false;
+
+    const currentIteration = lastIteration + 1;
+          lastIteration = currentIteration;
+
+    const initialDir = process.cwd();
+
+    const tempFilePath = getTempFilePath(this.options, currentIteration);
+    const elmiPath = getElmiPath(this.options, currentIteration);
+    const jsOutputPath = getJsOutputPath(this.options, currentIteration);
+
+    const moduleName = 'NodeRepl' + currentIteration;
+
+    return new Promise(
+        function(resolve, reject) {
+            const firstLines = [ 'port module ' + moduleName + ' exposing (..)' ]
+                .concat(imports.map(function(_import) {
+                        return _import ? ('import ' + _import) : '';
+                    })
+                ).concat([
+                    'import Platform exposing (..)',
+                    'import Json.Decode', ''
+                ]);
+            const fileContent = firstLines.concat(
+                varsNames.map(function(varName) {
+                    return varName + ' = (' + varsMap[varName] + ')';
+                })
+            ).concat([
+                '',
                 'port outcome : List String -> Cmd msg',
                 'port income : (Bool -> msg) -> Sub msg',
                 '',
@@ -137,6 +243,12 @@ Repl.prototype.getValues = function(imports, expressions) {
         }.bind(this)
     ).then(function(jsOutputPath) {
         if (!keepTempFile) fs.unlinkSync(tempFilePath);
+        var buffer = fs.readFileSync(elmiPath);
+        return elmiParser.parse(buffer);
+    }).then(function(parsedIface) {
+        if (!keepElmiFile) fs.unlinkSync(elmiPath);
+        return new Types(parsedIface).findAll(varsNames);
+    }).then(function(allTypes) {
         var srcJsContent = fs.readFileSync(jsOutputPath);
         var targetJsContent = Buffer.concat([
             srcJsContent,
@@ -153,23 +265,23 @@ Repl.prototype.getValues = function(imports, expressions) {
         var cp = require('child_process');
         return new Promise(function(resolve, reject) {
             var childProcess = cp.fork(jsOutputPath, { silent: true });
-            var receivedValue;
+            var allValues;
             childProcess.stdout.on('data', function(data) {
-                receivedValue = JSON.parse(data.toString()).out;
+                allValues = JSON.parse(data.toString()).out;
             });
             childProcess.on('error', reject);
             childProcess.on('exit', function() {
                 if (workDir) process.chdir(initialDir);
-                resolve(receivedValue || []);
+                resolve({
+                    types: allTypes || [],
+                    values: allValues || []
+                });
             });
         });
     }).catch(function(e) {
         if (workDir) process.chdir(initialDir);
         throw e;
     });
-}
-
-Repl.prototype.getTypesAndValues = function(imports, expressions) {
 }
 
 Repl.stringify = Types.stringify;

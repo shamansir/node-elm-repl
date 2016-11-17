@@ -16,7 +16,7 @@ function stringify(t) {
     if (t.type === 'var') { return t.name; }
     if ((t.type === 'type') ||
         (t.type === 'aliased')) {
-        const name = t.def.subName ? (t.def.name + '.' + t.def.subName) : t.def.name;
+        const name = t.def.subNames ? (t.def.name + '.' + t.def.subNames[0]) : t.def.name;
         return t.msgvar ? (name + ' ' + t.msgvar) : name;
     }
     if (t.type === 'lambda') {
