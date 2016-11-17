@@ -10,7 +10,8 @@
     "test": "cd ./test/samples/elm/ && elm-package install && cd ../../.. && mocha ./test/*.spec.js"
   },
   "files": [
-    "./src"
+    "./src",
+    "./bin"
   ],
   "repository": {
     "type": "git",
