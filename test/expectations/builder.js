@@ -34,7 +34,6 @@ module.exports = {
                     values: item[name]
                 }
             }
-
         })
     },
 
@@ -68,14 +67,16 @@ module.exports = {
         };
     },
 
-    complexType: function(user, project, name, subName) {
+    complexType: function(user, project, name, subNames) {
         return {
             type: 'type',
             def: {
                 user: user,
                 project: project,
                 name: name,
-                subName: subName || name
+                subNames: subNames
+                    ? (Array.isArray(subNames) ? subNames : [ subNames ])
+                    : [ name ]
             }
         };
     },

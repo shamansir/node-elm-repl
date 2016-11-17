@@ -3,12 +3,11 @@ var b = require('./builder.js');
 var expectation = {
     version: b.version(0, 18, 0),
     package: {
-        user: 'user',
-        name: 'project'
+        user: 'shaman-sir',
+        name: 'test-node-elm-repl'
     },
     exports: b.exports([
         [ 'Basics' ],
-        [ 'Char' ],
         [ 'Debug' ],
         [ 'List' ],
         [ 'Maybe' ],
@@ -16,15 +15,12 @@ var expectation = {
         [ 'Platform', 'Cmd' ],
         [ 'Platform', 'Sub' ],
         [ 'Result' ],
-        [ 'Set' ],
         [ 'String' ],
         [ 'Tuple' ]
     ]),
     imports: b.imports([
-        'isPangram',
-        'findLetterCount',
-        'isLetter',
-        'subtractA'
+        'income',
+        'outcome'
     ]),
     types: [
         {
@@ -38,31 +34,29 @@ var expectation = {
             )
         },
         {
-            name: 'findLetterCount',
+            name: 'income',
             value: b.lambda(
-                b.type('String'),
-                b.type('Int')
+                b.lambda(
+                    b.type('Bool'),
+                    b.var('msg')
+                ),
+                b.app(
+                    b.complexType('elm-lang', 'core', 'Platform', [ 'Sub', 'Sub' ]),
+                    [ b.var('msg') ]
+                )
             )
         },
         {
-            name: 'isLetter',
+            name: 'outcome',
             value: b.lambda(
-                b.aliased(b.complexType('elm-lang', 'core', 'Char', 'KeyCode'), [ b.type('Int') ]),
-                b.type('Bool')
-            )
-        },
-        {
-            name: 'isPangram',
-            value: b.lambda(
-                b.type('String'),
-                b.type('Bool')
-            )
-        },
-        {
-            name: 'subtractA',
-            value: b.lambda(
-                b.type('Int'),
-                b.type('Int')
+                b.app(
+                    b.type('List'),
+                    [ b.type('String') ]
+                ),
+                b.app(
+                    b.complexType('elm-lang', 'core', 'Platform', [ 'Cmd', 'Cmd' ]),
+                    [ b.var('msg') ]
+                )
             )
         }
     ]

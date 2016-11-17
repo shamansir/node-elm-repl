@@ -31,23 +31,26 @@ if (!argv.from) {
     console.log('number -> number -> number');
     console.log('');
     console.log('Other options:');
-    console.log('--show-time — show how much time it took to convert everyting');
     console.log('--work-dir — specify working directory for execution, for example where the `.elm` files you use are located');
-    console.log('--elm-ver — exact elm-version you use (default: 0.17.1), required to be known if you import your own modules');
+    console.log('--elm-ver — exact elm-version you use (default: 0.18.0), required to be known if you import your own modules');
     console.log('--user — your github username specified in elm-package.json (default: user), required to be known if you import your own modules');
     console.log('--project — your github project specified in elm-package.json (default: project), required to be known if you import your own modules');
     console.log('--project-ver — your project version specified in elm-package.json (default: project), required to be known if you import your own modules');
+    console.log('--show-time — show how much time it took to convert everyting');
+    console.log('--with-values — include values into the output (takes more time)');
+    console.log('--only-values — report and extract only values, not the types (overrides --with-values)');
+    console.log('--values-below — has sense only when --with-values used: instead of putting types and values in lines like TYPE<TAB>VALUE, put a list of values line-by-line below the list of types, could be useful for parsing');
     console.log('');
 } else {
 
     const readFile = require('fs-readfile-promise');
 
     const repl = new Repl({
-        workDir: argv['work-dir'],
-        elmVer: argv['elm-ver'],
-        user: argv['user'],
-        project: argv['project'],
-        projectVer: argv['project-ver'],
+        workDir: argv['work-dir'] || null,
+        elmVer: argv['elm-ver'] || null,
+        user: argv['user'] || null,
+        project: argv['project'] || null,
+        projectVer: argv['project-ver'] || null,
         keepTempFile: argv.hasOwnProperty('keep-temp') || false,
         keepElmiFile: argv.hasOwnProperty('keep-elmi') || false
     });
@@ -57,6 +60,10 @@ if (!argv.from) {
     const startTime = new Date().getTime();
     var afterReadTime;
 
+    var valuesBelow = argv.hasOwnProperty('values-below') || false;
+    var withValues = argv.hasOwnProperty('with-values') || false;
+    var onlyValues = argv.hasOwnProperty('only-values') || false;
+
     readFile(argv.from)
            .then(function(buffer) {
                var lines = buffer.toString().split('\n');
@@ -65,22 +72,56 @@ if (!argv.from) {
                return {
                    imports: imports,
                    expressions: expressions
-               }
+               };
            }).then(function(spec) {
                afterReadTime = new Date().getTime();
-               return repl.getTypes(spec.imports, spec.expressions);
-           }).then(function(types) {
+               if (!onlyValues && !withValues) {
+                   return repl.getTypes(spec.imports, spec.expressions);
+               } else if (onlyValues) {
+                   return repl.getValues(spec.imports, spec.expressions);
+               } else if (withValues) {
+                   return repl.getTypesAndValues(spec.imports, spec.expressions);
+               }
+           }).then(function(response) {
                const convertTime = new Date().getTime();
-               console.log(Repl.stringifyAll(types).join('\n'));
+               if (!onlyValues && !withValues) {
+                   console.log(Repl.stringifyAll(response).join('\n'));
+               } else if (onlyValues) {
+                   console.log(response.join('\n'));
+               } else if (withValues) {
+                   if (valuesBelow) {
+                       console.log(Repl.stringifyAll(response.types).join('\n'));
+                       console.log(response.values.join('\n'));
+                   } else {
+                       var allTypes = Repl.stringifyAll(response.types);
+                       var allValues = response.values;
+                       console.log(allTypes.map(function(type, idx) {
+                           return type + '\t' + allValues[idx];
+                       }).join('\n'));
+                   }
+               }
                const finishTime = new Date().getTime();
                if (showTime) {
                    console.log('-----------');
                    console.log('Time to read source file: ' + getNiceTime(afterReadTime - startTime));
-                   console.log('Time to parse binary and return types: ' + getNiceTime(convertTime - afterReadTime));
-                   console.log('Time to stringify types: ' + getNiceTime(finishTime - convertTime));
+
+                   if (!onlyValues && !withValues) {
+                       console.log('Time to parse binary and return types: ' + getNiceTime(convertTime - afterReadTime));
+                   } else if (onlyValues) {
+                       console.log('Time to extract values: ' + getNiceTime(convertTime - afterReadTime));
+                   } else if (withValues) {
+                       console.log('Time to parse binary, execute js and extract both types and values: ' + getNiceTime(convertTime - afterReadTime));
+                   }
+
+                   if (!onlyValues) console.log('Time to stringify types: ' + getNiceTime(finishTime - convertTime));
                    console.log('Altogether: ' + getNiceTime(finishTime - startTime));
                }
-           }).catch(console.error);
+           }).catch(function(e) {
+               process.exitCode = 1;
+               console.log(e);
+               console.log('ERROR.');
+               throw e;
+           });
 
     function getNiceTime(time) {
         const seconds = Math.floor(time / 1000);

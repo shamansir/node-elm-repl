@@ -1,7 +1,7 @@
 var b = require('./builder.js');
 
 var expectation = {
-    version: b.version(0, 17, 1),
+    version: b.version(0, 18, 0),
     package: {
         user: 'user',
         name: 'project'
@@ -15,7 +15,8 @@ var expectation = {
         [ 'Platform', 'Cmd' ],
         [ 'Platform', 'Sub' ],
         [ 'Result' ],
-        [ 'String' ]
+        [ 'String' ],
+        [ 'Tuple' ]
     ]),
     imports: b.imports([
         'factors',

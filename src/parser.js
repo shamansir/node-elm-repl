@@ -129,11 +129,18 @@ var filledTypeParser = new Parser()
     .string('user', { length: 'userLen' })
     .skip(4).int32('projectLen')
     .string('project', { length: 'projectLen' })
-    .skip(4).int32('filler1')
+    .skip(4).int32('subNamesCount')
     .skip(4).int32('nameLen')
     .string('name', { length: 'nameLen' })
-    .skip(4).int32('subNameLen')
-    .string('subName', { length: 'subNameLen' });
+    .array('subNames', {
+        length: 'subNamesCount',
+        type: Parser.start()
+            .skip(4).int32('subNameLen')
+            .string('subName', { length: 'subNameLen' }),
+        formatter: function(subNames) {
+            return subNames.map(function(sn) { return sn.subName; });
+        }
+    });
 
 var typeParser = new Parser()
     .int8('isFilled')
@@ -150,7 +157,7 @@ function typeFormatter(t) {
         ? { user: t.inner.user,
             project: t.inner.project,
             name: t.inner.name,
-            subName: t.inner.subName }
+            subNames: t.inner.subNames }
         : { name: t.inner.name };
 }
 

@@ -21,7 +21,8 @@ var samples = [
     'Raindrops',
     'SpaceAge',
     'Pangram',
-    'Triangle'
+    'Triangle',
+    'Ports'
 ];
 
 describe('Parser', function() {
