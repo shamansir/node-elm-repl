@@ -4,7 +4,7 @@ const Types = require('./types.js');
 const fs = require('fs');
 const cp = require('child_process');
 
-const DEFAULT_ELM_VER = '0.17.1';
+const DEFAULT_ELM_VER = '0.18.0';
 const DEFAULT_USER = 'user';
 const DEFAULT_PROJECT = 'project';
 const DEFAULT_PROJECT_VER = '1.0.0';
