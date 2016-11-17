@@ -7,7 +7,7 @@
     "node-elm-repl": "./bin/cli"
   },
   "scripts": {
-    "test": "cd ./test/samples/elm/ && elm-package install && cd ../../.. && mocha ./test/*.spec.js"
+    "test": "cd ./test/samples/elm/ && elm-package install --yes && cd ../../.. && mocha ./test/*.spec.js"
   },
   "files": [
     "src",
