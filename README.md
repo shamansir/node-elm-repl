@@ -1,10 +1,23 @@
 # node-elm-repl
 
+* [Installation](#Installation)
 * [Description](#Description)
 * [How to use it with Node.js?](#how-to-use-it-with-nodejs)
 * [How to use it with CLI?](#how-to-use-it-with-cli)
 * [How to contribute?](#how-to-contribute)
 * [How it was done?](#how-it-was-done)
+
+# Installation
+
+```
+npm install node-elm-repl
+```
+
+If this command fails, it's a [known](http://stackoverflow.com/questions/17990647/npm-install-errors-with-error-enoent-chmod) `npm` [issue](https://github.com/npm/npm/issues/9633), please try:
+
+```
+npm install node-elm-repl --no-bin-links
+```
 
 # Description
 
