@@ -19,6 +19,41 @@ If this command fails, it's a [known](http://stackoverflow.com/questions/1799064
 npm install node-elm-repl --no-bin-links
 ```
 
+You need the fully working Elm project in current directory (by default) in the place where you plan to use this library or in the directory you specify with `workDir` (a.k.a. `--work-dir` in CLI) option, so before using it, please ensure to run there:
+
+```
+elm-package install
+```
+
+Then, you may test it with:
+
+```
+touch ./index.js
+```
+
+Add the minimal example (works only with defaults, when Elm configuration wasn't changed after `elm-package install` and `elm-package.json` also wasn't manually modified):
+
+```
+var Repl = require('node-elm-repl');
+
+new Repl({ // options
+    elmVer: '0.18.0', // your exact elm-compiler version
+}).getTypes(
+    [ /* imports */ ],
+    [ /* expressions */
+      '\\a b -> a + b'
+    ]
+).then(function(types) { // getTypes returns the Promise which resolves to array
+    console.log(Repl.stringifyAll(types).join('\n'));
+});
+```
+
+If everything's ok, you should get:
+
+```
+number -> number -> number
+```
+
 # Description
 
 This package is a very specific and weird package.
