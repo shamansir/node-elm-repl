@@ -1,7 +1,7 @@
 # node-elm-repl
 
-* [Installation](#Installation)
-* [Description](#Description)
+* [Installation](#installation)
+* [Description](#description)
 * [How to use it with Node.js?](#how-to-use-it-with-nodejs)
 * [How to use it with CLI?](#how-to-use-it-with-cli)
 * [How to contribute?](#how-to-contribute)
