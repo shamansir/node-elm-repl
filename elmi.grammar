@@ -93,15 +93,13 @@
             <string name="UserName" id="72" fillcolor="FFFCCB" type="fixed-length" length="UserNameLen"/>
             <number name="ProjectNameLen" id="73" type="integer" length="8"/>
             <string name="ProjectName" id="74" fillcolor="FFFCCB" type="fixed-length" length="ProjectNameLen"/>
-            <number name="Reserved" mustmatch="yes" id="75" fillcolor="942092" type="integer" length="8">
-                <fixedvalues>
-                    <fixedvalue name="passed" value="1"/>
-                </fixedvalues>
-            </number>
+            <number name="SubNamesCount" id="75" type="integer" length="8"/>
             <number name="NameLen" id="76" type="integer" length="8"/>
             <string name="Name" id="77" fillcolor="FFFCCB" type="fixed-length" length="NameLen"/>
-            <number name="SubNameLen" id="78" type="integer" length="8"/>
-            <string name="SubName" id="79" fillcolor="FFFCCB" type="fixed-length" length="SubNameLen"/>
+            <structure name="SubNames" id="205" repeat="id:75" repeatmin="0" repeatmax="-1">
+                <number name="SubNameLen" id="78" type="integer" length="8"/>
+                <string name="SubName" id="79" fillcolor="FFFCCB" type="fixed-length" length="SubNameLen"/>
+            </structure>
         </structure>
         <structure name="RecordCell" id="81" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="Name">
             <number name="NameLen" id="82" type="integer" length="8"/>
@@ -174,115 +172,116 @@
                 </fixedvalues>
             </number>
             <structref name="Type" id="124" structure="id:57"/>
-            <structure name="Choice" id="213" order="variable">
-                <structure name="Message" id="217" repeatmin="0">
-                    <number name="justOne" mustmatch="yes" id="219" type="integer" length="8">
+            <structure name="Choice" id="125" order="variable">
+                <structure name="Message" id="126" repeatmin="0">
+                    <number name="justOne" mustmatch="yes" id="127" type="integer" length="8">
                         <fixedvalues>
                             <fixedvalue name="isOne" value="1"/>
                         </fixedvalues>
                     </number>
-                    <number name="msgLen" mustmatch="yes" id="220" type="integer" length="8">
+                    <number name="msgLen" mustmatch="yes" id="128" type="integer" length="8">
                         <fixedvalues>
                             <fixedvalue name="isMessage" value="3"/>
                         </fixedvalues>
                     </number>
-                    <string name="msgOption" mustmatch="yes" id="212" fillcolor="FBFF16" repeatmin="0" type="fixed-length" length="3">
+                    <string name="msgOption" mustmatch="yes" id="129" fillcolor="FBFF16" repeatmin="0" type="fixed-length" length="3">
                         <fixedvalues>
                             <fixedvalue name="message" value="msg"/>
                         </fixedvalues>
                     </string>
-                    <structref name="VariableNode" id="223" structure="id:95"/>
-                    <number name="Reserved" mustmatch="yes" id="224" fillcolor="942092" type="integer" length="1">
+                    <structref name="VariableNode" id="130" structure="id:95"/>
+                    <number name="Reserved" mustmatch="yes" id="131" fillcolor="942092" type="integer" length="1">
                         <fixedvalues>
                             <fixedvalue name="passed" value="1"/>
                         </fixedvalues>
                     </number>
-                    <structref name="Node" id="225" structure="id:84"/>
+                    <structref name="Node" id="132" structure="id:84"/>
                 </structure>
-                <structure name="Aliases" id="215" repeatmin="0">
-                    <number name="Reserved" mustmatch="yes" id="125" type="integer" length="1">
+                <structure name="Aliases" id="134" repeatmin="0">
+                    <number name="Reserved" mustmatch="yes" id="135" type="integer" length="1">
                         <fixedvalues>
                             <fixedvalue name="passed" value="0"/>
                         </fixedvalues>
                     </number>
-                    <number name="AliasesCount" id="127" type="integer" length="8"/>
-                    <structure name="List" id="128" length="0" repeat="id:127" repeatmin="0" repeatmax="-1">
-                        <structref name="Node" id="129" structure="id:84"/>
+                    <number name="AliasesCount" id="136" type="integer" length="8"/>
+                    <structure name="List" id="137" length="0" repeat="id:136" repeatmin="0" repeatmax="-1">
+                        <structref name="Node" id="138" structure="id:84"/>
                     </structure>
                 </structure>
             </structure>
         </structure>
         <structure name="Node" id="84" encoding="ISO_8859-1:1987" endian="big" signed="no" order="variable" valueexpression="NodeType">
-            <structref name="LambdaNode" id="133" repeatmin="0" structure="id:90"/>
-            <structref name="VariableNode" id="134" repeatmin="0" structure="id:95"/>
-            <structref name="TypeNode" id="135" repeatmin="0" structure="id:100"/>
-            <structref name="ApplicationNode" id="136" repeatmin="0" structure="id:104"/>
-            <structref name="RecordNode" id="137" repeatmin="0" structure="id:114"/>
-            <structref name="AliasedNode" id="138" repeatmin="0" structure="id:122"/>
+            <structref name="LambdaNode" id="143" repeatmin="0" structure="id:90"/>
+            <structref name="VariableNode" id="144" repeatmin="0" structure="id:95"/>
+            <structref name="TypeNode" id="145" repeatmin="0" structure="id:100"/>
+            <structref name="ApplicationNode" id="146" repeatmin="0" structure="id:104"/>
+            <structref name="RecordNode" id="147" repeatmin="0" structure="id:114"/>
+            <structref name="AliasedNode" id="148" repeatmin="0" structure="id:122"/>
         </structure>
-        <structure name="Definition" id="140" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="DefName">
-            <number name="DefNameLen" id="141" type="integer" length="8"/>
-            <string name="DefName" id="142" fillcolor="FFFCCB" type="fixed-length" length="DefNameLen"/>
-            <structref name="Tree" id="143" structure="id:84"/>
+        <structure name="Definition" id="150" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="DefName">
+            <number name="DefNameLen" id="151" type="integer" length="8"/>
+            <string name="DefName" id="152" fillcolor="FFFCCB" type="fixed-length" length="DefNameLen"/>
+            <structref name="Tree" id="153" structure="id:84"/>
         </structure>
-        <structure name="Definitions" id="145" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="DefinitionsCount">
-            <number name="DefinitionsCount" id="146" fillcolor="FFACAE" type="integer" length="8"/>
-            <structure name="List" id="147" repeat="id:146" repeatmin="0" repeatmax="-1" valueexpression="Definition">
-                <structref name="Definiton" id="148" structure="id:140"/>
+        <structure name="Definitions" id="155" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="DefinitionsCount">
+            <number name="DefinitionsCount" id="156" fillcolor="FFACAE" type="integer" length="8"/>
+            <structure name="List" id="157" repeat="id:156" repeatmin="0" repeatmax="-1" valueexpression="Definition">
+                <structref name="Definiton" id="158" structure="id:150"/>
             </structure>
         </structure>
-        <structure name="Union" id="151" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="UnionName">
-            <number name="UnionNameLen" id="152" type="integer" length="8"/>
-            <string name="UnionName" id="153" fillcolor="FFFCCB" type="fixed-length" length="UnionNameLen"/>
-            <number name="Reserved" mustmatch="yes" id="154" fillcolor="942092" type="integer" length="8">
+        <structure name="Union" id="161" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="UnionName">
+            <number name="UnionNameLen" id="162" type="integer" length="8"/>
+            <string name="UnionName" id="163" fillcolor="FFFCCB" type="fixed-length" length="UnionNameLen"/>
+            <number name="Reserved" mustmatch="yes" id="164" fillcolor="942092" type="integer" length="8">
                 <fixedvalues>
                     <fixedvalue name="passed" value="0"/>
                 </fixedvalues>
             </number>
-            <number name="ItemsCount" id="155" fillcolor="BEFFE1" type="integer" length="8"/>
-            <structure name="Items" id="156" repeat="id:155" repeatmin="0" repeatmax="-1" valueexpression="ItemName">
-                <number name="ItemNameLen" id="157" type="integer" length="8"/>
-                <string name="ItemName" id="158" fillcolor="FFFCCB" type="fixed-length" length="ItemNameLen"/>
-                <number name="Reserved" mustmatch="yes" id="159" fillcolor="942092" type="integer" length="8">
+            <number name="ItemsCount" id="165" fillcolor="BEFFE1" type="integer" length="8"/>
+            <structure name="Items" id="166" repeat="id:165" repeatmin="0" repeatmax="-1" valueexpression="ItemName">
+                <number name="ItemNameLen" id="167" type="integer" length="8"/>
+                <string name="ItemName" id="168" fillcolor="FFFCCB" type="fixed-length" length="ItemNameLen"/>
+                <number name="Reserved" mustmatch="yes" id="169" fillcolor="942092" type="integer" length="8">
                     <fixedvalues>
                         <fixedvalue name="passed" value="0"/>
                     </fixedvalues>
                 </number>
             </structure>
         </structure>
-        <structure name="Unions" id="162" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="UnionsCount">
-            <number name="UnionsCount" id="163" fillcolor="FFACAE" type="integer" length="8"/>
-            <structure name="List" id="164" repeat="id:163" repeatmin="0" repeatmax="-1" valueexpression="UnionName">
-                <structref name="Union" id="165" structure="id:151"/>
+        <structure name="Unions" id="172" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="UnionsCount">
+            <number name="UnionsCount" id="173" fillcolor="FFACAE" type="integer" length="8"/>
+            <structure name="List" id="174" repeat="id:173" repeatmin="0" repeatmax="-1" valueexpression="UnionName">
+                <structref name="Union" id="175" structure="id:161"/>
             </structure>
         </structure>
-        <structure name="Alias" id="180" encoding="ISO_8859-1:1987" endian="big" signed="no">
-            <number name="AliasNameLen" id="182" type="integer" length="8"/>
-            <string name="AliasName" id="183" type="fixed-length" length="AliasNameLen"/>
-            <number name="Reserved" mustmatch="yes" id="187" fillcolor="942092" type="integer" length="8">
+        <structure name="Alias" id="178" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="AliasNameLen" id="179" type="integer" length="8"/>
+            <string name="AliasName" id="180" type="fixed-length" length="AliasNameLen"/>
+            <number name="Reserved" mustmatch="yes" id="181" fillcolor="942092" type="integer" length="8">
                 <fixedvalues>
                     <fixedvalue name="passed" value="0"/>
                 </fixedvalues>
             </number>
-            <structref name="Subject" id="191" structure="id:84"/>
+            <structref name="Subject" id="182" structure="id:84"/>
         </structure>
-        <structure name="Aliases" id="168" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="AliasesCount">
-            <number name="AliasesCount" id="169" fillcolor="FFACAE" type="integer" length="8"/>
-            <structure name="List" id="184" repeat="id:169" repeatmin="0" repeatmax="-1">
-                <structref name="Alias" id="186" structure="id:180"/>
+        <structure name="Aliases" id="184" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="AliasesCount">
+            <number name="AliasesCount" id="185" fillcolor="FFACAE" type="integer" length="8"/>
+            <structure name="List" id="186" repeat="id:185" repeatmin="0" repeatmax="-1">
+                <structref name="Alias" id="187" structure="id:178"/>
             </structure>
         </structure>
-        <structure name="Fixities" id="192" encoding="ISO_8859-1:1987" endian="big" signed="no">
-            <number name="FixitiesCount" id="226" fillcolor="FFACAE" type="integer" length="8"/>
+        <structure name="Fixities" id="190" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="FixitiesCount" id="191" fillcolor="FFACAE" type="integer" length="8"/>
         </structure>
         <structure name="ELMI File" id="1" encoding="ISO_8859-1:1987" endian="big" signed="no">
-            <structref name="PackageInfo" id="171" structure="id:2"/>
-            <structref name="Imports" id="172" structure="id:40"/>
-            <structref name="Exports" id="173" structure="id:47"/>
-            <structref name="Definitions" id="174" structure="id:145"/>
-            <structref name="Unions" id="175" structure="id:162"/>
-            <structref name="Aliases" id="176" structure="id:168"/>
-            <structref name="Fixities" id="194" structure="id:192"/>
+            <structref name="PackageInfo" id="193" structure="id:2"/>
+            <structref name="Imports" id="194" structure="id:40"/>
+            <structref name="Exports" id="195" structure="id:47"/>
+            <structref name="Definitions" id="196" structure="id:155"/>
+            <structref name="Unions" id="197" structure="id:172"/>
+            <structref name="Aliases" id="198" structure="id:184"/>
+            <structref name="Fixities" id="199" structure="id:190"/>
         </structure>
+        <structure name="ID: 41" id="41" encoding="ISO_8859-1:1987" endian="big" signed="no"/>
     </grammar>
 </ufwb>

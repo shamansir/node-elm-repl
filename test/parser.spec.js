@@ -21,7 +21,8 @@ var samples = [
     'Raindrops',
     'SpaceAge',
     'Pangram',
-    'Triangle'
+    'Triangle',
+    'Ports'
 ];
 
 describe('Parser', function() {
@@ -30,7 +31,7 @@ describe('Parser', function() {
 
         describe(sampleName + '.elmi', function() {
 
-            it('should properly parse ' + sampleName + '.elmi file', function() {
+            it.only('should properly parse ' + sampleName + '.elmi file', function() {
                 var expectation = require('./expectations/' + sampleName + '.expectation.js');
                 return readFile('./test/samples/elmi/' + sampleName + '.elmi')
                        .then(parseStream)

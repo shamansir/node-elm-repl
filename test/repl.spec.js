@@ -32,7 +32,7 @@ describe('Repl', function() {
 
         describe('Repl.' + expectationsGroupName, function() {
 
-            it.only('should properly extract types for ' + expectationsGroupName, function() {
+            it('should properly extract types for ' + expectationsGroupName, function() {
                 const expectationsPath = './test/expectations/Repl.' + expectationsGroupName + '.expectation';
                 return readFile(expectationsPath)
                        .then(function(buffer) {
@@ -105,9 +105,9 @@ describe('Repl', function() {
                            };
                        }).then(function(spec) {
                            const imports = spec.imports;
-                           const expressions    = spec.triplet.map(function(s) { return s.expression; });
-                           const expectedTypes  = spec.triplet.map(function(s) { return s.type; });
-                           const expectedValues = spec.triplet.map(function(s) { return s.value; });
+                           const expressions    = spec.triplets.map(function(s) { return s.expression; });
+                           const expectedTypes  = spec.triplets.map(function(s) { return s.type; });
+                           const expectedValues = spec.triplets.map(function(s) { return s.value; });
                            return repl.getTypesAndValues(imports, expressions)
                                       .should.eventually.deep.equal({
                                           types: expectedTypes,
