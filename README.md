@@ -1,7 +1,5 @@
 # node-elm-repl
 
-[![Build Status](https://travis-ci.org/shamansir/node-elm-repl.svg?branch=master)](https://travis-ci.org/shamansir/node-elm-repl)
-
 * [Installation](#installation)
 * [Description](#description)
 * [How to use it with Node.js?](#how-to-use-it-with-nodejs)
@@ -88,6 +86,8 @@ so please first run this in the directory where you've installed the package:
 ```
 npm test
 ```
+
+(NB: Sometimes the very first call to `elm-make` takes longer than 2 seconds so the very first test fails on timeout while other 33 tests do pass; do not believe the first time, run second time and then again and again and everything should be fine)
 
 Then, in your JS file, and in the same directory where you have `elm-package.json` or where you store your `.elm` modules, if you have any, just do something like:
 
