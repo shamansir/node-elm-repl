@@ -19,19 +19,19 @@ If this command fails, it's a [known](http://stackoverflow.com/questions/1799064
 npm install node-elm-repl --no-bin-links
 ```
 
-You need the fully working Elm project in current directory (by default) in the place where you plan to use this library or in the directory you specify with `workDir` (a.k.a. `--work-dir` in CLI) option, so before using it, please ensure to run there:
+You need to have the fully working Elm project in current directory (by default), _or_ in the place where you plan to use this library, _or_ in the directory you specify with `workDir` (a.k.a. `--work-dir` in CLI) option, so before using it, please ensure to run there:
 
 ```
 elm-package install
 ```
 
-Then, you may test it with:
+Then, you may test it with `npm test` or with creating the test-file:
 
 ```
-touch ./index.js
+touch ./test-repl.js
 ```
 
-Add the minimal example (works only with defaults, when Elm configuration wasn't changed after `elm-package install` and `elm-package.json` also wasn't manually modified):
+And filling it with the minimal example (it works only with defaults, i.e. when Elm configuration wasn't changed after `elm-package install` execution and `elm-package.json` also wasn't manually modified, so `user`/`project` is the name of your current project at this moment):
 
 ```javascript
 var Repl = require('node-elm-repl');
@@ -51,6 +51,7 @@ new Repl({ // options
 If everything's ok, you should get:
 
 ```
+> node ./test-repl.js
 number -> number -> number
 ```
 
