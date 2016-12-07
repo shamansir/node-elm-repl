@@ -1,7 +1,9 @@
+const fs = require('fs');
 const readFile = require('fs-readfile-promise');
 
-const chai = require("chai");
-const chaiAsPromised = require("chai-as-promised");
+const chai = require('chai');
+const assert = chai.assert;
+const chaiAsPromised = require('chai-as-promised');
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -123,6 +125,20 @@ describe('Repl', function() {
 
         });
 
+    });
+
+    /* it('parser is accessible and could be used', function() {
+
+    }); */
+
+    it('works when type was not specified', function() {
+        const singlePassTestRoot = './test/single-pass';
+        const singlePassRepl = new Repl({ workDir: singlePassTestRoot,
+                                          elmVer: '0.18.0' });
+        return singlePassRepl.getTypes([ 'TestSinglePass' ], [ 'TestSinglePass.myAdd' ])
+                             .then(function(result) {
+                                 return Repl.stringify(result[0]);
+                             }).should.eventually.equal('a -> a -> a -> List a');
     });
 
 });

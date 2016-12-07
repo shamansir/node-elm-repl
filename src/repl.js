@@ -41,7 +41,7 @@ Repl.prototype.getTypes = function(imports, expressions) {
                 .concat(imports.map(function(_import) {
                     return _import ? ('import ' + _import) : '';
                 }));
-            const fileContent = firstLines.concat(
+            const fileContent = firstLines.concat(['']).concat(
                 varsNames.map(function(varName) {
                     return varName + ' = (' + varsMap[varName] + ')';
                 })
