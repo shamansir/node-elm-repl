@@ -88,7 +88,27 @@ so please first run this in the directory where you've installed the package:
 npm test
 ```
 
-(NB: Sometimes the very first call to `elm-make` takes longer than 2 seconds so the very first test fails on timeout while other 33 tests do pass; do not believe the first time, run second time and then again and again and everything should be fine)
+> *NB:* When `elm-stuff` was cleaned up, the very first call to `elm-make` in this directory takes longer than 2 seconds, so the very first test always takes much longer than other 33 tests, which in their case are satisfyingly fast; so please take into consideration that `elm-stuff` is cleaned for every test run and timeout is set to 5 seconds just to make tests fair for clean environment, but there's a high chance that in your environment you won't do it so frequently, so absolutely any call should take less than 500ms.
+
+> You may see it for yourself, if in `package.json` you replace:
+
+```javascript
+"scripts": {
+    "test": "cd ./test/samples/elm/ && rm -Rf ./elm-stuff && elm-package install --yes && cd ../../.. && mocha -t 5000 ./test/*.spec.js"
+}
+```
+
+> With just:
+
+```javascript
+"scripts": {
+    "test": "cd ./test/samples/elm/ && elm-package install --yes && cd ../../.. && mocha -t 5000 ./test/*.spec.js"
+}
+```
+
+> And then run `npm test` several times, only the first time among these calls will take so much time, while all the next ones will run much-much faster.
+
+> *End of NB.*
 
 Then, in your JS file, and in the same directory where you have `elm-package.json` or where you store your `.elm` modules, if you have any, just do something like:
 
