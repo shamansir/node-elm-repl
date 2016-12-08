@@ -50,7 +50,7 @@ Repl.prototype.getTypes = function(imports, expressions) {
             );
             if (workDir) process.chdir(workDir);
             fs.writeFileSync(tempFilePath, fileContent.join('\n') + '\n');
-            cp.execSync('elm-make ' + tempFilePath, { cwd: process.cwd() });
+            cp.execSync('elm-make --yes ' + tempFilePath, { cwd: process.cwd() });
             resolve();
         }.bind(this)
     ).then(function() {
@@ -107,7 +107,7 @@ Repl.prototype.getValues = function(imports, expressions) {
              .concat(VALUES_EXTRACTION_OUTRO);
             if (workDir) process.chdir(workDir);
             fs.writeFileSync(tempFilePath, fileContent.join('\n') + '\n');
-            cp.execSync('elm-make ' + tempFilePath + ' --output ' + jsOutputPath,
+            cp.execSync('elm-make --yes ' + tempFilePath + ' --output ' + jsOutputPath,
                 { cwd: process.cwd() });
             resolve();
         }.bind(this)
@@ -178,7 +178,7 @@ Repl.prototype.getTypesAndValues = function(imports, expressions) {
              .concat(VALUES_EXTRACTION_OUTRO);
             if (workDir) process.chdir(workDir);
             fs.writeFileSync(tempFilePath, fileContent.join('\n') + '\n');
-            cp.execSync('elm-make ' + tempFilePath + ' --output ' + jsOutputPath,
+            cp.execSync('elm-make --yes ' + tempFilePath + ' --output ' + jsOutputPath,
                 { cwd: process.cwd() });
             resolve(jsOutputPath);
         }.bind(this)
