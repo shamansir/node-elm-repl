@@ -84,6 +84,7 @@ describe('Repl', function() {
                            const expressions   = spec.pairs.map(function(s) { return s.expression; });
                            const expectedValues = spec.pairs.map(function(s) { return s.expectation; });
                            return repl.getValues(imports, expressions)
+                                      .then(filterWeirdFunctions)
                                       .should.eventually.deep.equal(expectedValues);
                        });
             });
@@ -115,7 +116,7 @@ describe('Repl', function() {
                                       .then(function(result) {
                                         return {
                                             types: Repl.stringifyAll(result.types),
-                                            values: result.values
+                                            values: filterWeirdFunctions(result.values)
                                         }
                                       }).should.eventually.deep.equal({
                                           types: expectedTypes,
@@ -211,3 +212,14 @@ describe('Repl', function() {
     });
 
 });
+
+
+function filterWeirdFunctions(values) {
+    return values.map(function(value) {
+        if ((typeof value === 'string') &&
+            (value.indexOf('<function:') >= 0)) {
+            return '<function>';
+        }
+        return value;
+    })
+}
