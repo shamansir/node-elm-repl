@@ -42,10 +42,55 @@ function stringify(t) {
     }
 }
 
-Types.stringify = stringify;
+function stringifyWithSpec(t, spec) {
+    if (t.type === 'var') { return spec['var'](t.name); }
+    if (t.type === 'type') {
+        return spec['type'](t.def.name, t.def.subNames,
+            t.msgvar, t.msgnode ? stringifyWithSpec(t.msgnode, spec) : null);
+    }
+    if (t.type === 'aliased') {
+        return spec['aliased'](t.def.name, t.def.subNames,
+            t.msgvar, t.msgnode ? stringifyWithSpec(t.msgnode, spec) : null);
+    }
+    if (t.type === 'lambda') {
+        return spec['lambda'](
+            stringifyWithSpec(t.left, spec),
+            stringifyWithSpec(t.right, spec)
+        );
+    }
+    if (t.type === 'app') {
+        return spec['app'](
+            stringifyWithSpec(t.subject, spec),
+            t.object.map(function(curObject) {
+                return stringifyWithSpec(curObject, spec);
+            })
+        );
+    }
+    if (t.type === 'record') {
+        return spec['record'](
+            t.fields.map(function(pair) {
+                return {
+                    name: pair.name,
+                    value: stringifyWithSpec(pair.node, spec)
+                };
+            })
+        );
+    }
+}
 
-Types.stringifyAll = function(types) {
-    return types ? types.map(Types.stringify) : [];
+Types.stringify = function(t, spec) {
+    if (!spec) {
+        return stringify(t);
+    } else {
+        return stringifyWithSpec(t, spec);
+    }
+};
+
+Types.stringifyAll = function(types, spec) {
+    return types ? types.map(spec
+                            ? function(type) { return stringifyWithSpec(type, spec); }
+                            : stringify)
+                 : [];
 }
 
 function extractTypes(ifaceTypes) {
