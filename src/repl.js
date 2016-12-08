@@ -16,6 +16,8 @@ function Repl(options) {
     }*/
 }
 
+Repl.Parser = elmiParser;
+
 var lastIteration = 0;
 Repl.prototype.getTypes = function(imports, expressions) {
     const varsMap = mapToVariables(expressions);

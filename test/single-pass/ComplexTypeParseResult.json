@@ -1,0 +1,260 @@
+{
+    "version": {
+        "major": 0,
+        "minor": 18,
+        "patch": 0
+    },
+    "package": {
+        "name": "project",
+        "user": "user"
+    },
+    "exports": [{
+        "path": ["Basics"]
+    }, {
+        "path": ["Debug"]
+    }, {
+        "path": ["Html"]
+    }, {
+        "path": ["List"]
+    }, {
+        "path": ["Maybe"]
+    }, {
+        "path": ["Platform"]
+    }, {
+        "path": ["Platform", "Cmd"]
+    }, {
+        "path": ["Platform", "Sub"]
+    }, {
+        "path": ["Result"]
+    }, {
+        "path": ["String"]
+    }, {
+        "path": ["Tuple"]
+    }],
+    "imports": [{
+        "name": "testComplexType",
+        "type": 0
+    }],
+    "types": [{
+        "name": "::",
+        "value": {
+            "left": {
+                "name": "a",
+                "type": "var"
+            },
+            "right": {
+                "left": {
+                    "object": [{
+                        "name": "a",
+                        "type": "var"
+                    }],
+                    "subject": {
+                        "def": {
+                            "name": "List"
+                        },
+                        "type": "type"
+                    },
+                    "type": "app"
+                },
+                "right": {
+                    "object": [{
+                        "name": "a",
+                        "type": "var"
+                    }],
+                    "subject": {
+                        "def": {
+                            "name": "List"
+                        },
+                        "type": "type"
+                    },
+                    "type": "app"
+                },
+                "type": "lambda"
+            },
+            "type": "lambda"
+        }
+    }, {
+        "name": "testComplexType",
+        "value": {
+            "left": {
+                "def": {
+                    "name": "Html",
+                    "project": "html",
+                    "subNames": [
+                        "Html"
+                    ],
+                    "user": "elm-lang"
+                },
+                "list": [],
+                "msgnode": {
+                    "object": [{
+                        "name": "a",
+                        "type": "var"
+                    }],
+                    "subject": {
+                        "def": {
+                            "name": "VirtualDom",
+                            "project": "virtual-dom",
+                            "subNames": [
+                                "Node"
+                            ],
+                            "user": "elm-lang"
+                        },
+                        "type": "type"
+                    },
+                    "type": "app"
+                },
+                "msgvar": "a",
+                "type": "aliased"
+            },
+            "right": {
+                "left": {
+                    "object": [{
+                        "def": {
+                            "name": "Html",
+                            "project": "html",
+                            "subNames": [
+                                "Html"
+                            ],
+                            "user": "elm-lang"
+                        },
+                        "list": [],
+                        "msgnode": {
+                            "object": [{
+                                "name": "a",
+                                "type": "var"
+                            }],
+                            "subject": {
+                                "def": {
+                                    "name": "VirtualDom",
+                                    "project": "virtual-dom",
+                                    "subNames": [
+                                        "Node"
+                                    ],
+                                    "user": "elm-lang"
+                                },
+                                "type": "type"
+                            },
+                            "type": "app"
+                        },
+                        "msgvar": "a",
+                        "type": "aliased"
+                    }],
+                    "subject": {
+                        "def": {
+                            "name": "List"
+                        },
+                        "type": "type"
+                    },
+                    "type": "app"
+                },
+                "right": {
+                    "left": {
+                        "fields": [{
+                            "name": "model",
+                            "node": {
+                                "name": "model",
+                                "type": "var"
+                            }
+                        }, {
+                            "name": "update",
+                            "node": {
+                                "left": {
+                                    "name": "msg",
+                                    "type": "var"
+                                },
+                                "right": {
+                                    "left": {
+                                        "name": "model",
+                                        "type": "var"
+                                    },
+                                    "right": {
+                                        "name": "model",
+                                        "type": "var"
+                                    },
+                                    "type": "lambda"
+                                },
+                                "type": "lambda"
+                            }
+                        }, {
+                            "name": "view",
+                            "node": {
+                                "left": {
+                                    "name": "model",
+                                    "type": "var"
+                                },
+                                "right": {
+                                    "def": {
+                                        "name": "Html",
+                                        "project": "html",
+                                        "subNames": [
+                                            "Html"
+                                        ],
+                                        "user": "elm-lang"
+                                    },
+                                    "list": [],
+                                    "msgnode": {
+                                        "object": [{
+                                            "name": "msg",
+                                            "type": "var"
+                                        }],
+                                        "subject": {
+                                            "def": {
+                                                "name": "VirtualDom",
+                                                "project": "virtual-dom",
+                                                "subNames": [
+                                                    "Node"
+                                                ],
+                                                "user": "elm-lang"
+                                            },
+                                            "type": "type"
+                                        },
+                                        "type": "app"
+                                    },
+                                    "msgvar": "msg",
+                                    "type": "aliased"
+                                },
+                                "type": "lambda"
+                            }
+                        }],
+                        "type": "record"
+                    },
+                    "right": {
+                        "object": [{
+                            "def": {
+                                "name": "Basics",
+                                "project": "core",
+                                "subNames": [
+                                    "Never"
+                                ],
+                                "user": "elm-lang"
+                            },
+                            "type": "type"
+                        }, {
+                            "name": "model",
+                            "type": "var"
+                        }, {
+                            "name": "msg",
+                            "type": "var"
+                        }],
+                        "subject": {
+                            "def": {
+                                "name": "Platform",
+                                "project": "core",
+                                "subNames": [
+                                    "Program"
+                                ],
+                                "user": "elm-lang"
+                            },
+                            "type": "type"
+                        },
+                        "type": "app"
+                    },
+                    "type": "lambda"
+                },
+                "type": "lambda"
+            },
+            "type": "lambda"
+        }
+    }]
+}

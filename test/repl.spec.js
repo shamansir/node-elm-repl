@@ -3,6 +3,7 @@ const readFile = require('fs-readfile-promise');
 
 const chai = require('chai');
 const assert = chai.assert;
+const expect = chai.expect;
 const chaiAsPromised = require('chai-as-promised');
 
 chai.use(chaiAsPromised);
@@ -127,15 +128,17 @@ describe('Repl', function() {
 
     });
 
-    /* it('parser is accessible and could be used', function() {
-
-    }); */
+    it('parser is accessible and could be used to parse elmi files', function() {
+        var buffer = fs.readFileSync('./test/single-pass/ComplexType.elmi');
+        var expectedResult = JSON.parse(fs.readFileSync('./test/single-pass/ComplexTypeParseResult.json', 'utf8'));
+        expect(Repl.Parser.parse(buffer)).to.deep.equal(expectedResult);
+    });
 
     it('works when type was not specified', function() {
         const singlePassTestRoot = './test/single-pass';
         const singlePassRepl = new Repl({ workDir: singlePassTestRoot,
                                           elmVer: '0.18.0' });
-        return singlePassRepl.getTypes([ 'TestSinglePass' ], [ 'TestSinglePass.myAdd' ])
+        return singlePassRepl.getTypes([ 'NoTypeSpecified' ], [ 'NoTypeSpecified.myAdd' ])
                              .then(function(result) {
                                  return Repl.stringify(result[0]);
                              }).should.eventually.equal('a -> a -> a -> List a');
