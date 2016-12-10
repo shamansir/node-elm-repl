@@ -86,7 +86,7 @@ Repl.prototype.getValues = function(imports, expressions) {
     const elmiPath = getElmiPath(this.options, currentIteration);
     const jsOutputPath = getJsOutputPath(this.options, currentIteration);
 
-    const moduleName = 'NodeRepl' + currentIteration;
+    const moduleName = getModuleName(this.options, currentIteration);
 
     return new Promise(
         function(resolve, reject) {
@@ -157,7 +157,7 @@ Repl.prototype.getTypesAndValues = function(imports, expressions) {
     const elmiPath = getElmiPath(this.options, currentIteration);
     const jsOutputPath = getJsOutputPath(this.options, currentIteration);
 
-    const moduleName = 'NodeRepl' + currentIteration;
+    const moduleName = getModuleName(this.options, currentIteration);
 
     return new Promise(
         function(resolve, reject) {
@@ -268,6 +268,10 @@ Repl.stringify = Types.stringify;
 
 Repl.stringifyAll = Types.stringifyAll;
 
+function getModuleName(options, interationId) {
+    return 'NodeRepl' + interationId;
+}
+
 function getElmiPath(options, iterationId) {
     return './elm-stuff/build-artifacts/' + (options.elmVer || DEFAULT_ELM_VER) + '/' +
             (options.user || DEFAULT_USER) + '/' +
@@ -277,11 +281,13 @@ function getElmiPath(options, iterationId) {
 }
 
 function getTempFilePath(options, iterationId) {
+    if (options.tempFileName) return options.tempFileName + '.elm';
     return './f_o_o_b_a_r_test' + iterationId + '.elm';
 }
 
 
 function getJsOutputPath(options, iterationId) {
+    if (options.tempFileName) return options.tempFileName + '.js';
     return './f_o_o_b_a_r_test' + iterationId + '.js';
 }
 

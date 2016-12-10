@@ -40,6 +40,7 @@ if (!argv.from) {
     console.log('--with-values — include values into the output (takes more time to extract them)');
     console.log('--only-values — report and extract only values, not the types (overrides --with-values)');
     console.log('--values-below — has sense only when --with-values was used: instead of putting types and values in lines like TYPE<TAB>VALUE, put a list of values line-by-line below the list of types: could be useful for parsing');
+    console.log('--temp-file-name — specify file name of the generated Elm');
     console.log('');
 } else {
 
@@ -52,7 +53,8 @@ if (!argv.from) {
         project: argv['project'] || null,
         projectVer: argv['project-ver'] || null,
         keepTempFile: argv.hasOwnProperty('keep-temp') || false,
-        keepElmiFile: argv.hasOwnProperty('keep-elmi') || false
+        keepElmiFile: argv.hasOwnProperty('keep-elmi') || false,
+        tempFileName: argv['temp-file-name'] || null
     });
 
     const showTime = argv['show-time'];
