@@ -1,8 +1,7 @@
 language: node_js
 node_js:
-    - "5"
     - "6"
     - "7"
-script: npm test
+script: travis_wait npm test
 before_script:
     - npm install -g elm
