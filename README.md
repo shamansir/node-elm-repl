@@ -75,7 +75,7 @@ NB: It's work-in-progress, so at some moment you could discover that it parses n
 
 ## How to use it with Node.js?
 
-It's not yet published to `npm.js` (if ever will), but you may install it using:
+You may easily install the project using:
 
 ```
 npm install git://github.com/shamansir/node-elm-repl.git
