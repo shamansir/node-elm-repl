@@ -1,6 +1,7 @@
 /node_modules
 /elm-stuff
 /index.html
+/index.js
 /test/samples/elm/elm-stuff
 /test/samples/elm/index.html
 /test/single-pass/elm-stuff
