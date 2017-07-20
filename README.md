@@ -21,8 +21,6 @@ So, this tool would help you if, and only if, all of these points satisfy:
 * In JavaScript, you need to know the values and/or the returned [structured types definitions](./Types.md) of several Elm expressions with a single `elm-make` compilation cycle (for the moment, one cycle takes about 200-300ms in average, except rare first-run cases, taking up to 3 seconds);
 * Also, you are willing to do everything mentioned above _offline_, both for you and the user (except the case when `elm-make` auto-downloads required packages);
 
-And, a binary parser grammar for the `.elmi` files [is just lying here](https://github.com/shamansir/node-elm-repl/blob/master/elmi.grammar),s in case you need it. Though it is for [Synalize it!](https://www.synalysis.net/) and it is XML. Sorry. I need to make a PEG Grammar out of it, sometimes.
-
 So if those points satisfy for you, but you are still uncertain if you need this, please read [This Very Article](medium.com/@shaman_sir/modern-binary-reverse-engineering-with-node-js-for-elm-bd7546853e43) (written by me) which describes in the detailed details, what is done here. Another way for you, in this case, is just to [use this binary tool](https://github.com/stoeffel/elm-interface-to-json) which was developed later than this one, and which is driven by Haskell (which is an advantage), so has a compiled binary (which is an advantage) and uses the "core" code to get type (which is an advantage), but has no ability to get values (which is whatever) and only has types in their stringified form (which is a disadvantage, but may be implementing it for an author is just a matter of time).
 
 In short, when you use this:
@@ -63,6 +61,8 @@ Then you get this:
       "<function>"
   ] }
 ```
+
+And, the grammar for the `.elmi` files [is just lying here](https://github.com/shamansir/node-elm-repl/blob/master/elmi.grammar), in case you need it. Though it is for [Synalize it!](https://www.synalysis.net/) and it is XML. Sorry. I need to make a PEG Grammar out of it, sometimes... Oh, totally forgot, but I also have [JS binary grammar here](https://github.com/shamansir/node-elm-repl/blob/master/src/parser.js), may be it more friendly and may also help you in `.elmi` investigations.
 
 # Installation
 
