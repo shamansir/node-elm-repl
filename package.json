@@ -1,6 +1,6 @@
 {
   "name": "node-elm-repl",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "a wrapper for elm-repl intended to be used from node.js",
   "main": "./src/repl.js",
   "bin": {
