@@ -96,9 +96,9 @@
                             "user": "elm-lang",
                             "package": "virtual-dom",
                             "path": [
-                                "Node"
+                                "VirtualDom"
                             ],
-                            "name": "VirtualDom"
+                            "name": "Node"
                         },
                         "type": "type"
                     },
@@ -129,9 +129,9 @@
                                     "user": "elm-lang",
                                     "package": "virtual-dom",
                                     "path": [
-                                        "Node"
+                                        "VirtualDom"
                                     ],
-                                    "name": "VirtualDom"
+                                    "name": "Node"
                                 },
                                 "type": "type"
                             },
@@ -203,9 +203,9 @@
                                                 "user": "elm-lang",
                                                 "package": "virtual-dom",
                                                 "path": [
-                                                    "Node"
+                                                    "VirtualDom"
                                                 ],
-                                                "name": "VirtualDom"
+                                                "name": "Node"
                                             },
                                             "type": "type"
                                         },

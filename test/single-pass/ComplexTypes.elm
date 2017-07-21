@@ -1,4 +1,4 @@
-module ComplexType exposing (..)
+module ComplexTypes exposing (..)
 
 import Html exposing (..)
 

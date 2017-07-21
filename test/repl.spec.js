@@ -140,20 +140,38 @@ describe('Repl', function() {
     });
 
     it('parser is accessible and could be used to parse elmi files', function() {
-        const buffer = fs.readFileSync('./test/single-pass/ComplexType.elmi');
-        const expectedResult = JSON.parse(fs.readFileSync('./test/single-pass/ComplexTypeParseResult.json', 'utf8'));
+        const buffer = fs.readFileSync('./test/single-pass/ComplexTypes.elmi');
+        const expectedResult = JSON.parse(fs.readFileSync('./test/single-pass/ComplexTypesParseResult.json', 'utf8'));
         expect(Repl.Parser.parse(buffer)).to.deep.equal(expectedResult);
     });
 
-    it('it is possible to format some type in a custom way', function() {
+    it('it is possible to specify just the name of the module to parse', function() {
+        const expectedResult = JSON.parse(fs.readFileSync('./test/single-pass/ComplexTypesParseResult.json', 'utf8'));
+        const parsePromise =
+            new Repl({ workDir: './test/single-pass',
+                       elmVer: '0.18.0' })
+                .parseModule('ComplexTypes');
+        return parsePromise.should.eventually.deep.equal(expectedResult);
+    });
+
+    it('it is possible to specify a path to the module to parse', function() {
+        const expectedResult = JSON.parse(fs.readFileSync('./test/single-pass/InnerModule/InnerTypesParseResult.json', 'utf8'));
+        const parsePromise =
+            new Repl({ workDir: './test/single-pass',
+                       elmVer: '0.18.0' })
+                .parseModule('InnerModule.InnerTypes');
+        return parsePromise.should.eventually.deep.equal(expectedResult);
+    });
+
+    it('it is possible to format a specific type in a custom way', function() {
         const customStringifier = {
             'var': function(name) { return '<' + name + '>'; },
             'type': function(name, path) {
-                return path ? '+ ' + name + ' // ' + path.join('..') + ' +'
+                return path ? '+ ' + path.join('..') + ' // ' + name + ' +'
                             : '- ' + name;
             },
             'aliased': function(name, path) {
-                return path ? '{{ ' + name + ' --- ' + path.join('^^') + ' }}'
+                return path ? '{{ ' + path.join('^^') + ' --- ' + name + ' }}'
                             : '[[ ' + name + ' ]]';
             },
             'lambda': function(left, right) { return right + ' ::: ' + left; },
@@ -165,11 +183,12 @@ describe('Repl', function() {
             }
         };
 
-        const customTypeDefinition = '+ Platform // Program + ** + Basics // Never +_<model>_<msg> ::: ' +
+        const customTypeDefinition =
+            '+ Platform // Program + ** + Basics // Never +_<model>_<msg> ::: ' +
             '& model >< <model> %% update >< <model> ::: <model> ::: <msg> %% view >< {{ Html --- Html }} ::: ' +
             '<model> & ::: - List ** {{ Html --- Html }} ::: {{ Html --- Html }}';
 
-        const buffer = fs.readFileSync('./test/single-pass/ComplexType.elmi');
+        const buffer = fs.readFileSync('./test/single-pass/ComplexTypes.elmi');
         const parsedElmi = Repl.Parser.parse(buffer);
         expect(parsedElmi.types[1].name).to.equal('testComplexType');
         const complexTypeDef = parsedElmi.types[1].value;
@@ -180,11 +199,11 @@ describe('Repl', function() {
         const customStringifier = {
             'var': function(name) { return '$' + name + '$'; },
             'type': function(name, path) {
-                return path ? '> ' + name + ' ¯\\_(ツ)_/¯ ' + path.join('..') + ' +'
+                return path ? '> ' + path.join('..') + ' ¯\\_(ツ)_/¯ ' + name + ' +'
                             : '<  ' + name;
             },
             'aliased': function(name, path) {
-                return path ? '{{ ' + name + ' --- ' + path.join('^^') + ' }}'
+                return path ? '{{ ' + path.join('^^') + ' --- ' + name + ' }}'
                             : '[[ ' + name + ' ]]';
             },
             'lambda': function(left, right) { return right + ' ::: ' + left; },
@@ -196,12 +215,13 @@ describe('Repl', function() {
             }
         };
 
-        const customTypeDefinitions = [ '> Platform ¯\\_(ツ)_/¯ Program + ** > Basics ¯\\_(ツ)_/¯ Never +_$model$_$msg$ ::: ' +
+        const customTypeDefinitions = [
+            '> Platform ¯\\_(ツ)_/¯ Program + ** > Basics ¯\\_(ツ)_/¯ Never +_$model$_$msg$ ::: ' +
             '& model GG $model$ %% update GG $model$ ::: $model$ ::: $msg$ %% view GG {{ Html --- Html }} ::: ' +
             '$model$ & ::: <  List ** {{ Html --- Html }} ::: {{ Html --- Html }}',
-            '> AAA ¯\\_(ツ)_/¯ A..B +' ];
+            '> A..B ¯\\_(ツ)_/¯ AAA +' ];
 
-        const buffer = fs.readFileSync('./test/single-pass/ComplexType.elmi');
+        const buffer = fs.readFileSync('./test/single-pass/ComplexTypes.elmi');
         const parsedElmi = Repl.Parser.parse(buffer);
         expect(parsedElmi.types[1].name).to.equal('testComplexType');
         const complexTypeDef = parsedElmi.types[1].value;

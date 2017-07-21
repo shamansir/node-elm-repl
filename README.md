@@ -5,10 +5,10 @@
 * [Description](#description)
 * [Running tests](#running-tests)
 * [How to use it with Node.js? (JS API)](#how-to-use-it-with-nodejs)
-* [How to deconstruct Type Definitions in JS? (JS API)](./Types.md) (_separate page_)
+* [How to deconstruct Type Definitions in JS? (JS API)](./Types.md) (_a separate page_)
 * [How to use it with CLI? (Command-Line API)](#how-to-use-it-with-cli)
 * [How to contribute?](#how-to-contribute)
-* [How it was done?](./Story.md) (_separate page_)
+* [How it was done?](./Story.md) (_a separate page_)
 
 # Intro
 
@@ -21,17 +21,22 @@ So, this tool would help you if, and only if, all of these points satisfy:
 * In JavaScript, you need to know the values and/or the returned [structured types definitions](./Types.md) of several Elm expressions with a single `elm-make` compilation cycle (for the moment, one cycle takes about 200-300ms in average, except rare first-run cases, taking up to 3 seconds);
 * Also, you are willing to do everything mentioned above _offline_, both for you and the user (except the case when `elm-make` auto-downloads required packages);
 
-So if those points satisfy for you, but you are still uncertain if you need this, please read [This Very Article](https;//medium.com/@shaman_sir/modern-binary-reverse-engineering-with-node-js-for-elm-bd7546853e43) (written by me) which describes in the detailed details, what is done here. Another way for you, in this case, is just to [use this binary tool](https://github.com/stoeffel/elm-interface-to-json) which was developed later than this one, and which is driven by Haskell (which is an advantage), so has a compiled binary (which is an advantage) and uses the "core" code to get type (which is an advantage), but has no ability to get values (which is whatever) and only has types in their stringified form (which is a disadvantage, but may be implementing it for an author is just a matter of time).
+If these points are applicable to you, but you are still uncertain if you need this, please read [The "Modern Binary Reverse Engineering with Node.js for Elm" Article](https;//medium.com/@shaman_sir/modern-binary-reverse-engineering-with-node-js-for-elm-bd7546853e43) (written by me) which describes in the very details, what is done here and how it works. Another way for you, in this case, is just to [use this binary tool](https://github.com/stoeffel/elm-interface-to-json) which was developed later than this one, and which is driven by Haskell (which is an advantage), so has a compiled binary (which is an advantage) and uses the "core" code to get the type information (which is an advantage), but has no ability to get values (which is whatever) and only has types in their stringified form (which is a disadvantage, but may be implementing it for an author is just a matter of time).
+
+----
 
 In short, when you use this:
 
 ```javascript
 new Repl({ elmVer: '0.18.0' })
-    .getTypes([], [ '1 + 1', '\\a b -> a + b' ])
+    .getTypes([], [
+        '1 + 1',
+        '\\a b -> a + b'
+    ])
     .then(types => console.dir(types, { depth: null }));
 ```
 
-You get this:
+In response you get this:
 
 ```javascript
 [ { type: "var", name: "number" },
@@ -43,11 +48,16 @@ You get this:
        right: { type: "var", name: "number" } } } ]
 ```
 
+----
+
 Or when you use this:
 
 ```javascript
 new Repl({ elmVer: '0.18.0' })
-    .getTypesAndValues([], [ '1 + 1', '\\a b -> a + b' ])
+    .getTypesAndValues([], [
+        '1 + 1',
+        '\\a b -> a + b'
+    ])
     .then(typesAndValues => console.dir(typesAndValues, { depth: null }))
     .catch(err => console.error(err));
 ```
@@ -62,7 +72,42 @@ Then you get this:
   ] }
 ```
 
-And, the JS grammar for the `.elmi` files [is just lying here](https://github.com/shamansir/node-elm-repl/blob/master/src/parser.js), in case you need it separately. And [the XML version](https://github.com/shamansir/node-elm-repl/blob/master/elmi.grammar) for [Synalize it!](https://www.synalysis.net/).
+----
+
+It is also possible to specify a complete module to parse, so:
+
+```javascript
+new Repl({ elmVer: '0.18.0',
+           workDir: 'my/source/dir' })
+    .parseModule('MyModule.MyInnerModule')
+    .then(parsedModule => console.dir(parsedModule, { depth: null }))
+    .catch(err => console.error(err));
+```
+
+Will give you:
+
+```javascript
+{
+    "version": {
+        "major": 0,
+        "minor": 18,
+        "patch": 0
+    },
+    "package": {
+        "name": "project",
+        "user": "user"
+    },
+    "imports": [ ... <a-list-of-imports> ... ],
+    "exports": [ ... <a-list-of-exports> ... ],
+    "types": [ ... <a-list-of-types> ... ]
+}
+```
+
+----
+
+Use the [Types](./Types.md) documentation to help you investigate the inner structure of such constructs.
+
+And, the JS grammar for the `.elmi` files [is just lying here](https://github.com/shamansir/node-elm-repl/blob/master/src/parser.js), in case you need it separately. It is accessible from JS with the `Repl.Parser.parse(elmiFileBuffer)`. And [the XML version](https://github.com/shamansir/node-elm-repl/blob/master/elmi.grammar) for [Synalize it!](https://www.synalysis.net/).
 
 # Installation
 
