@@ -152,6 +152,26 @@ var expectation = {
             )
         },
         {
+            name: 'O',
+            value: b.lambda(
+                b.type('String'),
+                b.lambda(
+                    b.type('Int'),
+                    b.lambda(
+                        b.type('Bool'),
+                        b.aliased(
+                            b.complexType('user', 'project', 'Records', 'O'),
+                            [ b.record({
+                                a: b.type('String'),
+                                b: b.type('Int'),
+                                c: b.type('Bool')
+                            }) ]
+                        )
+                    )
+                )
+            )
+        },
+        {
             name: 'Recursive',
             value: b.lambda(
                 b.record({
