@@ -225,8 +225,8 @@ new Repl({ // options, defaults are listed:
     workDir: '.', // working directory
     elmVer: '0.18.0', // your exact elm-compiler version
     user: 'user', // specify github username you used in elm-package.json
-    project: 'project', // specify project name you used in elm-package.json
-    projectVer: '1.0.0' // specify project version you used in elm-package.json
+    package: 'project', // specify project name you used in elm-package.json
+    packageVer: '1.0.0' // specify project version you used in elm-package.json
 }).getTypes(
     [ // imports:
         'List as L',
@@ -264,8 +264,8 @@ number -> number -> number
 * `workDir` — specify working directory for execution, for example where the `.elm` files you use are located, or where you have your `elm-package.json`;
 * `elmVer` — the exact elm-version you use (default: `'0.18.0'`);
 * `user` — your github username specified in `elm-package.json` (default: `'user'`);
-* `project` — your github project specified in `elm-package.json` (default: `'project'`);
-* `projectVer` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
+* `package` — your project specified in `elm-package.json` (default: `'project'`);
+* `packageVer` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
 * `keepTempFile` — for debugging purposes, if _truthy_, then do not delete `.elm` files after compilation;
 * `keepElmiFile` — for debugging purposes, if _truthy_, then do not delete `.elmi` files after compilation;
 
@@ -430,9 +430,9 @@ Repl-CLI accepts several options:
 
 * `--work-dir` — specify working directory for execution, for example where the `.elm` files you use are located, or where you have your `elm-package.json`;
 * `--elm-ver` — the exact elm-version you use (default: `'0.18.0'`);
-* `--user` — your github username specified in `elm-package.json` (default: `'user'`);
-* `--project` — your github project specified in `elm-package.json` (default: `'project'`);
-* `--project-ver` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
+* `--user` — your username specified in `elm-package.json` (default: `'user'`);
+* `--package` — your project specified in `elm-package.json` (default: `'project'`);
+* `--package-ver` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
 * `--keep-temp-file` — for debugging purposes, if specified, then do not delete `.elm` files after compilation;
 * `--keep-elmi-file` — for debugging purposes, if specified, then do not delete `.elmi` files after compilation;
 * `--show-time` — additionally report the time was spent to extract types;

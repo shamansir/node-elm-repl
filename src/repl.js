@@ -6,12 +6,12 @@ const cp = require('child_process');
 
 const DEFAULT_ELM_VER = '0.18.0';
 const DEFAULT_USER = 'user';
-const DEFAULT_PROJECT = 'project';
-const DEFAULT_PROJECT_VER = '1.0.0';
+const DEFAULT_PACKAGE = 'project';
+const DEFAULT_PACKAGE_VER = '1.0.0';
 
 function Repl(options) {
     this.options = options || {};
-    /*if (!this.options.user || !this.options.project) {
+    /*if (!this.options.user || !this.options.package) {
         this.options = injectOptionsFromPackageJson(options);
     }*/
 }
@@ -306,8 +306,8 @@ function getModuleFilePath(options, moduleName) {
 function getModuleElmiPath(options, moduleName) {
     return './elm-stuff/build-artifacts/' + (options.elmVer || DEFAULT_ELM_VER) + '/' +
             (options.user || DEFAULT_USER) + '/' +
-            (options.project || DEFAULT_PROJECT) + '/' +
-            (options.projectVer || DEFAULT_PROJECT_VER) + '/' +
+            (options.package || DEFAULT_PACKAGE) + '/' +
+            (options.packageVer || DEFAULT_PACKAGE_VER) + '/' +
             (moduleName.replace(/\./g, '-')) + '.elmi';
 }
 
@@ -318,8 +318,8 @@ function getTempModuleName(options, interationId) {
 function getTempElmiPath(options, iterationId) {
     return './elm-stuff/build-artifacts/' + (options.elmVer || DEFAULT_ELM_VER) + '/' +
             (options.user || DEFAULT_USER) + '/' +
-            (options.project || DEFAULT_PROJECT) + '/' +
-            (options.projectVer || DEFAULT_PROJECT_VER) + '/' +
+            (options.package || DEFAULT_PACKAGE) + '/' +
+            (options.packageVer || DEFAULT_PACKAGE_VER) + '/' +
             'NodeRepl' + iterationId + '.elmi';
 }
 
