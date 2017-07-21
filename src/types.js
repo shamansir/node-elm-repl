@@ -16,7 +16,9 @@ function stringify(t) {
     if (t.type === 'var') { return t.name; }
     if ((t.type === 'type') ||
         (t.type === 'aliased')) {
-        const name = t.def.subNames ? (t.def.name + '.' + t.def.subNames[0]) : t.def.name;
+        const name = t.def.path
+            ? (t.def.path[t.def.path.length - 1] + '.' + t.def.name)
+            : t.def.name;
         return t.msgvar ? (name + ' ' + t.msgvar) : name;
     }
     if (t.type === 'lambda') {
@@ -45,11 +47,11 @@ function stringify(t) {
 function stringifyWithSpec(t, spec) {
     if (t.type === 'var') { return spec['var'](t.name); }
     if (t.type === 'type') {
-        return spec['type'](t.def.name, t.def.subNames,
+        return spec['type'](t.def.name, t.def.path,
             t.msgvar, t.msgnode ? stringifyWithSpec(t.msgnode, spec) : null);
     }
     if (t.type === 'aliased') {
-        return spec['aliased'](t.def.name, t.def.subNames,
+        return spec['aliased'](t.def.name, t.def.path,
             t.msgvar, t.msgnode ? stringifyWithSpec(t.msgnode, spec) : null);
     }
     if (t.type === 'lambda') {

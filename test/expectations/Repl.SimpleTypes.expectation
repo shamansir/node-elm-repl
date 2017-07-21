@@ -2,6 +2,7 @@
 1	number	1
 1.01	Float	1.01
 1 + 1	number	2
+\a b -> a + b	number -> number -> number	<function>
 "Foo"	String	"Foo"
 """Foo"""	String	"Foo"
 'f'	Char	'f'

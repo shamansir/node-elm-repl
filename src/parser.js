@@ -29,33 +29,11 @@ var importPathItemParser = new Parser()
     .skip(4).int32('itemLen')
     .string('item', { length: 'itemLen' });
 
-var importPathParser = new Parser()
+var singleImportParser = new Parser()
     .skip(4).int32('count')
     .array('path', {
         type: importPathItemParser,
         length: 'count'
-    })
-    .skip(1);
-
-function importPathFormatter(v) {
-    if (!v.path) return v;
-    return v.path.map(function(data) {
-        return data.item;
-    });
-}
-
-var singleImportParser = new Parser()
-    .int8('type')
-    .skip(4).int32('nameLen')
-    .string('name', { length: 'nameLen' })
-    .choice('values', {
-        tag: 'type',
-        choices: {
-            0: stop,
-            1: stop,
-            2: importPathParser
-        },
-        formatter: importPathFormatter
     });
 
 var importsParser = new Parser()
@@ -67,13 +45,10 @@ var importsParser = new Parser()
 
 var importsFormatter = function(v) {
     return v.values.map(function(iv) {
-        if (iv.type !== 2) {
-            return { 'type': iv.type,
-                     'name': iv.name };
-        } else {
-            return { 'type': iv.type,
-                     'name': iv.name,
-                     'values': iv.values };
+        return {
+            path: iv.path.map(function(pv) {
+                      return pv.item;
+                  })
         }
     });
 };
@@ -84,11 +59,33 @@ var exportPathItemParser = new Parser()
     .skip(4).int32('itemLen')
     .string('item', { length: 'itemLen' });
 
-var singleExportParser = new Parser()
+var exportPathParser = new Parser()
     .skip(4).int32('count')
     .array('path', {
         type: exportPathItemParser,
         length: 'count'
+    })
+    .skip(1);
+
+function exportPathFormatter(v) {
+    if (!v.path) return v;
+    return v.path.map(function(data) {
+        return data.item;
+    });
+}
+
+var singleExportParser = new Parser()
+    .int8('type')
+    .skip(4).int32('nameLen')
+    .string('name', { length: 'nameLen' })
+    .choice('values', {
+        tag: 'type',
+        choices: {
+            0: stop,
+            1: stop,
+            2: exportPathParser
+        },
+        formatter: exportPathFormatter
     });
 
 var exportsParser = new Parser()
@@ -100,13 +97,20 @@ var exportsParser = new Parser()
 
 var exportsFormatter = function(v) {
     return v.values.map(function(ev) {
-        return {
-            path: ev.path.map(function(pv) {
-                      return pv.item;
-                  })
+        if (ev.type === 0) {
+            return { 'type': 'single',
+                     'name': ev.name };
+        } else if (ev.type === 1) {
+            return { 'type': 'list',
+                     'path': [ ev.name ] };
+        } else if (ev.type === 2) {
+            return { 'type': 'nested',
+                     'name': ev.name,
+                     'values': ev.values };
         }
     });
 };
+
 
 // types
 
@@ -127,8 +131,8 @@ var holleyTypeParser = new Parser()
 var filledTypeParser = new Parser()
     .skip(4).int32('userLen')
     .string('user', { length: 'userLen' })
-    .skip(4).int32('projectLen')
-    .string('project', { length: 'projectLen' })
+    .skip(4).int32('packageLen')
+    .string('package', { length: 'packageLen' })
     .skip(4).int32('subNamesCount')
     .skip(4).int32('nameLen')
     .string('name', { length: 'nameLen' })
@@ -155,9 +159,11 @@ var typeParser = new Parser()
 function typeFormatter(t) {
     return t.isFilled
         ? { user: t.inner.user,
-            project: t.inner.project,
-            name: t.inner.name,
-            subNames: t.inner.subNames }
+            package: t.inner.package,
+            path: t.inner.subNames
+                ? [ t.inner.name ].concat(t.inner.subNames.splice(0, t.inner.subNames.length - 1))
+                : [],
+            name: t.inner.subNames ? t.inner.subNames[t.inner.subNames.length - 1] : t.inner.name }
         : { name: t.inner.name };
 }
 
@@ -340,10 +346,10 @@ var elmiParser = new Parser()
         .nest('version', { type: versionParser })
         .nest('package', { type: packageInfoParser,
                            formatter: packageInfoFormatter })
-        .nest('imports', { type: importsParser,
-                           formatter: importsFormatter })
         .nest('exports', { type: exportsParser,
                            formatter: exportsFormatter })
+        .nest('imports', { type: importsParser,
+                           formatter: importsFormatter })
         .nest('types',   { type: typesParser,
                            formatter: typesFormatter });
 

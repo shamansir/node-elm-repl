@@ -5,14 +5,14 @@
 * [Description](#description)
 * [Running tests](#running-tests)
 * [How to use it with Node.js? (JS API)](#how-to-use-it-with-nodejs)
-* [How to deconstruct Type Definitions in JS? (JS API)](./Types.md) (_separate page_)
+* [How to deconstruct Type Definitions in JS? (JS API)](./Types.md) (_a separate page_)
 * [How to use it with CLI? (Command-Line API)](#how-to-use-it-with-cli)
 * [How to contribute?](#how-to-contribute)
-* [How it was done?](./Story.md) (_separate page_)
+* [How it was done?](./Story.md) (_a separate page_)
 
 # Intro
 
-Actually the name may confuse you, so I would make it clear from the start, that _technically_ what you see here is **TOTALLY NOT** the REPL. At least, by itself. It is _the replacement_ for the REPL for those who need to know evaluated values together with their types in their entirety (not just strings, but a structures defining the type, like... types AST) for Elm expressions in JavaScript environment. Also, this tool may help you make some REPL... in JavaScript.
+Actually the name may confuse you, so I would make it clear from the start, that _technically_ what you see here is **TOTALLY NOT** the REPL. At least, by itself. It is _the replacement_ for the REPL for those who need to know the evaluated values together with their types in their entirety (not just string-encoded boring types, but a structures defining the type, like... JSON Elm Type AST) for Elm expressions in JavaScript environment. Also, this tool may help you make some REPL... in JavaScript.
 
 So, this tool would help you if, and only if, all of these points satisfy:
 
@@ -21,17 +21,22 @@ So, this tool would help you if, and only if, all of these points satisfy:
 * In JavaScript, you need to know the values and/or the returned [structured types definitions](./Types.md) of several Elm expressions with a single `elm-make` compilation cycle (for the moment, one cycle takes about 200-300ms in average, except rare first-run cases, taking up to 3 seconds);
 * Also, you are willing to do everything mentioned above _offline_, both for you and the user (except the case when `elm-make` auto-downloads required packages);
 
-So if those points satisfy for you, but you are still uncertain if you need this, please read [This Very Article](medium.com/@shaman_sir/modern-binary-reverse-engineering-with-node-js-for-elm-bd7546853e43) (written by me) which describes in the detailed details, what is done here. Another way for you, in this case, is just to [use this binary tool](https://github.com/stoeffel/elm-interface-to-json) which was developed later than this one, and which is driven by Haskell (which is an advantage), so has a compiled binary (which is an advantage) and uses the "core" code to get type (which is an advantage), but has no ability to get values (which is whatever) and only has types in their stringified form (which is a disadvantage, but may be implementing it for an author is just a matter of time).
+If these points are applicable to you, but you are still uncertain if you need this, please read [The "Modern Binary Reverse Engineering with Node.js for Elm" Article](https;//medium.com/@shaman_sir/modern-binary-reverse-engineering-with-node-js-for-elm-bd7546853e43) (written by me) which describes in the very details, what is done here and how it works. Another way for you, in this case, is just to [use this binary tool](https://github.com/stoeffel/elm-interface-to-json) which was developed later than this one, and which is driven by Haskell (which is an advantage), so has a compiled binary (which is an advantage) and uses the "core" code to get the type information (which is an advantage), but has no ability to get values (which is whatever) and only has types in their stringified form (which is a disadvantage, but may be implementing it for an author is just a matter of time).
+
+----
 
 In short, when you use this:
 
 ```javascript
 new Repl({ elmVer: '0.18.0' })
-    .getTypes([], [ '1 + 1', '\\a b -> a + b' ])
+    .getTypes([], [
+        '1 + 1',
+        '\\a b -> a + b'
+    ])
     .then(types => console.dir(types, { depth: null }));
 ```
 
-You get this:
+In response you get this:
 
 ```javascript
 [ { type: "var", name: "number" },
@@ -43,11 +48,16 @@ You get this:
        right: { type: "var", name: "number" } } } ]
 ```
 
+----
+
 Or when you use this:
 
 ```javascript
 new Repl({ elmVer: '0.18.0' })
-    .getTypesAndValues([], [ '1 + 1', '\\a b -> a + b' ])
+    .getTypesAndValues([], [
+        '1 + 1',
+        '\\a b -> a + b'
+    ])
     .then(typesAndValues => console.dir(typesAndValues, { depth: null }))
     .catch(err => console.error(err));
 ```
@@ -62,7 +72,42 @@ Then you get this:
   ] }
 ```
 
-And, the grammar for the `.elmi` files [is just lying here](https://github.com/shamansir/node-elm-repl/blob/master/elmi.grammar), in case you need it. Though it is for [Synalize it!](https://www.synalysis.net/) and it is XML. Sorry. I need to make a PEG Grammar out of it, sometimes... Oh, totally forgot, but I also have [JS binary grammar here](https://github.com/shamansir/node-elm-repl/blob/master/src/parser.js), may be it more friendly and may also help you in `.elmi` investigations.
+----
+
+It is also possible to specify a complete module to parse, so:
+
+```javascript
+new Repl({ elmVer: '0.18.0',
+           workDir: 'my/source/dir' })
+    .parseModule('MyModule.MyInnerModule')
+    .then(parsedModule => console.dir(parsedModule, { depth: null }))
+    .catch(err => console.error(err));
+```
+
+Will give you:
+
+```javascript
+{
+    "version": {
+        "major": 0,
+        "minor": 18,
+        "patch": 0
+    },
+    "package": {
+        "name": "project",
+        "user": "user"
+    },
+    "imports": [ ... <a-list-of-imports> ... ],
+    "exports": [ ... <a-list-of-exports> ... ],
+    "types": [ ... <a-list-of-types> ... ]
+}
+```
+
+----
+
+Use the [Types](./Types.md) documentation to help you investigate the inner structure of such constructs.
+
+And, the JS grammar for the `.elmi` files [is just lying here](https://github.com/shamansir/node-elm-repl/blob/master/src/parser.js), in case you need it separately. It is accessible from JS with the `Repl.Parser.parse(elmiFileBuffer)`. And [the XML version](https://github.com/shamansir/node-elm-repl/blob/master/elmi.grammar) for [Synalize it!](https://www.synalysis.net/).
 
 # Installation
 
@@ -180,8 +225,8 @@ new Repl({ // options, defaults are listed:
     workDir: '.', // working directory
     elmVer: '0.18.0', // your exact elm-compiler version
     user: 'user', // specify github username you used in elm-package.json
-    project: 'project', // specify project name you used in elm-package.json
-    projectVer: '1.0.0' // specify project version you used in elm-package.json
+    package: 'project', // specify project name you used in elm-package.json
+    packageVer: '1.0.0' // specify project version you used in elm-package.json
 }).getTypes(
     [ // imports:
         'List as L',
@@ -196,6 +241,7 @@ new Repl({ // options, defaults are listed:
         '\\a b -> a + b'
     ]
 ).then(function(types) { // getTypes returns the Promise which resolves to array
+    // see ./Types.md for the details on every type definition
     console.log(Repl.stringifyAll(types).join('\n'));
 }).catch(console.error);
 ```
@@ -211,15 +257,15 @@ number
 number -> number -> number
 ```
 
-*N.B.:* Here you manually convert the received types descriptors to their `string`-type text-friendly versions—but before this conversion took place, they actually were very detailed and descriptive JavaScript objects. So, if you need more than just a boring string representation of a type, you may follow to the [Types API documentation](./Types.md), to know what exactly to expect from object representation of the type definition.
+*N.B.:* Here you explicitly convert the received types descriptors to their `string`-type text-friendly versions—but before this conversion took place, they actually were very detailed and descriptive JavaScript objects. So, if you need more than just a boring string representation of a type, you may follow to the [Types API documentation](./Types.md), to know what exactly to expect from object representation of the type definition.
 
 `Repl` constructor accepts several options:
 
 * `workDir` — specify working directory for execution, for example where the `.elm` files you use are located, or where you have your `elm-package.json`;
 * `elmVer` — the exact elm-version you use (default: `'0.18.0'`);
 * `user` — your github username specified in `elm-package.json` (default: `'user'`);
-* `project` — your github project specified in `elm-package.json` (default: `'project'`);
-* `projectVer` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
+* `package` — your project specified in `elm-package.json` (default: `'project'`);
+* `packageVer` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
 * `keepTempFile` — for debugging purposes, if _truthy_, then do not delete `.elm` files after compilation;
 * `keepElmiFile` — for debugging purposes, if _truthy_, then do not delete `.elmi` files after compilation;
 
@@ -291,6 +337,7 @@ new Repl({
     var types = typesAndValues.types;
     var values = typesAndValues.values;
     types.forEach(function(type, idx) {
+        // see ./Types.md for the details on every type definition
         console.log('TYPE', Repl.stringify(type), 'VALUE', values[idx]);
     });
 }).catch(console.error);
@@ -308,6 +355,43 @@ TYPE List Int VALUE [1,2,3,4]
 TYPE Int VALUE 50
 TYPE number -> number -> number VALUE <function>
 ```
+
+`Repl.parseModule` allows you to parse the whole Elm Module and extract not only the types, but also imports and exports. Just point it to your directory with sources, and if you need to parse some nested module, put a dot between the names:
+
+```javascript
+var Repl = require('node-elm-repl');
+
+new Repl({
+    // the options may vary depending on environment
+    elmVer: '0.18.0',
+    workDir: './src'
+})
+.parseModule('MyModule') // or 'MyLib.MyModule' or 'Sub.Sub.Module'
+.then(function(parsedModule) {
+    console.dir(parsedModule, { depth: null });
+});
+```
+
+Will output:
+
+```javascript
+{
+    "version": {
+        "major": 0,
+        "minor": 18,
+        "patch": 0
+    },
+    "package": {
+        "name": "project",
+        "user": "user"
+    },
+    "imports": [ ... <a-list-of-imports> ... ],
+    "exports": [ ... <a-list-of-exports> ... ],
+    "types": [ ... <a-list-of-types> ... ]
+}
+```
+
+See [Types section](./Types.md) to discover the detailed stucture of Imports, Exports and Types.
 
 ## How to use it with CLI?
 
@@ -346,9 +430,9 @@ Repl-CLI accepts several options:
 
 * `--work-dir` — specify working directory for execution, for example where the `.elm` files you use are located, or where you have your `elm-package.json`;
 * `--elm-ver` — the exact elm-version you use (default: `'0.18.0'`);
-* `--user` — your github username specified in `elm-package.json` (default: `'user'`);
-* `--project` — your github project specified in `elm-package.json` (default: `'project'`);
-* `--project-ver` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
+* `--user` — your username specified in `elm-package.json` (default: `'user'`);
+* `--package` — your project specified in `elm-package.json` (default: `'project'`);
+* `--package-ver` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
 * `--keep-temp-file` — for debugging purposes, if specified, then do not delete `.elm` files after compilation;
 * `--keep-elmi-file` — for debugging purposes, if specified, then do not delete `.elmi` files after compilation;
 * `--show-time` — additionally report the time was spent to extract types;

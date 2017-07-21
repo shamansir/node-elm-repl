@@ -1,4 +1,6 @@
-module Records exposing (A, B, C, Recursive)
+module Records exposing (O, A, B, C, Recursive)
+
+type alias O = { a: String, b: Int, c: Bool }
 
 type alias A = { a: String }
 

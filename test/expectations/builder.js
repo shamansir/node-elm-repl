@@ -6,7 +6,7 @@ module.exports = {
         };
     },
 
-    exports: function(list) {
+    imports: function(list) {
         return list.map(function(item) {
             return {
                 'path': item
@@ -14,22 +14,22 @@ module.exports = {
         })
     },
 
-    imports: function(list) {
+    exports: function(list) {
         return list.map(function(item) {
             if (typeof item === 'string' || item instanceof String) {
                 return {
-                    type: 0,
+                    type: 'single',
                     name: item
                 }
             } else if (Array.isArray(item)) {
                 return {
-                    type: 1,
-                    name: item[0]
+                    type: 'list',
+                    path: item
                 }
             } else {
                 var name = Object.keys(item)[0];
                 return {
-                    type: 2,
+                    type: 'nested',
                     name: name,
                     values: item[name]
                 }
@@ -67,16 +67,26 @@ module.exports = {
         };
     },
 
-    complexType: function(user, project, name, subNames) {
+    record: function(fields) {
+        return {
+            'type': 'record',
+            'fields': Object.keys(fields).map(function(name) {
+                return {
+                    name: name,
+                    node: fields[name]
+                }
+            })
+        };
+    },
+
+    complexType: function(user, package, path, name) {
         return {
             type: 'type',
             def: {
                 user: user,
-                project: project,
-                name: name,
-                subNames: subNames
-                    ? (Array.isArray(subNames) ? subNames : [ subNames ])
-                    : [ name ]
+                package: package,
+                path: Array.isArray(path) ? path : [ path ],
+                name: name
             }
         };
     },

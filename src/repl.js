@@ -6,19 +6,19 @@ const cp = require('child_process');
 
 const DEFAULT_ELM_VER = '0.18.0';
 const DEFAULT_USER = 'user';
-const DEFAULT_PROJECT = 'project';
-const DEFAULT_PROJECT_VER = '1.0.0';
+const DEFAULT_PACKAGE = 'project';
+const DEFAULT_PACKAGE_VER = '1.0.0';
 
 function Repl(options) {
     this.options = options || {};
-    /*if (!this.options.user || !this.options.project) {
+    /*if (!this.options.user || !this.options.package) {
         this.options = injectOptionsFromPackageJson(options);
     }*/
 }
 
 Repl.Parser = elmiParser;
 
-var lastIteration = 0;
+let lastIteration = 0;
 Repl.prototype.getTypes = function(imports, expressions) {
     const varsMap = mapToVariables(expressions);
     const varsNames = Object.keys(varsMap);
@@ -35,7 +35,7 @@ Repl.prototype.getTypes = function(imports, expressions) {
     const initialDir = process.cwd();
 
     const tempFilePath = getTempFilePath(this.options, currentIteration);
-    const elmiPath = getElmiPath(this.options, currentIteration);
+    const tempElmiPath = getTempElmiPath    (this.options, currentIteration);
 
     return new Promise(
         function(resolve, reject) {
@@ -55,10 +55,10 @@ Repl.prototype.getTypes = function(imports, expressions) {
         }.bind(this)
     ).then(function() {
         if (!keepTempFile) fs.unlinkSync(tempFilePath);
-        var buffer = fs.readFileSync(elmiPath);
+        const buffer = fs.readFileSync(tempElmiPath);
         return elmiParser.parse(buffer);
     }).then(function(parsedIface) {
-        if (!keepElmiFile) fs.unlinkSync(elmiPath);
+        if (!keepElmiFile) fs.unlinkSync(tempElmiPath);
         if (workDir) process.chdir(initialDir);
         return new Types(parsedIface).findAll(varsNames);
     }).catch(function(e) {
@@ -83,14 +83,14 @@ Repl.prototype.getValues = function(imports, expressions) {
     const initialDir = process.cwd();
 
     const tempFilePath = getTempFilePath(this.options, currentIteration);
-    const elmiPath = getElmiPath(this.options, currentIteration);
+    const tempElmiPath = getTempElmiPath(this.options, currentIteration);
     const jsOutputPath = getJsOutputPath(this.options, currentIteration);
 
-    const moduleName = getModuleName(this.options, currentIteration);
+    const tempModuleName = getTempModuleName(this.options, currentIteration);
 
     return new Promise(
         function(resolve, reject) {
-            const firstLines = [ 'port module ' + moduleName + ' exposing (..)' ]
+            const firstLines = [ 'port module ' + tempModuleName + ' exposing (..)' ]
                 .concat(imports.map(function(_import) {
                         return _import ? ('import ' + _import) : '';
                     })
@@ -113,16 +113,16 @@ Repl.prototype.getValues = function(imports, expressions) {
         }.bind(this)
     ).then(function() {
         if (!keepTempFile) fs.unlinkSync(tempFilePath);
-        var srcJsContent = fs.readFileSync(jsOutputPath);
-        var targetJsContent = Buffer.concat([
+        const srcJsContent = fs.readFileSync(jsOutputPath);
+        const targetJsContent = Buffer.concat([
             srcJsContent,
-            new Buffer(getValuesExtractionJs(moduleName).join('\n'))
+            new Buffer(getValuesExtractionJs(tempModuleName).join('\n'))
         ]);
         fs.writeFileSync(jsOutputPath, targetJsContent + '\n');
-        var cp = require('child_process');
+        const cp = require('child_process');
         return new Promise(function(resolve, reject) {
-            var childProcess = cp.fork(jsOutputPath, { silent: true });
-            var allValues;
+            const childProcess = cp.fork(jsOutputPath, { silent: true });
+            let allValues;
             childProcess.stdout.on('data', function(data) {
                 allValues = JSON.parse(data.toString()).out;
             });
@@ -154,14 +154,14 @@ Repl.prototype.getTypesAndValues = function(imports, expressions) {
     const initialDir = process.cwd();
 
     const tempFilePath = getTempFilePath(this.options, currentIteration);
-    const elmiPath = getElmiPath(this.options, currentIteration);
+    const tempElmiPath = getTempElmiPath(this.options, currentIteration);
     const jsOutputPath = getJsOutputPath(this.options, currentIteration);
 
-    const moduleName = getModuleName(this.options, currentIteration);
+    const tempModuleName = getTempModuleName(this.options, currentIteration);
 
     return new Promise(
         function(resolve, reject) {
-            const firstLines = [ 'port module ' + moduleName + ' exposing (..)' ]
+            const firstLines = [ 'port module ' + tempModuleName + ' exposing (..)' ]
                 .concat(imports.map(function(_import) {
                         return _import ? ('import ' + _import) : '';
                     })
@@ -184,22 +184,22 @@ Repl.prototype.getTypesAndValues = function(imports, expressions) {
         }.bind(this)
     ).then(function(jsOutputPath) {
         if (!keepTempFile) fs.unlinkSync(tempFilePath);
-        var buffer = fs.readFileSync(elmiPath);
+        const buffer = fs.readFileSync(tempElmiPath);
         return elmiParser.parse(buffer);
     }).then(function(parsedIface) {
-        if (!keepElmiFile) fs.unlinkSync(elmiPath);
+        if (!keepElmiFile) fs.unlinkSync(tempElmiPath);
         return new Types(parsedIface).findAll(varsNames);
     }).then(function(allTypes) {
-        var srcJsContent = fs.readFileSync(jsOutputPath);
-        var targetJsContent = Buffer.concat([
+        const srcJsContent = fs.readFileSync(jsOutputPath);
+        const targetJsContent = Buffer.concat([
             srcJsContent,
-            new Buffer(getValuesExtractionJs(moduleName).join('\n'))
+            new Buffer(getValuesExtractionJs(tempModuleName).join('\n'))
         ]);
         fs.writeFileSync(jsOutputPath, targetJsContent + '\n');
-        var cp = require('child_process');
+        const cp = require('child_process');
         return new Promise(function(resolve, reject) {
-            var childProcess = cp.fork(jsOutputPath, { silent: true });
-            var allValues;
+            const childProcess = cp.fork(jsOutputPath, { silent: true });
+            let allValues;
             childProcess.stdout.on('data', function(data) {
                 allValues = JSON.parse(data.toString()).out;
             });
@@ -218,7 +218,38 @@ Repl.prototype.getTypesAndValues = function(imports, expressions) {
     });
 }
 
-var VALUES_EXTRACTION_INTRO = [
+Repl.prototype.parseModule = function(moduleName) {
+    const elmVer = this.options.elmVer || DEFAULT_ELM_VER;
+    const workDir = this.options.workDir;
+
+    //const keepTempFile = this.options.keepTempFile || false;
+    const keepElmiFile = this.options.keepElmiFile || false;
+
+    const initialDir = process.cwd();
+
+    const moduleElmiPath = getModuleElmiPath(this.options, moduleName);
+    const modulePath = getModuleFilePath(this.options, moduleName);
+
+    return new Promise(
+        function(resolve, reject) {
+            if (workDir) process.chdir(workDir);
+            cp.execSync('elm-make --yes ' + modulePath, { cwd: process.cwd() });
+            resolve(modulePath);
+        }
+    ).then(function() {
+        const buffer = fs.readFileSync(moduleElmiPath);
+        return elmiParser.parse(buffer);
+    }).then(function(parsedIface) {
+        if (!keepElmiFile) fs.unlinkSync(moduleElmiPath);
+        if (workDir) process.chdir(initialDir);
+        return parsedIface;
+    }).catch(function(e) {
+        if (workDir) process.chdir(initialDir);
+        throw e;
+    });
+}
+
+const VALUES_EXTRACTION_INTRO = [
     '',
     'port outcome : List String -> Cmd msg',
     'port income : (Bool -> msg) -> Sub msg',
@@ -237,7 +268,7 @@ function getValuesExtractionBody(varsNames) {
     });
 }
 
-var VALUES_EXTRACTION_OUTRO = [
+const VALUES_EXTRACTION_OUTRO = [
     '    ]',
     '',
     'update : Bool -> Model -> (Model, Cmd msg)',
@@ -268,15 +299,27 @@ Repl.stringify = Types.stringify;
 
 Repl.stringifyAll = Types.stringifyAll;
 
-function getModuleName(options, interationId) {
+function getModuleFilePath(options, moduleName) {
+    return './' + moduleName.replace(/\./g, '/') + '.elm';
+}
+
+function getModuleElmiPath(options, moduleName) {
+    return './elm-stuff/build-artifacts/' + (options.elmVer || DEFAULT_ELM_VER) + '/' +
+            (options.user || DEFAULT_USER) + '/' +
+            (options.package || DEFAULT_PACKAGE) + '/' +
+            (options.packageVer || DEFAULT_PACKAGE_VER) + '/' +
+            (moduleName.replace(/\./g, '-')) + '.elmi';
+}
+
+function getTempModuleName(options, interationId) {
     return 'NodeRepl' + interationId;
 }
 
-function getElmiPath(options, iterationId) {
+function getTempElmiPath(options, iterationId) {
     return './elm-stuff/build-artifacts/' + (options.elmVer || DEFAULT_ELM_VER) + '/' +
             (options.user || DEFAULT_USER) + '/' +
-            (options.project || DEFAULT_PROJECT) + '/' +
-            (options.projectVer || DEFAULT_PROJECT_VER) + '/' +
+            (options.package || DEFAULT_PACKAGE) + '/' +
+            (options.packageVer || DEFAULT_PACKAGE_VER) + '/' +
             'NodeRepl' + iterationId + '.elmi';
 }
 
@@ -291,13 +334,13 @@ function getJsOutputPath(options, iterationId) {
     return './f_o_o_b_a_r_test' + iterationId + '.js';
 }
 
-var varsCount = 0;
+let varsCount = 0;
 function generateVarName() {
     return 'f_o_o_b_a_r_' + varsCount++;
 }
 
 function mapToVariables(expressions) {
-    var varsMap = {};
+    const varsMap = {};
     expressions.forEach(function(expression) {
         varsMap[generateVarName()] = expression;
     });

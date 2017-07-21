@@ -6,7 +6,7 @@ var expectation = {
         user: 'user',
         name: 'project'
     },
-    exports: b.exports([
+    imports: b.imports([
         [ 'Basics' ],
         [ 'Debug' ],
         [ 'List' ],
@@ -18,7 +18,7 @@ var expectation = {
         [ 'String' ],
         [ 'Tuple' ]
     ]),
-    imports: b.imports([
+    exports: b.exports([
         'factorial',
         'squareOfSum',
         'sumOfSquares',

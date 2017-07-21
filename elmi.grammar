@@ -11,8 +11,8 @@
             <structure name="Name" id="8">
                 <number name="UserNameLen" id="9" type="integer" length="8"/>
                 <string name="UserName" id="10" fillcolor="FFDA36" type="fixed-length" length="UserNameLen"/>
-                <number name="ProjectNameLen" id="11" type="integer" length="8"/>
-                <string name="ProjectName" id="12" fillcolor="FFDA36" type="fixed-length" length="ProjectNameLen"/>
+                <number name="PackageNameLen" id="11" type="integer" length="8"/>
+                <string name="PackageName" id="12" fillcolor="FFDA36" type="fixed-length" length="PackageNameLen"/>
             </structure>
         </structure>
         <structure name="ImportCell" id="15" encoding="ISO_8859-1:1987" endian="big" signed="no" order="variable" valueexpression="ImportName">
@@ -91,8 +91,8 @@
             </number>
             <number name="UserNameLen" id="71" type="integer" length="8"/>
             <string name="UserName" id="72" fillcolor="FFFCCB" type="fixed-length" length="UserNameLen"/>
-            <number name="ProjectNameLen" id="73" type="integer" length="8"/>
-            <string name="ProjectName" id="74" fillcolor="FFFCCB" type="fixed-length" length="ProjectNameLen"/>
+            <number name="PackageNameLen" id="73" type="integer" length="8"/>
+            <string name="PackageName" id="74" fillcolor="FFFCCB" type="fixed-length" length="PackageNameLen"/>
             <number name="SubNamesCount" id="75" type="integer" length="8"/>
             <number name="NameLen" id="76" type="integer" length="8"/>
             <string name="Name" id="77" fillcolor="FFFCCB" type="fixed-length" length="NameLen"/>

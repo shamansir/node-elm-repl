@@ -1,0 +1,199 @@
+{
+    "version": {
+        "major": 0,
+        "minor": 18,
+        "patch": 0
+    },
+    "package": {
+        "name": "project",
+        "user": "user"
+    },
+    "imports": [{
+        "path": ["Basics"]
+    }, {
+        "path": ["Debug"]
+    }, {
+        "path": ["Dict"]
+    }, {
+        "path": ["List"]
+    }, {
+        "path": ["Maybe"]
+    }, {
+        "path": ["Platform"]
+    }, {
+        "path": ["Platform", "Cmd"]
+    }, {
+        "path": ["Platform", "Sub"]
+    }, {
+        "path": ["Result"]
+    }, {
+        "path": ["String"]
+    }, {
+        "path": ["Tuple"]
+    }],
+    "exports": [{
+        "type": "list",
+        "path": [ "A" ]
+    }, {
+        "type": "nested",
+        "name": "B",
+        "values": [ "C", "D", "E" ]
+    }],
+    "types": [{
+        "name": "::",
+        "value": {
+            "left": {
+                "name": "a",
+                "type": "var"
+            },
+            "right": {
+                "left": {
+                    "object": [{
+                        "name": "a",
+                        "type": "var"
+                    }],
+                    "subject": {
+                        "def": {
+                            "name": "List"
+                        },
+                        "type": "type"
+                    },
+                    "type": "app"
+                },
+                "right": {
+                    "object": [{
+                        "name": "a",
+                        "type": "var"
+                    }],
+                    "subject": {
+                        "def": {
+                            "name": "List"
+                        },
+                        "type": "type"
+                    },
+                    "type": "app"
+                },
+                "type": "lambda"
+            },
+            "type": "lambda"
+        }
+    },
+    {
+      "name": "C",
+      "value": {
+        "def": {
+          "name": "B",
+          "package": "project",
+          "path": [
+            "InnerModule",
+            "InnerTypes"
+          ],
+          "user": "user"
+        },
+        "type": "type"
+      }
+    },
+    {
+      "name": "D",
+      "value": {
+        "def": {
+          "name": "B",
+          "package": "project",
+          "path": [
+            "InnerModule",
+            "InnerTypes"
+          ],
+          "user": "user"
+        },
+        "type": "type"
+      }
+    },
+    {
+      "name": "E",
+      "value": {
+        "def": {
+          "name": "B",
+          "package": "project",
+          "path": [
+            "InnerModule",
+            "InnerTypes"
+          ],
+          "user": "user"
+        },
+        "type": "type"
+      }
+    },
+    {
+      "name": "Many",
+      "value": {
+        "left": {
+          "object": [
+            {
+              "name": "a",
+              "type": "var"
+            }
+          ],
+          "subject": {
+            "def": {
+              "name": "List"
+            },
+            "type": "type"
+          },
+          "type": "app"
+        },
+        "right": {
+          "object": [
+            {
+              "name": "a",
+              "type": "var"
+            }
+          ],
+          "subject": {
+            "def": {
+              "name": "F",
+              "package": "project",
+              "path": [
+                "InnerModule",
+                "InnerTypes"
+              ],
+              "user": "user"
+            },
+            "type": "type"
+          },
+          "type": "app"
+        },
+        "type": "lambda"
+      }
+    },
+    {
+      "name": "Single",
+      "value": {
+        "left": {
+          "name": "a",
+          "type": "var"
+        },
+        "right": {
+          "object": [
+            {
+              "name": "a",
+              "type": "var"
+            }
+          ],
+          "subject": {
+            "def": {
+              "name": "F",
+              "package": "project",
+              "path": [
+                "InnerModule",
+                "InnerTypes"
+              ],
+              "user": "user"
+            },
+            "type": "type"
+          },
+          "type": "app"
+        },
+        "type": "lambda"
+      }
+    }]
+}

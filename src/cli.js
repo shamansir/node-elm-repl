@@ -33,9 +33,9 @@ if (!argv.from) {
     console.log('Other options:');
     console.log('--work-dir — specify working directory for execution, for example where the `.elm` files you use are located');
     console.log('--elm-ver — exact elm-version you use (default: 0.18.0), required to be known if you import your own modules');
-    console.log('--user — your github username specified in elm-package.json (default: user), required to be known if you import your own modules');
-    console.log('--project — your github project specified in elm-package.json (default: project), required to be known if you import your own modules');
-    console.log('--project-ver — your project version specified in elm-package.json (default: 1.0.0), required to be known if you import your own modules');
+    console.log('--user — your username specified in elm-package.json (default: user), required to be known if you import your own modules');
+    console.log('--package — your project specified in elm-package.json (default: project), required to be known if you import your own modules');
+    console.log('--package-ver — your project version specified in elm-package.json (default: 1.0.0), required to be known if you import your own modules');
     console.log('--show-time — show how much time it took to convert everyting');
     console.log('--with-values — include values into the output (takes more time to extract them)');
     console.log('--only-values — report and extract only values, not the types (overrides --with-values)');
@@ -50,8 +50,8 @@ if (!argv.from) {
         workDir: argv['work-dir'] || null,
         elmVer: argv['elm-ver'] || null,
         user: argv['user'] || null,
-        project: argv['project'] || null,
-        projectVer: argv['project-ver'] || null,
+        package: argv['package'] || null,
+        packageVer: argv['package-ver'] || null,
         keepTempFile: argv.hasOwnProperty('keep-temp') || false,
         keepElmiFile: argv.hasOwnProperty('keep-elmi') || false,
         tempFileName: argv['temp-file-name'] || null

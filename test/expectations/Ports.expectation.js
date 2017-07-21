@@ -6,7 +6,7 @@ var expectation = {
         user: 'shaman-sir',
         name: 'test-node-elm-repl'
     },
-    exports: b.exports([
+    imports: b.imports([
         [ 'Basics' ],
         [ 'Debug' ],
         [ 'List' ],
@@ -18,7 +18,7 @@ var expectation = {
         [ 'String' ],
         [ 'Tuple' ]
     ]),
-    imports: b.imports([
+    exports: b.exports([
         'income',
         'outcome'
     ]),
@@ -41,7 +41,7 @@ var expectation = {
                     b.var('msg')
                 ),
                 b.app(
-                    b.complexType('elm-lang', 'core', 'Platform', [ 'Sub', 'Sub' ]),
+                    b.complexType('elm-lang', 'core', [ 'Platform', 'Sub' ], 'Sub'),
                     [ b.var('msg') ]
                 )
             )
@@ -54,7 +54,7 @@ var expectation = {
                     [ b.type('String') ]
                 ),
                 b.app(
-                    b.complexType('elm-lang', 'core', 'Platform', [ 'Cmd', 'Cmd' ]),
+                    b.complexType('elm-lang', 'core', [ 'Platform', 'Cmd' ], 'Cmd'),
                     [ b.var('msg') ]
                 )
             )

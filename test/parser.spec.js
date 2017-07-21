@@ -22,6 +22,7 @@ var samples = [
     'SpaceAge',
     'Pangram',
     'Triangle',
+    'Records',
     'Ports'
 ];
 
