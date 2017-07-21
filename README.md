@@ -12,7 +12,7 @@
 
 # Intro
 
-Actually the name may confuse you, so I would make it clear from the start, that _technically_ what you see here is **TOTALLY NOT** the REPL. At least, by itself. It is _the replacement_ for the REPL for those who need to know evaluated values together with their types in their entirety (not just strings, but a structures defining the type, like... types AST) for Elm expressions in JavaScript environment. Also, this tool may help you make some REPL... in JavaScript.
+Actually the name may confuse you, so I would make it clear from the start, that _technically_ what you see here is **TOTALLY NOT** the REPL. At least, by itself. It is _the replacement_ for the REPL for those who need to know the evaluated values together with their types in their entirety (not just string-encoded boring types, but a structures defining the type, like... JSON Elm Type AST) for Elm expressions in JavaScript environment. Also, this tool may help you make some REPL... in JavaScript.
 
 So, this tool would help you if, and only if, all of these points satisfy:
 
@@ -21,7 +21,7 @@ So, this tool would help you if, and only if, all of these points satisfy:
 * In JavaScript, you need to know the values and/or the returned [structured types definitions](./Types.md) of several Elm expressions with a single `elm-make` compilation cycle (for the moment, one cycle takes about 200-300ms in average, except rare first-run cases, taking up to 3 seconds);
 * Also, you are willing to do everything mentioned above _offline_, both for you and the user (except the case when `elm-make` auto-downloads required packages);
 
-So if those points satisfy for you, but you are still uncertain if you need this, please read [This Very Article](medium.com/@shaman_sir/modern-binary-reverse-engineering-with-node-js-for-elm-bd7546853e43) (written by me) which describes in the detailed details, what is done here. Another way for you, in this case, is just to [use this binary tool](https://github.com/stoeffel/elm-interface-to-json) which was developed later than this one, and which is driven by Haskell (which is an advantage), so has a compiled binary (which is an advantage) and uses the "core" code to get type (which is an advantage), but has no ability to get values (which is whatever) and only has types in their stringified form (which is a disadvantage, but may be implementing it for an author is just a matter of time).
+So if those points satisfy for you, but you are still uncertain if you need this, please read [This Very Article](https;//medium.com/@shaman_sir/modern-binary-reverse-engineering-with-node-js-for-elm-bd7546853e43) (written by me) which describes in the detailed details, what is done here. Another way for you, in this case, is just to [use this binary tool](https://github.com/stoeffel/elm-interface-to-json) which was developed later than this one, and which is driven by Haskell (which is an advantage), so has a compiled binary (which is an advantage) and uses the "core" code to get type (which is an advantage), but has no ability to get values (which is whatever) and only has types in their stringified form (which is a disadvantage, but may be implementing it for an author is just a matter of time).
 
 In short, when you use this:
 
@@ -62,7 +62,7 @@ Then you get this:
   ] }
 ```
 
-And, the grammar for the `.elmi` files [is just lying here](https://github.com/shamansir/node-elm-repl/blob/master/elmi.grammar), in case you need it. Though it is for [Synalize it!](https://www.synalysis.net/) and it is XML. Sorry. I need to make a PEG Grammar out of it, sometimes... Oh, totally forgot, but I also have [JS binary grammar here](https://github.com/shamansir/node-elm-repl/blob/master/src/parser.js), may be it more friendly and may also help you in `.elmi` investigations.
+And, the JS grammar for the `.elmi` files [is just lying here](https://github.com/shamansir/node-elm-repl/blob/master/src/parser.js), in case you need it separately. And [the XML version](https://github.com/shamansir/node-elm-repl/blob/master/elmi.grammar) for [Synalize it!](https://www.synalysis.net/).
 
 # Installation
 
@@ -196,6 +196,7 @@ new Repl({ // options, defaults are listed:
         '\\a b -> a + b'
     ]
 ).then(function(types) { // getTypes returns the Promise which resolves to array
+    // see ./Types.md for the details on every type definition
     console.log(Repl.stringifyAll(types).join('\n'));
 }).catch(console.error);
 ```
@@ -211,7 +212,7 @@ number
 number -> number -> number
 ```
 
-*N.B.:* Here you manually convert the received types descriptors to their `string`-type text-friendly versions—but before this conversion took place, they actually were very detailed and descriptive JavaScript objects. So, if you need more than just a boring string representation of a type, you may follow to the [Types API documentation](./Types.md), to know what exactly to expect from object representation of the type definition.
+*N.B.:* Here you explicitly convert the received types descriptors to their `string`-type text-friendly versions—but before this conversion took place, they actually were very detailed and descriptive JavaScript objects. So, if you need more than just a boring string representation of a type, you may follow to the [Types API documentation](./Types.md), to know what exactly to expect from object representation of the type definition.
 
 `Repl` constructor accepts several options:
 
@@ -291,6 +292,7 @@ new Repl({
     var types = typesAndValues.types;
     var values = typesAndValues.values;
     types.forEach(function(type, idx) {
+        // see ./Types.md for the details on every type definition
         console.log('TYPE', Repl.stringify(type), 'VALUE', values[idx]);
     });
 }).catch(console.error);
