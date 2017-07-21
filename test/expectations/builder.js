@@ -24,7 +24,7 @@ module.exports = {
             } else if (Array.isArray(item)) {
                 return {
                     type: 'list',
-                    name: item[0]
+                    path: item
                 }
             } else {
                 var name = Object.keys(item)[0];

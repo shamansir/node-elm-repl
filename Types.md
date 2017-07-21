@@ -54,7 +54,7 @@ Or... just `<TYPE>`. So, the structure of the definition is the same, but refere
 
 So, there is always a `type` field which defines the... type of this cell, which is either:
 
-* `var`: if it is a type variable:
+* `var`: if it is a type variable, like `a` in `Html a`:
     * `name`: a name of this variable, like `number` or `comparable`, `msg`, `a`, `b`, `x` ... actually anything;
 * `type`: if it's a simple unary type (not union type (see [Special Cases / Union Types](#union-types)), not alias, not lambda, not application, not record, just a direct type, nowhere to go deep):
     * `def: DEFINITION`: the definition of this type, no matter the internal one or the custom one:
@@ -83,6 +83,62 @@ So, there is always a `type` field which defines the... type of this cell, which
         * `node: TYPE`: type of the field;
 
 ### Special cases
+
+### Imports & Exports
+
+If you call `new Repl(<options>).parseModule('Module')`, you'll not only get the types, but also imports and exports defined in this module.
+
+Imports are just the array of paths to the imported things, in a way like:
+
+```javascript
+"imports": [{
+        "path": ["Basics"]
+    }, {
+        "path": ["Debug"]
+    }, {
+        "path": ["Dict"]
+    }, {
+        "path": ["List"]
+    }, {
+        "path": ["Maybe"]
+    }, {
+        "path": ["Platform"]
+    }, {
+        "path": ["Platform", "Cmd"]
+    }, {
+        "path": ["Platform", "Sub"]
+    }, {
+        "path": ["Result"]
+    }, {
+        "path": ["String"]
+    }, {
+        "path": ["Tuple"]
+    }]
+```
+
+There is a number of core imports which are always included in every module by default, but not listed there. Actually, for Elm 0.18 it is all of the listed above, except `Dict`.
+
+Exports are somewhat a little bit more complicated.
+
+```javascript
+"exports": [{
+        "type": "list",
+        "path": [ "A" ]
+    }, {
+        "type": "nested",
+        "name": "B",
+        "values": [ "C", "D", "E" ]
+    }, {
+        "type": "single",
+        "name": "F"
+    }]
+```
+
+There are three types of export:
+
+* `single`: just a name;
+* `list`: this type of export could contain a path, but it may happen to have just one element there;
+* `nested`: it is usually what you export, when you write, for example, `module MyModule exposing (B(..))` — so it is the export for union type where all the type variables for it are also exported;
 
 #### Union type
 
@@ -120,10 +176,6 @@ And the `Planet` type itself will be stored in exports as the enumeration:
 ```javascript
 `Planet`: [ `Mercury`, `Venus`, `Earth` ... ]
 ```
-
-#### Message vars
-
-TODO
 
 #### Records
 
@@ -199,6 +251,6 @@ will be expanded into this creepy structure:
 
 It is exactly the way it was stored in the interface file, just converted into JSON. But actually it provides you with the required info at every level of the deepness. But the `fields` object already stores the required information about types, and it actually does in 80% of cases. So, in most cases, you will be safe if you just skip all the `lambda`s on the way to the `fields` structure. Still, there are 20% of cases, when this won't be sufficient.
 
-### Imports
+#### Message vars
 
-### Exports
+TODO

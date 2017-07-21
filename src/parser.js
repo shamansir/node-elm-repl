@@ -97,10 +97,13 @@ var exportsParser = new Parser()
 
 var exportsFormatter = function(v) {
     return v.values.map(function(ev) {
-        if (ev.type !== 2) {
-            return { 'type': (ev.type === 0) ? 'single' : 'list',
+        if (ev.type === 0) {
+            return { 'type': 'single',
                      'name': ev.name };
-        } else {
+        } else if (ev.type === 1) {
+            return { 'type': 'list',
+                     'path': [ ev.name ] };
+        } else if (ev.type === 2) {
             return { 'type': 'nested',
                      'name': ev.name,
                      'values': ev.values };

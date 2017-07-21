@@ -32,11 +32,11 @@
         "path": ["Tuple"]
     }],
     "exports": [{
-        "name": "A",
-        "type": "list"
+        "type": "list",
+        "path": [ "A" ]
     }, {
-        "name": "B",
         "type": "nested",
+        "name": "B",
         "values": [ "C", "D", "E" ]
     }],
     "types": [{

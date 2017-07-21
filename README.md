@@ -356,6 +356,43 @@ TYPE Int VALUE 50
 TYPE number -> number -> number VALUE <function>
 ```
 
+`Repl.parseModule` allows you to parse the whole Elm Module and extract not only the types, but also imports and exports. Just point it to your directory with sources, and if you need to parse some nested module, put a dot between the names:
+
+```javascript
+var Repl = require('node-elm-repl');
+
+new Repl({
+    // the options may vary depending on environment
+    elmVer: '0.18.0',
+    workDir: './src'
+})
+.parseModule('MyModule') // or 'MyLib.MyModule' or 'Sub.Sub.Module'
+.then(function(parsedModule) {
+    console.dir(parsedModule, { depth: null });
+});
+```
+
+Will output:
+
+```javascript
+{
+    "version": {
+        "major": 0,
+        "minor": 18,
+        "patch": 0
+    },
+    "package": {
+        "name": "project",
+        "user": "user"
+    },
+    "imports": [ ... <a-list-of-imports> ... ],
+    "exports": [ ... <a-list-of-exports> ... ],
+    "types": [ ... <a-list-of-types> ... ]
+}
+```
+
+See [Types section](./Types.md) to discover the detailed stucture of Imports, Exports and Types.
+
 ## How to use it with CLI?
 
 CLI interface is a bit different, to use it, you need to create a file with expressions listed.
