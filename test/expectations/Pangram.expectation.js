@@ -6,7 +6,7 @@ var expectation = {
         user: 'user',
         name: 'project'
     },
-    exports: b.exports([
+    imports: b.imports([
         [ 'Basics' ],
         [ 'Char' ],
         [ 'Debug' ],
@@ -20,7 +20,7 @@ var expectation = {
         [ 'String' ],
         [ 'Tuple' ]
     ]),
-    imports: b.imports([
+    exports: b.exports([
         'isPangram',
         'findLetterCount',
         'isLetter',
@@ -47,7 +47,10 @@ var expectation = {
         {
             name: 'isLetter',
             value: b.lambda(
-                b.aliased(b.complexType('elm-lang', 'core', 'Char', 'KeyCode'), [ b.type('Int') ]),
+                b.aliased(
+                    b.complexType('elm-lang', 'core', 'Char', 'KeyCode'),
+                    [ b.type('Int') ]
+                ),
                 b.type('Bool')
             )
         },

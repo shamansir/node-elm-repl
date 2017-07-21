@@ -6,7 +6,7 @@ var expectation = {
         user: 'user',
         name: 'project'
     },
-    exports: b.exports([
+    imports: b.imports([
         [ 'Basics' ],
         [ 'Debug' ],
         [ 'List' ],
@@ -18,7 +18,7 @@ var expectation = {
         [ 'String' ],
         [ 'Tuple' ]
     ]),
-    imports: b.imports([
+    exports: b.exports([
         'helloWorld'
     ]),
     types: [
@@ -36,7 +36,7 @@ var expectation = {
             name: 'helloWorld',
             value: b.lambda(
                 b.app(
-                    b.complexType('elm-lang', 'core', 'Maybe'),
+                    b.complexType('elm-lang', 'core', 'Maybe', 'Maybe'),
                     [ b.type('String') ]
                 ),
                 b.type('String')

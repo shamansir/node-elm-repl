@@ -1,4 +1,5 @@
-
+Result exposing ( Result(..) )
 { x = 3, y = 4 }	{ x : number, y : number1 }	{ x = 3, y = 4 }
 List.map .x [{ x = 3, y = 4 }, {x = 7, y = 11 }]	List number	[3,7]
 { x = "a", y = "b", z = "c" }	{ x : String, y : String, z : String }	{ x = "a", y = "b", z = "c" }
+{ test = [ 1, 2 ], v = Ok "v" }	{ test : List number, v : Result.Result error String }	{ test = [1,2], v = Ok "v" }

@@ -60,8 +60,8 @@ So, there is always a `type` field which defines the... type of this cell, which
     * `def: DEFINITION`: the definition of this type, no matter the internal one or the custom one:
         * `name: string`: could be `Int`, `String`, `List`, `Bool` or any name the person who created the code gave to this type;
         * `[user]: string`: if it's an user type or an external type, then it is a name of an user (or a type author) as defined in her `elm-package.json`;
-        * `[project]: string`: if it's an user type or an external type, then it is a name of a package/project as defined in its `elm-package.json`;
-        * `[subNames]: [string]`: if it's an user type or an external type, then it follows the list of modules and type names inside, defining the way to reach this particular type;
+        * `[package]: string`: if it's an user type or an external type, then it is a name of a package/project as defined in its `elm-package.json`;
+        * `[path]: [string]`: if it's an user type or an external type, then it follows the list of modules and type names inside, defining the way to reach this particular type;
 * `lambda`: it is when you use `->` operator in Elm, be it a lambda or function type declaration; just notice that, for example, `String -> Bool -> Int` is always expanded as `lambda(left: type(String), right: lambda(left: type(Bool), right: type(Int)))`, so it is always a pair of types to be joined with `lambda`, never three types or more.
     * `left: TYPE`: what was on the left of the arrow operator;
     * `right: TYPE`: what was on the right of the arrow operator;
@@ -72,12 +72,12 @@ So, there is always a `type` field which defines the... type of this cell, which
     * `def: DEFINITION`: the definition of an aliased type, no matter the internal one or the custom one:
         * `name: string`: could be `Int`, `String`, `List`, `Bool` or any name the person who created the code gave to this type;
         * `[user]: string`: if it's an user type or an external type, then it is a name of an user (or a type author) as defined in her `elm-package.json`;
-        * `[project]: string`: if it's an user type or an external type, then it is a name of a package/project as defined in its `elm-package.json`;
-        * `[subNames]: [string]`: if it's an user type or an external type, then it follows the list of modules and type names inside, defining the way to reach this particular type;
+        * `[package]: string`: if it's an user type or an external type, then it is a name of a package/project as defined in its `elm-package.json`;
+        * `[path]: [string]`: if it's an user type or an external type, then it follows the list of modules and type names inside, defining the way to reach this particular type;
     * `list: [ TYPE ]`: a list of types associated with this alias;
     * `[msgvar]: string`: See [Special Cases / Message Variables](#message-variables);
     * `[msgnode]: TYPE`:  See [Special Cases / Message Variables](#message-variables);
-* `record`: just a record as you know it:
+* `record`: just a record as you know it, but with few important traits, see [Special Cases / Records](#records):
     * `fields: [ FIELD ]`: an array of record fields, name and type pairs:
         * `name: string`: name of the field;
         * `node: TYPE`: type of the field;
@@ -109,9 +109,10 @@ Every its option (`Mercury`, `Venus`, `Earth`, ...) will be stored separately as
     def:
       { name: "Mercury",
         user: "user",
-        project: "project",
-        name: "Module",
-        subNames: [ "Planet" ] } }
+        package: "project",
+        path: [ "Module" ],
+        name: "Planet"
+      } }
 ```
 
 And the `Planet` type itself will be stored in exports as the enumeration:
@@ -121,3 +122,79 @@ And the `Planet` type itself will be stored in exports as the enumeration:
 ```
 
 #### Message vars
+
+TODO
+
+#### Records
+
+You may expect records to be stored just as a hash map with a relation of field name <-> type definition. It is close to the reality, but not entirely true. If the types of the record fields depend on some non-primitive types (and in this case, even `String` type is considered non-primitive), then, such record starts with a chain of lambdas, where _left part_ is referring to the required type and _the right part_ is either another `lambda` or an actual `record` with fields, and only when it happened to be the latter, you may treat is as the end of a chain.
+
+So, for example, this record:
+
+```elm
+type alias O = { a: String, b: Int, c: Bool }
+```
+
+will be expanded into this creepy structure:
+
+```javascript
+{
+    "name": "O",
+    "value": {
+      "type": "lambda",
+      "left": {
+        "type": "type", "def": { "name": "String" }
+      },
+      "right": {
+        "type": "lambda",
+        "left": {
+          "type": "type", "def": { "name": "Int" }
+        },
+        "right": {
+          "type": "lambda",
+          "left": {
+            "type": "type", "def": { "name": "Bool" }
+          },
+          "right": {
+            "type": "aliased",
+            "def": {
+              "name": "O",
+              "package": "project",
+              "path": [
+                "Module"
+              ],
+              "user": "user"
+            },
+            "list": [
+              {
+                "type": "record",
+                "fields": [
+                  {
+                    "name": "a",
+                    "node": {
+                        "type": "type", "def": { "name": "String" }
+                    }
+                  },
+                  {
+                    "name": "b",
+                    "node": {
+                      "type": "type", "def": { "name": "Int" }
+                    }
+                  },
+                  {
+                    "name": "c",
+                    "node": {
+                      "type": "type", "def": { "name": "Bool" }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+}
+```
+
+It is exactly the way it was stored in the interface file, just converted into JSON. But actually it provides you with the required info at every level of the deepness. But the `fields` object already stores the required information about types, and it actually does in 80% of cases. So, in most cases, you will be safe if you just skip all the `lambda`s on the way to the `fields` structure. Still, there are 20% of cases, when this won't be sufficient.

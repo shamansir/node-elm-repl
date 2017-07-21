@@ -148,13 +148,13 @@ describe('Repl', function() {
     it('it is possible to format some type in a custom way', function() {
         const customStringifier = {
             'var': function(name) { return '<' + name + '>'; },
-            'type': function(name, subNames) {
-                return subNames ? '+ ' + name + ' // ' + subNames.join('..') + ' +'
-                                : '- ' + name;
+            'type': function(name, path) {
+                return path ? '+ ' + name + ' // ' + path.join('..') + ' +'
+                            : '- ' + name;
             },
-            'aliased': function(name, subNames) {
-                return subNames ? '{{ ' + name + ' --- ' + subNames.join('^^') + ' }}'
-                                : '[[ ' + name + ' ]]';
+            'aliased': function(name, path) {
+                return path ? '{{ ' + name + ' --- ' + path.join('^^') + ' }}'
+                            : '[[ ' + name + ' ]]';
             },
             'lambda': function(left, right) { return right + ' ::: ' + left; },
             'app': function(subject, object) { return subject + ' ** ' + object.join('_'); },
@@ -179,13 +179,13 @@ describe('Repl', function() {
     it('it is possible to format several types in a custom way', function() {
         const customStringifier = {
             'var': function(name) { return '$' + name + '$'; },
-            'type': function(name, subNames) {
-                return subNames ? '> ' + name + ' ¯\\_(ツ)_/¯ ' + subNames.join('..') + ' +'
-                                : '<  ' + name;
+            'type': function(name, path) {
+                return path ? '> ' + name + ' ¯\\_(ツ)_/¯ ' + path.join('..') + ' +'
+                            : '<  ' + name;
             },
-            'aliased': function(name, subNames) {
-                return subNames ? '{{ ' + name + ' --- ' + subNames.join('^^') + ' }}'
-                                : '[[ ' + name + ' ]]';
+            'aliased': function(name, path) {
+                return path ? '{{ ' + name + ' --- ' + path.join('^^') + ' }}'
+                            : '[[ ' + name + ' ]]';
             },
             'lambda': function(left, right) { return right + ' ::: ' + left; },
             'app': function(subject, object) { return subject + ' ** ' + object.join('_'); },
@@ -207,7 +207,7 @@ describe('Repl', function() {
         const complexTypeDef = parsedElmi.types[1].value;
         expect(Repl.stringifyAll(
             [ complexTypeDef,
-              { type: 'type', 'def': { 'name': 'AAA', 'subNames': [ 'A', 'B' ] } }
+              { type: 'type', 'def': { 'name': 'AAA', 'path': [ 'A', 'B' ] } }
             ], customStringifier)).to.deep.equal(customTypeDefinitions);
     });
 
