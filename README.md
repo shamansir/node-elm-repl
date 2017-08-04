@@ -186,27 +186,15 @@ npm install -g mocha
 npm test
 ```
 
-> *NB:* When `elm-stuff` was cleaned up, the very first call to `elm-make` in this directory takes longer than 2 seconds since it checks package availability and installs them sometimes, so the very first test always takes much longer than other 33 tests, which in their case are satisfyingly fast; so please take into consideration that `elm-stuff` is cleaned for every test run and timeout is set to 5 seconds just to make tests fair for clean environment, but there's a high chance that in your environment you won't clean up `elm-stuff` so frequently, so absolutely any call should take less than 500ms.
+> *NB:* When `elm-stuff` was cleaned up, the very first call to `elm-make` in this directory takes longer than 2 seconds since it checks package availability and installs them sometimes, so the very first test always takes much longer than other 33 tests, which in their case are satisfyingly fast; so please take into consideration that `elm-stuff` is cleaned for every test run and timeout is set to 10 seconds just to make tests fair for clean environment, but there's a high chance that in your environment you won't clean up `elm-stuff` so frequently, so absolutely any call should take less than 500ms.
 
-> You may see it for yourself, if in `package.json` you replace:
+> You may see it for yourself, if you run instead `test-dirty`:
 
-```javascript
-"scripts": {
-    "test": "cd ./test/samples/elm/ && rm -Rf ./elm-stuff && elm-package install --yes && cd ../../.. && mocha -t 5000 ./test/*.spec.js"
-}
+```
+npm run test-dirty
 ```
 
-> With just (no `elm-stuff` removal):
-
-```javascript
-"scripts": {
-    "test": "cd ./test/samples/elm/ && elm-package install --yes && cd ../../.. && mocha -t 5000 ./test/*.spec.js"
-}
-```
-
-> And then run `npm test` several times, only the first time among these calls will take so much time, while all the next ones will run much-much faster.
-
-> *End of NB.*
+> Now any call should take no more than 500ms (usually less than 300ms).
 
 ## How to use it in Node.js environment?
 
@@ -442,4 +430,4 @@ Repl-CLI accepts several options:
 
 ## How to contribute?
 
-Write a test which fails with `npm test`, file an issue, fork the repository, make a pull request — just any of that or all together will help.
+Write a test which fails with `npm run test`, file an issue, fork the repository, make a pull request — just any of that or all together will help.
