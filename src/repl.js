@@ -35,7 +35,7 @@ Repl.prototype.getTypes = function(imports, expressions) {
     const initialDir = process.cwd();
 
     const tempFilePath = getTempFilePath(this.options, currentIteration);
-    const tempElmiPath = getTempElmiPath    (this.options, currentIteration);
+    const tempElmiPath = getTempElmiPath(this.options, currentIteration);
 
     return new Promise(
         function(resolve, reject) {

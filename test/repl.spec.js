@@ -13,8 +13,8 @@ const Repl = require('../src/repl.js')
 const repl = new Repl({ workDir: './test/samples/elm/',
                         elmVer: '0.18.0',
                         user: 'shaman-sir',
-                        project: 'test-node-elm-repl',
-                        projectVer: '0.0.1',
+                        package: 'test-node-elm-repl',
+                        packageVer: '0.0.1',
                         keepTempFile: true,
                         keepElmiFile: true });
 
