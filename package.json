@@ -7,8 +7,8 @@
     "node-elm-repl": "./bin/cli"
   },
   "scripts": {
-    "test": "cd ./test/samples/elm/ && rm -Rf ./elm-stuff && elm-package install --yes && cd ../../.. && mocha -t 100000 ./test/*.spec.js",
-    "test-dirty": "cd ./test/samples/elm/ && elm-package install --yes && cd ../../.. && mocha -t 100000 ./test/*.spec.js"
+    "test": "cd ./test/samples/elm/ && rm -Rf ./elm-stuff && elm-package install --yes && cd ../../.. && mocha -t 100000 --slow 0 ./test/*.spec.js",
+    "test-dirty": "cd ./test/samples/elm/ && elm-package install --yes && cd ../../.. && mocha -t 100000 --slow 0 ./test/*.spec.js"
   },
   "files": [
     "src",
