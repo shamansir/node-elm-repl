@@ -23,7 +23,8 @@ var samples = [
     'Pangram',
     'Triangle',
     'Records',
-    'Ports'
+    'Ports',
+    'Issue07'
 ];
 
 describe('Parser', function() {

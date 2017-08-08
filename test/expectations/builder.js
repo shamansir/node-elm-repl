@@ -101,4 +101,14 @@ module.exports = {
         };
     },
 
+    msgAliased: function(type, nodeType) {
+        return {
+            type: 'aliased',
+            def: type.def,
+            list: [],
+            msgvar: 'msg',
+            msgnode: nodeType
+        };
+    }
+
 };

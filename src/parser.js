@@ -202,11 +202,11 @@ function recordFormatter(r) {
 var aliasedTypeParser = new Parser()
     .nest('type', { type: typeParser,
                     formatter: typeFormatter })
-    //.buffer('testMsg', { clone: true, length: 8+8+3 }) FIXME: moves offset
+    //.buffer('testMsg', { clone: true, length: 8+8+3 })
     .choice('fork', {
         tag: function() {
-            const msgMarker = new Buffer('000000000000000100000000000000036D7367', 'hex');
-            return buffer.includes(msgMarker, offset) ? 1 : 0;
+            const msgMarker = Buffer.from('000000000000000100000000000000036D7367', 'hex');
+            return buffer.slice(offset, offset+8+8+3).equals(msgMarker) ? 1 : 0;
         },
         defaultChoice: stop,
         choices: {
