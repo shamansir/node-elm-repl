@@ -125,6 +125,34 @@ types:
     seq:
       - id: aliased_type
         type: type_node
+      - id: test_msg
+        contents:
+          - 0x0000000000000001
+          - 0x0000000000000003
+          - 'msg'
+      - id: aliased_value
+        type: message
+      - id: aliased_value
+        type: aliases
+    types:
+      message:
+        seq:
+          - id: message_variable
+            type: variable_node
+          - id: message_reserved
+            contents: [ 0x01 ]
+          - id: message_node
+            type: definition_node
+      aliases:
+        seq:
+          - id: aliases_reserved
+            contents: [ 0x00 ]
+          - id: aliases_count
+            type: u8
+          - id: aliases_list
+            type: definition_node
+            repeat: expr
+            repeat-expr: aliases_count
   record_cell:
     seq:
       - id: record_cell_name
