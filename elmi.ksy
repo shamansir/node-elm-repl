@@ -6,24 +6,38 @@ meta:
 seq:
   - id: package_info
     type: package_info
-  - id: import_count
+  - id: imports_count
     type: u8
   - id: imports
     type: import
     repeat: expr
-    repeat-expr: import_count
-  - id: export_count
+    repeat-expr: imports_count
+  - id: exports_count
     type: u8
   - id: exports
     type: export
     repeat: expr
-    repeat-expr: export_count
-  - id: definition_count
+    repeat-expr: exports_count
+  - id: definitions_count
     type: u8
   - id: definitions
     type: definition
     repeat: expr
-    repeat-expr: definition_count
+    repeat-expr: definitions_count
+  - id: unions_count
+    type: u8
+  - id: unions
+    type: union
+    repeat: expr
+    repeat-expr: unions_count
+  - id: aliases_count
+    type: u8
+  - id: aliases
+    type: alias
+    repeat: expr
+    repeat-expr: aliases_count
+  - id: fixties_count
+    type: u8
 types:
   package_info:
     seq:
@@ -177,6 +191,32 @@ types:
         type: str_with_len
         repeat: expr
         repeat-expr: subnames_count
+  union:
+    seq:
+      - id: union_name
+        type: str_with_len
+      - id: union_reserved
+        type: u8
+      - id: union_items_count
+        type: u8
+      - id: union_items
+        repeat: expr
+        repeat-expr: union_items_count
+        type: union_item
+  union_item:
+    seq:
+      - id: union_item_name
+        type: str_with_len
+      - id: union_item_reserved
+        type: u8
+  alias:
+    seq:
+      - id: alias_name
+        type: str_with_len
+      - id: alias_reserved
+        type: u8
+      - id: alias_subject
+        type: definition_node
   path:
     seq:
       - id: path_len
