@@ -137,18 +137,33 @@ types:
         contents: [ 0 ]
   aliased_node:
     seq:
+      - id: message_marker
+        type: message_head
+        #size: _.size
       - id: aliased_type
         type: type_node
-      - id: test_msg
-        contents:
-          - 0x0000000000000001
-          - 0x0000000000000003
-          - 'msg'
-      - id: aliased_value
+      - id: aliased_message
+        if: message_marker.exists
         type: message
-      - id: aliased_value
+      - id: aliased_list
+        if: not message_marker.exists
         type: aliases
     types:
+      message_head:
+        seq:
+          - id: b1
+            type: u8
+          - id: b2
+            if: exists
+            type: u8
+          - id: marker
+            if: exists
+            contents: [ 'msg' ]
+        instances:
+          exists:
+            value: (b1 == 0x0000000000000001) and (b2 == 0x00000000000003)
+          size:
+            value: exists ? 8+8+3 : 1
       message:
         seq:
           - id: message_variable
