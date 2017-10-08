@@ -12,9 +12,9 @@ chai.should();
 const Repl = require('../src/repl.js')
 const repl = new Repl({ workDir: './test/samples/elm/',
                         elmVer: '0.18.0',
-                        user: 'shaman-sir',
-                        package: 'test-node-elm-repl',
-                        packageVer: '0.0.1',
+                        user: 'user',
+                        package: 'project',
+                        packageVer: '1.0.0',
                         keepTempFile: true,
                         keepElmiFile: true });
 

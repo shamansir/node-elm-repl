@@ -1,8 +1,8 @@
 {
-    "version": "0.0.1",
+    "version": "1.0.0",
     "summary": "Tests for the Node Elm Repl",
     "license": "BSD3",
-    "repository": "https://github.com/shaman-sir/test-node-elm-repl.git",
+    "repository": "https://github.com/user/project.git",
     "source-directories": [
         "."
     ],
