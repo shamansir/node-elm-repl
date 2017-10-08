@@ -1,13 +1,14 @@
+#! /usr/bin/env node
+
 const Repl = require('./repl.js');
 const helpText = require('./cli-help.js');
 
 const argv = require('minimist')(process.argv.slice(2));
-const out = require('cli-output');
 
 if (!argv.from && !argv.fromModule) {
 
-    out.info('');
-    out.info('No input was defined. Please specify either a file with expressions using --from parameter or a module name using --from-module.');
+    console.info('');
+    console.info('No input was defined. Please specify either a file with expressions using --from parameter or a module name using --from-module.');
 
     showHelp();
 
@@ -61,17 +62,17 @@ if (!argv.from && !argv.fromModule) {
                 if (!argv.json) { // output as a raw text
 
                     if (!onlyValues && !withValues) {
-                        out.info(Repl.stringifyAll(response).join('\n'));
+                        console.log(Repl.stringifyAll(response).join('\n'));
                     } else if (onlyValues) {
-                        out.info(response.join('\n'));
+                        console.log(response.join('\n'));
                     } else if (withValues) {
                         if (valuesBelow) {
-                            out.info(Repl.stringifyAll(response.types).join('\n'));
-                            out.info(response.values.join('\n'));
+                            console.log(Repl.stringifyAll(response.types).join('\n'));
+                            console.log(response.values.join('\n'));
                         } else {
                             var allTypes = Repl.stringifyAll(response.types);
                             var allValues = response.values;
-                            out.info(allTypes.map(function(type, idx) {
+                            console.log(allTypes.map(function(type, idx) {
                                 return type + '\t' + allValues[idx];
                             }).join('\n'));
                         }
@@ -80,30 +81,30 @@ if (!argv.from && !argv.fromModule) {
                 } else { // use JSON
 
                     if (!onlyValues && !withValues) {
-                        out.rawJSON({ types: response });
+                        console.log(JSON.stringify({ types: response }));
                     } else if (onlyValues) {
-                        out.rawJSON({ values: response });
+                        console.log(JSON.stringify({ values: response }));
                     } else if (withValues) {
-                        out.rawJSON(response);
+                        console.log(JSON.stringify(response));
                     }
 
                 }
 
                 const finishTime = new Date().getTime();
                 if (showTime) {
-                    out.info('-----------');
-                    out.info('Time to read source file: ' + getNiceTime(afterReadTime - startTime));
+                    console.info('-----------');
+                    console.info('Time to read source file: ' + getNiceTime(afterReadTime - startTime));
 
                     if (!onlyValues && !withValues) {
-                        out.info('Time to parse binary and return types: ' + getNiceTime(convertTime - afterReadTime));
+                        console.info('Time to parse binary and return types: ' + getNiceTime(convertTime - afterReadTime));
                     } else if (onlyValues) {
-                        out.info('Time to extract values: ' + getNiceTime(convertTime - afterReadTime));
+                        console.info('Time to extract values: ' + getNiceTime(convertTime - afterReadTime));
                     } else if (withValues) {
-                        out.info('Time to parse binary, execute js and extract both types and values: ' + getNiceTime(convertTime - afterReadTime));
+                        console.info('Time to parse binary, execute js and extract both types and values: ' + getNiceTime(convertTime - afterReadTime));
                     }
 
-                    if (!onlyValues) out.info('Time to stringify types: ' + getNiceTime(finishTime - convertTime));
-                    out.info('Altogether: ' + getNiceTime(finishTime - startTime));
+                    if (!onlyValues) console.info('Time to stringify types: ' + getNiceTime(finishTime - convertTime));
+                    console.info('Altogether: ' + getNiceTime(finishTime - startTime));
                 }
             }).catch(logAndThrowError);
 
@@ -112,16 +113,16 @@ if (!argv.from && !argv.fromModule) {
         repl.parseModule(argv.fromModule)
             .then(parsedModule => {
                 //if (argv.json) {
-                    //out.prettyJSON(parsedModule);
-                    out.rawJSON(parsedModule);
+                    //console.prettyJSON(parsedModule);
+                    console.log(JSON.stringify(parsedModule));
                 //}
             })
             .catch(logAndThrowError);
 
     } else {
 
-        out.info('');
-        out.info('No input was defined. Please specify either a file with expressions using --from parameter or a module name using --from-module.');
+        console.info('');
+        console.info('No input was defined. Please specify either a file with expressions using --from parameter or a module name using --from-module.');
 
         showHelp();
 
@@ -137,13 +138,13 @@ function getNiceTime(time) {
 
 function showHelp() {
     helpText.forEach(function(helpLine) {
-        out.info(helpLine);
+        console.info(helpLine);
     });
 }
 
 function logAndThrowError(err) {
     process.exitCode = 1;
-    out.error(err);
-    out.log('ERROR.');
+    console.error(err);
+    console.log('ERROR.');
     throw e;
 }

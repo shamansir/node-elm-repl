@@ -34,7 +34,6 @@
   "homepage": "https://github.com/shamansir/node-elm-repl#readme",
   "dependencies": {
     "binary-parser": "git://github.com/shamansir/binary-parser.git#with-loophole",
-    "cli-output": "^1.0.0",
     "minimist": "^1.2.0"
   },
   "devDependencies": {
