@@ -5,7 +5,7 @@ const helpText = require('./cli-help.js');
 
 const argv = require('minimist')(process.argv.slice(2));
 
-if (!argv.from && !argv.fromModule) {
+if (!argv.from && !argv['from-module']) {
 
     console.info('');
     console.info('No input was defined. Please specify either a file with expressions using --from parameter or a module name using --from-module.');
@@ -30,12 +30,11 @@ if (!argv.from && !argv.fromModule) {
     const startTime = new Date().getTime();
     let afterReadTime;
 
+    const valuesBelow = argv.hasOwnProperty('values-below') || false;
+    const withValues = argv.hasOwnProperty('with-values') || false;
+    const onlyValues = argv.hasOwnProperty('only-values') || false;
+
     if (argv.from) {
-
-        const valuesBelow = argv.hasOwnProperty('values-below') || false;
-        const withValues = argv.hasOwnProperty('with-values') || false;
-        const onlyValues = argv.hasOwnProperty('only-values') || false;
-
         const readFile = require('fs-readfile-promise');
 
         readFile(argv.from)
@@ -108,14 +107,29 @@ if (!argv.from && !argv.fromModule) {
                 }
             }).catch(logAndThrowError);
 
-    } else if (argv.fromModule) {
+    } else if (argv['from-module']) {
 
-        repl.parseModule(argv.fromModule)
+        repl.parseModule(argv['from-module'])
             .then(parsedModule => {
-                //if (argv.json) {
-                    //console.prettyJSON(parsedModule);
+                if (argv.json) { // use JSON output
                     console.log(JSON.stringify(parsedModule));
-                //}
+                } else { // output as a raw text
+                    if (argv['module-info']) {
+                        console.log(parsedModule.package.user + '/' +
+                                    parsedModule.package.name,
+                                    'v' + (argv['package-ver'] || '1.0.0'));
+                        console.log('Elm v' + parsedModule.version.major +
+                            '.' + parsedModule.version.minor +
+                            '.' + parsedModule.version.patch);
+                        console.log(parsedModule.imports.map(_import =>
+                            _import.path ? _import.path.join('.') : _import.name
+                        ).join(';'));
+                        console.log(parsedModule.exports.map(_export => _export.name).join(';'));
+                    }
+                    console.log(parsedModule.types.map(type =>
+                        type.name + ' : ' + Repl.stringify(type.value)
+                    ).join('\n'));
+                }
             })
             .catch(logAndThrowError);
 
