@@ -100,6 +100,7 @@ Will give you:
     "imports": [ ... <a-list-of-imports> ... ],
     "exports": [ ... <a-list-of-exports> ... ],
     "types": [ ... <a-list-of-types> ... ]
+    ...
 }
 ```
 

@@ -36,7 +36,7 @@ module.exports = [
     '--show-time — show how much time it took to convert everyting',
     '--with-values — include values into the output (takes more time to extract them)',
     '--only-values — report and extract only values, not the types (overrides --with-values)',
-    '--values-below — has sense only when --with-values was used: instead of putting types and values in lines like TYPE<TAB>VALUE, put a list of values line-by-line below the list of types: could be useful for parsing',
+    '--values-below — has sense only when --with-values was used: instead of putting types and values in lines like TYPE<TAB>VALUE, put a list of values line-by-line below the list of types: could be useful for parsing (has no effect with JSON output)',
     '--temp-file-name — specify file name of the generated Elm code',
     // '--json — do not stringify the result, output to the JSON',
     // console.log('--ksy — use Kaitai parser instead of binary one');
