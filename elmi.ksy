@@ -6,18 +6,18 @@ meta:
 seq:
   - id: package_info
     type: package_info
-  - id: imports_count
-    type: u8
-  - id: imports
-    type: import
-    repeat: expr
-    repeat-expr: imports_count
   - id: exports_count
     type: u8
   - id: exports
     type: export
     repeat: expr
     repeat-expr: exports_count
+  - id: imports_count
+    type: u8
+  - id: imports
+    type: import
+    repeat: expr
+    repeat-expr: imports_count
   - id: definitions_count
     type: u8
   - id: definitions
@@ -59,21 +59,21 @@ types:
         type: str_with_len
       - id: package_name
         type: str_with_len
-  import:
-    seq:
-      - id: import_type
-        type: u1
-      - id: import_name
-        type: str_with_len
-      - id: import_path
-        if: import_type == 2
-        type: path
-      - id: import_reserved
-        if: import_type == 2
-        type: u1
   export:
     seq:
+      - id: export_type
+        type: u1
+      - id: export_name
+        type: str_with_len
       - id: export_path
+        if: export_type == 2
+        type: path
+      - id: export_reserved
+        if: export_type == 2
+        type: u1
+  import:
+    seq:
+      - id: import_path
         type: path
   definition:
     seq:
