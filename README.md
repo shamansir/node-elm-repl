@@ -384,9 +384,25 @@ See [Types section](./Types.md) to discover the detailed stucture of Imports, Ex
 
 ## How to use it with CLI?
 
-CLI interface is a bit different, to use it, you need to create a file with expressions listed.
+When you install the package through NPM, CLI should be accessible as `node-elm-repl` binary, which is actually an alias for `node ./src/cli.js` (or just `./bin/cli` for UNIX environments), so you may safely replace one with another.
 
-When you install the package through NPM, CLI should be accessible as `node-elm-repl` binary, which is actually an alias for `node ./src/cli.js`, so you may safely replace one with another.
+Run it without any arguments and you'll observe the detailed help.
+
+Use `--from-module` parameter to extract types and values from any Elm module in a form of JSON.
+
+Run `./bin/cli --from-module <your-module-name>`, let's try it with a test sample from this repository:
+
+```
+> ./bin/cli --from-module Anagram --work-dir ./test/samples/elm'
+:: : a -> List a -> List a
+detect : String -> List String -> List String
+isAnagram : String -> String -> Maybe.Maybe String
+sortChars : String -> String
+> ./bin/cli --from-module Anagram --json --work-dir ./test/samples/elm
+{ "package": ..., imports": ..., "exports": ..., "types": ..., "values": ... }
+```
+
+Another way to use it, is to create a file with expressions listed, the ones you need to be evaluated.
 
 If you need imports, list them in the first line starting with `;` and splitting them with `;`.
 
@@ -415,19 +431,27 @@ number
 number -> number -> number
 ```
 
-Repl-CLI accepts several options:
+Or, if you want to get JSON in response, just add `--json` flag.
 
-* `--work-dir` — specify working directory for execution, for example where the `.elm` files you use are located, or where you have your `elm-package.json`;
+Repl-CLI accepts different options:
+
+General ones:
+
+* `--from` — specify a file name to extract all the types, imports and exports from it (intended to be used as a replacement for `--from-module`);
+* `--from-module` — specify a module name to extract all the types, imports and exports from it (intended to be used as a replacement for `--from`);
+* `--json` — do not stringify the result, but output to JSON;
+* `--work-dir` — specify working directory for execution, for example where the `.elm` files you use are located, or where you have your `elm-stuff` and `elm-package.json`;
 * `--elm-ver` — the exact elm-version you use (default: `'0.18.0'`);
-* `--user` — your username specified in `elm-package.json` (default: `'user'`);
-* `--package` — your project specified in `elm-package.json` (default: `'project'`);
+* `--user` — your username specified in `elm-package.json` (default: `'user'` or the one specified in `elm-package.json`);
+* `--package` — your project specified in `elm-package.json` (default: `'project'` or the one specified in `elm-package.json`);
 * `--package-ver` — the version of your project from `elm-package.json` (default: `'1.0.0'`);
 * `--keep-temp-file` — for debugging purposes, if specified, then do not delete `.elm` files after compilation;
 * `--keep-elmi-file` — for debugging purposes, if specified, then do not delete `.elmi` files after compilation;
-* `--show-time` — additionally report the time was spent to extract types;
-* `--with-values` — include values into the output (takes more time to extract them);
-* `--only-values` — report and extract only values, not the types (overrides `--with-values`);
-* `--values-below` — has sense only when `--with-values` was used: instead of putting types and values in lines like `TYPE<TAB>VALUE`, put a list of values line-by-line below the list of types: could be useful for parsing;
+* `--show-time` — additionally report the time was spent to extract types, works with `--from` only;
+* `--module-info` — show module information: imports, exports, when called with `--from-module` without `--json` flag,
+* `--with-values` — include values into the output (takes more time to extract them), works with `--from` only;
+* `--only-values` — report and extract only values, not the types (overrides `--with-values`), works with `--from` only;
+* `--values-below` — has sense only when `--with-values` was used: instead of putting types and values in lines like `TYPE<TAB>VALUE`, put a list of values line-by-line below the list of types: could be useful for parsing, works with `--from` only;
 
 ## How to contribute?
 
