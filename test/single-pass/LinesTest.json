@@ -1,0 +1,9 @@
+{
+    "lines": [
+        "import List",
+        "",
+        "myFun : number -> number -> List number",
+        "myFun a b = ",
+        "   [a] ++ [b]"
+    ]
+}

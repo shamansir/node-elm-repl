@@ -19,6 +19,7 @@ function Repl(options) {
 Repl.Parser = elmiParser;
 
 let lastIteration = 0;
+
 Repl.prototype.getTypes = function(imports, expressions) {
     const varsMap = mapToVariables(expressions);
     const varsNames = Object.keys(varsMap);
@@ -233,6 +234,40 @@ Repl.prototype.parseModule = function(moduleName) {
     return new Promise(
         function(resolve, reject) {
             if (workDir) process.chdir(workDir);
+            cp.execSync('elm-make --yes ' + modulePath, { cwd: process.cwd() });
+            resolve(modulePath);
+        }
+    ).then(function() {
+        const buffer = fs.readFileSync(moduleElmiPath);
+        return elmiParser.parse(buffer);
+    }).then(function(parsedIface) {
+        if (!keepElmiFile) fs.unlinkSync(moduleElmiPath);
+        if (workDir) process.chdir(initialDir);
+        return parsedIface;
+    }).catch(function(e) {
+        if (workDir) process.chdir(initialDir);
+        throw e;
+    });
+}
+
+Repl.prototype.parseLines = function(userLines, moduleName) {
+    const elmVer = this.options.elmVer || DEFAULT_ELM_VER;
+    const workDir = this.options.workDir;
+
+    //const keepTempFile = this.options.keepTempFile || false;
+    const keepElmiFile = this.options.keepElmiFile || false;
+
+    const initialDir = process.cwd();
+
+    const moduleElmiPath = getModuleElmiPath(this.options, moduleName);
+    const modulePath = getModuleFilePath(this.options, moduleName);
+
+    return new Promise(
+        function(resolve, reject) {
+            const fileContent = [ 'module ' + moduleName + ' exposing (..)' ]
+                .concat(['']).concat(userLines);
+            if (workDir) process.chdir(workDir);
+            fs.writeFileSync(modulePath, fileContent.join('\n') + '\n');
             cp.execSync('elm-make --yes ' + modulePath, { cwd: process.cwd() });
             resolve(modulePath);
         }

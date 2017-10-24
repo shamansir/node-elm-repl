@@ -146,7 +146,9 @@ describe('Repl', function() {
     });
 
     it('it is possible to specify just the name of the module to parse', function() {
-        const expectedResult = JSON.parse(fs.readFileSync('./test/single-pass/ComplexTypesParseResult.json', 'utf8'));
+        const expectedResult = JSON.parse(
+            fs.readFileSync('./test/single-pass/ComplexTypesParseResult.json', 'utf8')
+        );
         const parsePromise =
             new Repl({ workDir: './test/single-pass',
                        elmVer: '0.18.0' })
@@ -155,11 +157,27 @@ describe('Repl', function() {
     });
 
     it('it is possible to specify a path to the module to parse', function() {
-        const expectedResult = JSON.parse(fs.readFileSync('./test/single-pass/InnerModule/InnerTypesParseResult.json', 'utf8'));
+        const expectedResult = JSON.parse(
+            fs.readFileSync('./test/single-pass/InnerModule/InnerTypesParseResult.json', 'utf8')
+        );
         const parsePromise =
             new Repl({ workDir: './test/single-pass',
                        elmVer: '0.18.0' })
                 .parseModule('InnerModule.InnerTypes');
+        return parsePromise.should.eventually.deep.equal(expectedResult);
+    });
+
+    it('is is possible to pass some lines to create a module from them and parse', function() {
+        const userLines = JSON.parse(
+            fs.readFileSync('./test/single-pass/LinesTest.json', 'utf8')
+        ).lines;
+        const expectedResult = JSON.parse(
+            fs.readFileSync('./test/single-pass/LinesTestParseResult.json', 'utf8')
+        );
+        const parsePromise =
+            new Repl({ workDir: './test/single-pass',
+                       elmVer: '0.18.0' })
+                .parseLines(userLines, 'Foobar');
         return parsePromise.should.eventually.deep.equal(expectedResult);
     });
 

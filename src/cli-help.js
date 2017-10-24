@@ -13,7 +13,7 @@ module.exports = [
     'isAnagram : String -> String -> Maybe.Maybe String',
     'sortChars : String -> String',
     '> ./bin/cli --from-module Anagram --json --work-dir ./test/samples/elm',
-    '{ "package": ..., imports": ..., "exports": ..., "types": ..., "values": ... }',
+    '{ "package": ..., imports": ..., "exports": ..., "types": ..., ... }',
     '',
     '',
     'Alternative way is to prepare a file and put the Elm expressions there, line by line',

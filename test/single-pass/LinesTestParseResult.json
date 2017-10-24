@@ -1,0 +1,106 @@
+{
+    "exports": [
+      {
+        "name": "myFun",
+        "type": "single"
+      }
+    ],
+    "imports": [
+      { "path": [ "Basics" ] },
+      { "path": [ "Debug" ] },
+      { "path": [ "List" ] },
+      { "path": [ "Maybe" ] },
+      { "path": [ "Platform" ] },
+      { "path": [ "Platform", "Cmd" ] },
+      { "path": [ "Platform", "Sub" ] },
+      { "path": [ "Result" ] },
+      { "path": [ "String" ] },
+      { "path": [ "Tuple" ] }
+    ],
+    "package": {
+      "name": "project",
+      "user": "user"
+    },
+    "types": [
+      {
+        "name": "::",
+        "value": {
+          "left": {
+            "name": "a",
+            "type": "var"
+          },
+          "right": {
+            "left": {
+              "object": [
+                {
+                  "name": "a",
+                  "type": "var"
+                }
+              ],
+              "subject": {
+                "def": {
+                  "name": "List"
+                },
+                "type": "type"
+              },
+              "type": "app"
+            },
+            "right": {
+              "object": [
+                {
+                  "name": "a",
+                  "type": "var"
+                }
+              ],
+              "subject": {
+                "def": {
+                  "name": "List"
+                },
+                "type": "type"
+              },
+              "type": "app"
+            },
+            "type": "lambda"
+          },
+          "type": "lambda"
+        }
+      },
+      {
+        "name": "myFun",
+        "value": {
+          "left": {
+            "name": "number",
+            "type": "var"
+          },
+          "right": {
+            "left": {
+              "name": "number",
+              "type": "var"
+            },
+            "right": {
+              "object": [
+                {
+                  "name": "number",
+                  "type": "var"
+                }
+              ],
+              "subject": {
+                "def": {
+                  "name": "List"
+                },
+                "type": "type"
+              },
+              "type": "app"
+            },
+            "type": "lambda"
+          },
+          "type": "lambda"
+        }
+      }
+    ],
+    "version": {
+      "major": 0,
+      "minor": 18,
+      "patch": 0
+    }
+}

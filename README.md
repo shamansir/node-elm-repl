@@ -376,9 +376,36 @@ Will output:
     },
     "imports": [ ... <a-list-of-imports> ... ],
     "exports": [ ... <a-list-of-exports> ... ],
-    "types": [ ... <a-list-of-types> ... ]
+    "types": [ ... <a-list-of-types> ... ],
+    ...
 }
 ```
+
+`Repl.parseLines` does almost the same as `Repl.parseModule`, but creates the module file itself, filling it with the lines you provide and naming it with the name you provide.
+
+It could be used like that:
+
+```javascript
+var Repl = require('node-elm-repl');
+
+new Repl({
+    // the options may vary depending on environment
+    elmVer: '0.18.0',
+    workDir: './src'
+})
+.parseLines([
+    "import List",
+    "",
+    "myFun : number -> number -> List number",
+    "myFun a b = ",
+    "   [a] ++ [b]"
+], 'MyModule')
+.then(function(parsedModule) {
+    console.dir(parsedModule, { depth: null });
+});
+```
+
+The resulting object will have the same structure as the result for `Repl.parseModule` above.
 
 See [Types section](./Types.md) to discover the detailed stucture of Imports, Exports and Types.
 
