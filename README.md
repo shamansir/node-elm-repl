@@ -205,6 +205,8 @@ You may easily install the project using:
 npm install node-elm-repl
 ```
 
+#### `Repl.getTypes`
+
 Then, in your JS file, and in the same directory where you have `elm-package.json` or where you store your `.elm` modules, if you have any, just do something like:
 
 ```javascript
@@ -248,6 +250,8 @@ number -> number -> number
 
 *N.B.:* Here you explicitly convert the received types descriptors to their `string`-type text-friendly versions—but before this conversion took place, they actually were very detailed and descriptive JavaScript objects. So, if you need more than just a boring string representation of a type, you may follow to the [Types API documentation](./Types.md), to know what exactly to expect from object representation of the type definition.
 
+#### REPL Options
+
 `Repl` constructor accepts several options:
 
 * `workDir` — specify working directory for execution, for example where the `.elm` files you use are located, or where you have your `elm-package.json`;
@@ -259,6 +263,8 @@ number -> number -> number
 * `keepElmiFile` — for debugging purposes, if _truthy_, then do not delete `.elmi` files after compilation;
 
 It's not the only method of `Repl` class:
+
+#### `Repl.getValues`
 
 `Repl.getValues` returns the array of values in the same manner, so:
 
@@ -299,6 +305,8 @@ Nothing
 50
 <function>
 ```
+
+#### `Repl.getTypesAndValues`
 
 `Repl.getTypesAndValues` returns both types and values for the cases when you need both. In this moment the Node-REPL becomes as powerful as it's father and, can't resist to mention it again, at least three times faster.
 
@@ -345,6 +353,8 @@ TYPE Int VALUE 50
 TYPE number -> number -> number VALUE <function>
 ```
 
+#### `Repl.parseModule`
+
 `Repl.parseModule` allows you to parse the whole Elm Module and extract not only the types, but also imports and exports. Just point it to your directory with sources, and if you need to parse some nested module, put a dot between the names:
 
 ```javascript
@@ -381,6 +391,8 @@ Will output:
 }
 ```
 
+#### `Repl.parseLines`
+
 `Repl.parseLines` does almost the same as `Repl.parseModule`, but creates the module file itself, filling it with the lines you provide and naming it with the name you provide.
 
 It could be used like that:
@@ -406,6 +418,46 @@ new Repl({
 ```
 
 The resulting object will have the same structure as the result for `Repl.parseModule` above.
+
+#### `Repl.stringify`
+
+`Repl.stringify` is a static method exposed to help you get a friendly version of a [Type Definition Tree Structure](./Types.md). You may pass it the nested structure you received from any method described above, i.e.:
+
+```javascript
+new Repl(...).getTypes(...).then(function(types) {
+    console.log(Repl.stringify(types[0]));
+});
+// > "number -> number -> List number"
+new Repl(...).parseLines(...).then(function(parsedModule) {
+    console.log(Repl.stringify(parsedModule.types[0]));
+});
+// > "number -> number -> List number"
+```
+
+#### `Repl.stringifyAll`
+
+`Repl.stringifyAll` is a static method which is actually the shortcut for [`typesArray.map(Repl.stringify)`](#repl-stringify):
+
+```javascript
+new Repl(...).getTypes(...).then(function(types) {
+    console.log(Repl.stringifyAll(types));
+});
+// > [ "number -> number -> List number",
+//     "...",
+//     "...",
+//     ...
+//   ]
+new Repl(...).parseLines(...).then(function(parsedModule) {
+    console.log(Repl.stringifyAll(parsedModule.types));
+});
+// > [ "number -> number -> List number",
+//     "...",
+//     "...",
+//     ...
+//   ]
+```
+
+#### Types
 
 See [Types section](./Types.md) to discover the detailed stucture of Imports, Exports and Types.
 
