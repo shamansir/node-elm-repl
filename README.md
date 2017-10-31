@@ -108,7 +108,7 @@ Will give you:
 
 Use the [Types](./Types.md) documentation to help you investigate the inner structure of such constructs.
 
-And, the JS grammar for the `.elmi` files [is just lying here](https://github.com/shamansir/node-elm-repl/blob/master/src/parser.js), in case you need it separately. It is accessible from JS with the `Repl.Parser.parse(elmiFileBuffer)`. And [the XML version](https://github.com/shamansir/node-elm-repl/blob/master/elmi.grammar) for [Synalize it!](https://www.synalysis.net/).
+And, the JS grammar for the `.elmi` files [is just lying here](https://github.com/shamansir/node-elm-repl/blob/master/src/parser.js), in case you need it separately. It is accessible from JS with the `Repl.Parser.parse(elmiFileBuffer)`. And [the Kaitai Struct Format](http://kaitai.io/) is defined for `.elmi` files [as well](https://github.com/shamansir/node-elm-repl/blob/master/elmi.ksy). And [the XML version](https://github.com/shamansir/node-elm-repl/blob/master/elmi.grammar) for [Synalize it!](https://www.synalysis.net/) just for the sake of joy.
 
 # Installation
 
@@ -429,26 +429,63 @@ new Repl(...).getTypes(...).then(function(types) {
 });
 // > "number -> number -> List number"
 new Repl(...).parseLines(...).then(function(parsedModule) {
-    console.log(Repl.stringify(parsedModule.types[0]));
+    console.log(Repl.stringify(parsedModule.types[0].value));
 });
 // > "number -> number -> List number"
 ```
+
+It is also possible to specify a custom specification on how to convert Type Structures to strings, so you may even achieve weird stuff like this:
+
+```javascript
+const mySpec = {
+    'var': function(name) { return '<' + name + '>'; },
+    'type': function(name, path) {
+        return path ? '+ ' + path.join('..') + ' // ' + name + ' +'
+                    : '- ' + name;
+    },
+    'aliased': function(name, path) {
+        return path ? '{{ ' + path.join('^^') + ' --- ' + name + ' }}'
+                    : '[[ ' + name + ' ]]';
+    },
+    'lambda': function(left, right) { return right + ' ::: ' + left; },
+    'app': function(subject, object) { return subject + ' ** ' + object.join('_'); },
+    'record': function(fields) {
+        return '& ' + fields.map(function(pair) {
+            return pair.name + ' >< ' + pair.value;
+        }).join(' %% ') + ' &';
+    }
+};
+new Repl(...).getTypes(...).then(function(types) {
+    console.log(Repl.stringifyAll(types, mySpec));
+});
+
+/* Result:
+> Platform ¯\_(ツ)_/¯ Program + ** > Basics ¯\_(ツ)_/¯ Never +_$model$_$msg$ :::
+& model GG $model$ %% update GG $model$ ::: $model$ ::: $msg$ %% view GG {{ Html --- Html }} :::
+$model$ & ::: <  List ** {{ Html --- Html }} ::: {{ Html --- Html }}
+> A..B ¯\_(ツ)_/¯ AAA +
+*/
+```
+
+See [Tests code](https://github.com/shamansir/node-elm-repl/blob/master/test/repl.spec.js#L184) for more examples.
 
 #### `Repl.stringifyAll`
 
 `Repl.stringifyAll` is a static method which is actually the shortcut for [`typesArray.map(Repl.stringify)`](#repl-stringify):
 
 ```javascript
-new Repl(...).getTypes(...).then(function(types) {
-    console.log(Repl.stringifyAll(types));
-});
+new Repl(...).getTypes(...).then(Repl.stringifyAll);
 // > [ "number -> number -> List number",
 //     "...",
 //     "...",
 //     ...
 //   ]
 new Repl(...).parseLines(...).then(function(parsedModule) {
-    console.log(Repl.stringifyAll(parsedModule.types));
+    console.log(
+        Repl.stringifyAll(
+            parsedModule.types.map(function(typeSpec) { return typeSpec.value; })
+        )
+    );
 });
 // > [ "number -> number -> List number",
 //     "...",
@@ -456,6 +493,8 @@ new Repl(...).parseLines(...).then(function(parsedModule) {
 //     ...
 //   ]
 ```
+
+`Repl.stringifyAll` accepts custom conversion specifications in the same manner as [`Repl.stringify`](#repl-stringify) does.
 
 #### Types
 
