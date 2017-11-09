@@ -250,9 +250,11 @@ Repl.prototype.parseModule = function(moduleName) {
     });
 }
 
-Repl.prototype.parseLines = function(userLines, moduleName) {
+Repl.prototype.parseModuleText = function(userText, maybeModuleName) {
     const elmVer = this.options.elmVer || DEFAULT_ELM_VER;
     const workDir = this.options.workDir;
+
+    const moduleName = maybeModuleName || extractModuleName(userText);
 
     //const keepTempFile = this.options.keepTempFile || false;
     const keepElmiFile = this.options.keepElmiFile || false;
@@ -264,10 +266,9 @@ Repl.prototype.parseLines = function(userLines, moduleName) {
 
     return new Promise(
         function(resolve, reject) {
-            const fileContent = [ 'module ' + moduleName + ' exposing (..)' ]
-                .concat(['']).concat(userLines);
+            const fileContent = userText;
             if (workDir) process.chdir(workDir);
-            fs.writeFileSync(modulePath, fileContent.join('\n') + '\n');
+            fs.writeFileSync(modulePath, fileContent + '\n');
             cp.execSync('elm-make --yes ' + modulePath, { cwd: process.cwd() });
             resolve(modulePath);
         }
@@ -282,6 +283,13 @@ Repl.prototype.parseLines = function(userLines, moduleName) {
         if (workDir) process.chdir(initialDir);
         throw e;
     });
+}
+
+Repl.prototype.parseLines = function(userLines, moduleName) {
+    return this.parseModuleText(
+        [ 'module ' + moduleName + ' exposing (..)' ].concat(['']).concat(userLines).join('\n'),
+        moduleName
+    );
 }
 
 const VALUES_EXTRACTION_INTRO = [
@@ -380,6 +388,12 @@ function mapToVariables(expressions) {
         varsMap[generateVarName()] = expression;
     });
     return varsMap;
+}
+
+function extractModuleName(moduleText) {
+    const maybeMatch = moduleText.match(/module\s+(\w+)\s+/);
+    if (maybeMatch) return maybeMatch[1];
+    else throw new Error('Unable to extract module name from its text. Either fix the text or provide name as a second parameter');
 }
 
 module.exports = Repl;

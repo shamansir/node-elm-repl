@@ -419,6 +419,36 @@ new Repl({
 
 The resulting object will have the same structure as the result for `Repl.parseModule` above.
 
+#### `Repl.parseModuleText`
+
+`Repl.parseModuleText` does almost the same as `Repl.parseModule`, but takes the module text and creates a file from it:
+
+It could be used like that:
+
+```javascript
+var Repl = require('node-elm-repl');
+
+new Repl({
+    // the options may vary depending on environment
+    elmVer: '0.18.0',
+    workDir: './src'
+})
+.parseModuleText([
+    "module MyModule exposing (..)",
+    "",
+    "import List",
+    "",
+    "myFun : number -> number -> List number",
+    "myFun a b = ",
+    "   [a] ++ [b]"
+].join('\n'))
+.then(function(parsedModule) {
+    console.dir(parsedModule, { depth: null });
+});
+```
+
+The resulting object will have the same structure as the result for `Repl.parseModule` above.
+
 #### `Repl.stringify`
 
 `Repl.stringify` is a static method exposed to help you get a friendly version of a [Type Definition Tree Structure](./Types.md). You may pass it the nested structure you received from any method described above, i.e.:

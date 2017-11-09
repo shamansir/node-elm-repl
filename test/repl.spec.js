@@ -181,6 +181,21 @@ describe('Repl', function() {
         return parsePromise.should.eventually.deep.equal(expectedResult);
     });
 
+    it('is is possible to pass module text to create a module from it and parse', function() {
+        const userLines = JSON.parse(
+            fs.readFileSync('./test/single-pass/LinesTest.json', 'utf8')
+        ).lines;
+        const userText = [ 'module Foobar exposing (..)', '' ].concat(userLines).join('\n')
+        const expectedResult = JSON.parse(
+            fs.readFileSync('./test/single-pass/LinesTestParseResult.json', 'utf8')
+        );
+        const parsePromise =
+            new Repl({ workDir: './test/single-pass',
+                       elmVer: '0.18.0' })
+                .parseModuleText(userText);
+        return parsePromise.should.eventually.deep.equal(expectedResult);
+    });
+
     it('it is possible to format a specific type in a custom way', function() {
         const customStringifier = {
             'var': function(name) { return '<' + name + '>'; },
