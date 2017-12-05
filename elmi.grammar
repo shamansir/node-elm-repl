@@ -159,11 +159,7 @@
             <structure name="Fields" id="119" repeat="id:118" repeatmin="0" repeatmax="-1">
                 <structref name="RecordCell" id="120" structure="id:83"/>
             </structure>
-            <number name="Reserved" mustmatch="yes" id="122" fillcolor="942092" type="integer" length="1">
-                <fixedvalues>
-                    <fixedvalue name="passed" value="0"/>
-                </fixedvalues>
-            </number>
+            <number name="Reserved" id="122" fillcolor="942092" type="integer" length="1"/>
         </structure>
         <structure name="AliasedNode" id="124" extends="id:89">
             <number name="NodeType" mustmatch="yes" id="125" type="integer">
