@@ -104,7 +104,10 @@
                     },
                     "type": "app"
                 },
-                "msgvar": "a",
+                "msgvar": {
+                    "name": "a",
+                    "type": "var"
+                },
                 "type": "aliased"
             },
             "right": {
@@ -137,7 +140,10 @@
                             },
                             "type": "app"
                         },
-                        "msgvar": "a",
+                        "msgvar": {
+                            "name": "a",
+                            "type": "var"
+                        },
                         "type": "aliased"
                     }],
                     "subject": {
@@ -211,7 +217,10 @@
                                         },
                                         "type": "app"
                                     },
-                                    "msgvar": "msg",
+                                    "msgvar": {
+                                        "name": "msg",
+                                        "type": "var"
+                                    },
                                     "type": "aliased"
                                 },
                                 "type": "lambda"

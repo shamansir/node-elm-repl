@@ -143,6 +143,7 @@ var expectation = {
                 ),
                 b.msgAliased(
                     b.complexType('elm-lang', 'html', 'Html', 'Html'),
+                    b.var('msg'),
                     b.app(
                         b.complexType('elm-lang', 'virtual-dom', 'VirtualDom', 'Node'),
                         [ b.var('msg') ]
@@ -162,6 +163,7 @@ var expectation = {
                 ),
                 b.msgAliased(
                     b.complexType('elm-lang', 'html', 'Html', 'Html'),
+                    b.var('msg'),
                     b.app(
                         b.complexType('elm-lang', 'virtual-dom', 'VirtualDom', 'Node'),
                         [ b.var('msg') ]

@@ -75,7 +75,7 @@ So, there is always a `type` field which defines the... type of this cell, which
         * `[package]: string`: if it's an user type or an external type, then it is a name of a package/project as defined in its `elm-package.json`;
         * `[path]: [string]`: if it's an user type or an external type, then it follows the list of modules and type names inside, defining the way to reach this particular type;
     * `list: [ TYPE ]`: a list of types associated with this alias;
-    * `[msgvar]: string`: See [Special Cases / Message Variables](#message-variables);
+    * `[msgvar]: TYPE`: See [Special Cases / Message Variables](#message-variables);
     * `[msgnode]: TYPE`:  See [Special Cases / Message Variables](#message-variables);
 * `record`: just a record as you know it, but with few important traits, see [Special Cases / Records](#records):
     * `fields: [ FIELD ]`: an array of record fields, name and type pairs:
@@ -253,4 +253,4 @@ It is exactly the way it was stored in the interface file, just converted into J
 
 #### Message vars
 
-TODO
+Message variable is the special case of the aliased type. Along with the alias information, it has message object and message variable attached and no listing of the aliased type. I am yet to discover if this difference was made with a purpose or I failed in finding the proper generalizing pattern,... but currently the case is that way: your `msg` aliases are encoded differently and if it's a lowercase `msg` — then `msgvar` is a `msg` variable and `msgnode` is an alias of `msg` variable to `VirtualDom.Node`, and if it is your custom message type (like `type MyMsg = This | That String | Something Foo`), then `msgvar` is your custom message type (i.e. `MyMsg`) and `msgnode` is still `VirtualDom.Node`.

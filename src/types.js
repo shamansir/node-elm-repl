@@ -19,7 +19,7 @@ function stringify(t) {
         const name = t.def.path
             ? (t.def.path[t.def.path.length - 1] + '.' + t.def.name)
             : t.def.name;
-        return t.msgvar ? (name + ' ' + t.msgvar) : name;
+        return t.msgvar ? (name + ' ' + stringify(t.msgvar)) : name;
     }
     if (t.type === 'lambda') {
         return ((t.left.type !== 'lambda') ? stringify(t.left) : '(' + stringify(t.left) + ')')
@@ -48,11 +48,13 @@ function stringifyWithSpec(t, spec) {
     if (t.type === 'var') { return spec['var'](t.name); }
     if (t.type === 'type') {
         return spec['type'](t.def.name, t.def.path,
-            t.msgvar, t.msgnode ? stringifyWithSpec(t.msgnode, spec) : null);
+            t.msgvar ? stringifyWithSpec(t.msgvar, spec) : null,
+            t.msgnode ? stringifyWithSpec(t.msgnode, spec) : null);
     }
     if (t.type === 'aliased') {
         return spec['aliased'](t.def.name, t.def.path,
-            t.msgvar, t.msgnode ? stringifyWithSpec(t.msgnode, spec) : null);
+            t.msgvar ? stringifyWithSpec(t.msgvar, spec) : null,
+            t.msgnode ? stringifyWithSpec(t.msgnode, spec) : null);
     }
     if (t.type === 'lambda') {
         return spec['lambda'](

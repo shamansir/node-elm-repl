@@ -24,7 +24,8 @@ var samples = [
     'Triangle',
     'Records',
     'Ports',
-    'Issue07'
+    'Issue07',
+    'Issue16'
 ];
 
 describe('Parser', function() {

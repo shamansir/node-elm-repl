@@ -101,12 +101,12 @@ module.exports = {
         };
     },
 
-    msgAliased: function(type, nodeType) {
+    msgAliased: function(type, msgVar, nodeType) {
         return {
             type: 'aliased',
             def: type.def,
             list: [],
-            msgvar: 'msg',
+            msgvar: msgVar,
             msgnode: nodeType
         };
     }

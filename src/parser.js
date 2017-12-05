@@ -220,9 +220,8 @@ var aliasedTypeParser = new Parser()
                      }),
             1: Parser.start()
                      .skip(8+8+3) // length of msgMarker
-                     .skip(1) // variable type marker
-                     .nest('msgvar', { type: variableParser,
-                                       formatter: variableFormatter })
+                     .nest('msgvar', { type: 'node' /*,
+                                        formatter: singleNodeFormatter*/ })
                      .skip(1)
                      .nest('msgnode', {
                          type: 'node'/*,
@@ -310,7 +309,7 @@ function singleNodeFormatter(n) {
             type: 'aliased',
             def: cell.aliased.type,
             list: cell.aliased.list ? cell.aliased.list.map(singleNodeFormatter) : [],
-            msgvar: cell.aliased.msgvar || null,
+            msgvar: cell.aliased.msgvar ? singleNodeFormatter(cell.aliased.msgvar) : null,
             msgnode: cell.aliased.msgnode ? singleNodeFormatter(cell.aliased.msgnode) : null,
         };
     }

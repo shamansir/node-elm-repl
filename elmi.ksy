@@ -156,7 +156,7 @@ types:
           - id: message_reserved_2
             contents: [ 'msg' ]
           - id: message_variable
-            type: variable_node
+            type: definition_node
           - id: message_reserved
             contents: [ 0x01 ]
             # type: u1
@@ -212,6 +212,12 @@ types:
         type: str_with_len
       - id: union_item_reserved
         type: u8
+      - id: union_item_attachment_count
+        type: u8
+      - id: union_item_attachments
+        repeat: expr
+        repeat-expr: union_item_attachment_count
+        type: definition_node
   alias:
     seq:
       - id: alias_name

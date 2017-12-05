@@ -26,7 +26,8 @@ const expectations = [
     'Records',
     'ImportCoreTypes',
     'ImportTypesFromInstalledPackage',
-    'ImportUserTypes'
+    'ImportUserTypes',
+    'Issues'
 ];
 
 describe('Repl', function() {
