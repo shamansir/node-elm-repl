@@ -63,7 +63,8 @@ var expectation = {
                 b.type('Float')
             )
         }
-    ]
+    ],
+    unions: []
 };
 
 module.exports = expectation;

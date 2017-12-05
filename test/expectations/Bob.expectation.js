@@ -76,6 +76,12 @@ var expectation = {
                 b.type('String')
             )
         }
+    ],
+    unions: [
+        {
+            name: 'Phrase',
+            items: []
+        }
     ]
 };
 

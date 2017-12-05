@@ -232,18 +232,18 @@
         <structure name="Union" id="171" encoding="ISO_8859-1:1987" endian="big" signed="no" valueexpression="UnionName">
             <number name="UnionNameLen" id="172" type="integer" length="8"/>
             <string name="UnionName" id="173" fillcolor="FFFCCB" type="fixed-length" length="UnionNameLen"/>
-            <number name="Reserved" mustmatch="yes" id="174" fillcolor="942092" type="integer" length="8">
-                <fixedvalues>
-                    <fixedvalue name="passed" value="0"/>
-                </fixedvalues>
-            </number>
-            <number name="ItemsCount" id="175" fillcolor="BEFFE1" type="integer" length="8"/>
-            <structure name="Items" id="176" repeat="id:175" repeatmin="0" repeatmax="-1" valueexpression="ItemName">
-                <number name="ItemNameLen" id="177" type="integer" length="8"/>
-                <string name="ItemName" id="178" fillcolor="FFFCCB" type="fixed-length" length="ItemNameLen"/>
-                <number name="AttachmentCount" id="179" type="integer" length="8"/>
-                <structure name="Attachments" id="180" length="0" repeat="id:179" repeatmax="-1">
-                    <structref name="Node" id="181" structure="id:86"/>
+            <number name="VarCount" id="233" type="integer" length="8"/>
+            <structure name="Vars" id="234" length="0" repeat="id:233" repeatmin="0" repeatmax="-1">
+                <number name="NameLen" id="236" type="integer" length="8"/>
+                <string name="VarName" id="237" type="fixed-length" length="NameLen"/>
+            </structure>
+            <number name="OptionsCount" id="240" type="integer" length="8"/>
+            <structure name="Options" id="238" repeat="id:240" repeatmin="0" repeatmax="-1">
+                <number name="OptionNameLength" id="241" type="integer" length="8"/>
+                <string name="OptionName" id="242" type="fixed-length" length="OptionNameLength"/>
+                <number name="AttachmentsCount" id="243" type="integer" length="8"/>
+                <structure name="Attachments" id="244" repeat="id:243" repeatmin="0" repeatmax="-1">
+                    <structref name="Node" id="246" structure="id:86"/>
                 </structure>
             </structure>
         </structure>

@@ -62,6 +62,12 @@ var expectation = {
                 )
             )
         }
+    ],
+    unions: [
+        {
+            name: 'Msg',
+            items: []
+        }
     ]
 };
 

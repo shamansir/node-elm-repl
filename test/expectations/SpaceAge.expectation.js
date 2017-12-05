@@ -91,6 +91,12 @@ var expectation = {
             name: 'earthPeriod',
             value: b.type('Float')
         }
+    ],
+    unions: [
+        {
+            name: 'Planet',
+            items: []
+        }
     ]
 };
 

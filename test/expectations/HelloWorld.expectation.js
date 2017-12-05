@@ -42,7 +42,8 @@ var expectation = {
                 b.type('String')
             )
         }
-    ]
+    ],
+    unions: []
 };
 
 module.exports = expectation;

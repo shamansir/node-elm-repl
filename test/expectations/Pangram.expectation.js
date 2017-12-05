@@ -68,7 +68,8 @@ var expectation = {
                 b.type('Int')
             )
         }
-    ]
+    ],
+    unions: []
 };
 
 module.exports = expectation;

@@ -123,6 +123,12 @@ var expectation = {
             name: 'version',
             value: b.type('Int')
         }
+    ],
+    unions: [
+        {
+            name: 'Triangle',
+            items: []
+        }
     ]
 };
 

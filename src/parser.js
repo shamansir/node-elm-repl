@@ -339,6 +339,47 @@ function typesFormatter(v) {
     });
 }
 
+var unionItemParser = new Parser()
+    .skip(4).int32('nameLen')
+    .string('name', { length: 'nameLen' })
+    .skip(4).int32('attachmentsCount')
+    .array('attachments', {
+        type: singleNodeParser,
+        length: 'attachmentsCount'
+    })
+
+var unionParser = new Parser()
+    .skip(4).int32('nameLen')
+    .string('name', { length: 'nameLen' })
+    .skip(1)
+    .skip(4).int32('itemsCount')
+    .array('items', {
+        type: unionItemParser,
+        length: 'itemsCount'
+    });
+
+
+var unionsParser = new Parser()
+    .skip(4).int32('count')
+    .array('values', {
+        type: unionParser,
+        length: 'count'
+    });
+
+function unionsFormatter(v) {
+    return v.values.map(function(uv) {
+        return {
+            name: uv.name,
+            items: uv.items.map(function(ui) {
+                return {
+                    name: ui.name,
+                    attachments: ui.attachments
+                };
+            })
+        };
+    });
+}
+
 // main
 
 var elmiParser = new Parser()
@@ -350,6 +391,8 @@ var elmiParser = new Parser()
         .nest('imports', { type: importsParser,
                            formatter: importsFormatter })
         .nest('types',   { type: typesParser,
-                           formatter: typesFormatter });
+                           formatter: typesFormatter })
+        .nest('unions',  { type: unionsParser,
+                           formatter: unionsFormatter });
 
 module.exports = elmiParser;

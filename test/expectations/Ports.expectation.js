@@ -59,7 +59,8 @@ var expectation = {
                 )
             )
         }
-    ]
+    ],
+    unions: []
 };
 
 module.exports = expectation;

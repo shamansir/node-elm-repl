@@ -63,7 +63,8 @@ var expectation = {
                 b.type('Bool')
             )
         }
-    ]
+    ],
+    unions: []
 };
 
 module.exports = expectation;

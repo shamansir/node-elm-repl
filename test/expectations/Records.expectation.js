@@ -181,7 +181,8 @@ var expectation = {
                 b.complexType('user', 'project', 'Records', 'Recursive')
             )
         }
-    ]
+    ],
+    unions: []
 };
 
 module.exports = expectation;
