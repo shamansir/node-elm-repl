@@ -37,6 +37,7 @@ Repl.prototype.getTypes = function(imports, expressions) {
 
     const tempFilePath = getTempFilePath(this.options, currentIteration);
     const tempElmiPath = getTempElmiPath(this.options, currentIteration);
+    const tempJsPath = getGeneratedJsPath(this.options, 'NodeRepl' + currentIteration);
 
     return new Promise(
         function(resolve, reject) {
@@ -51,11 +52,15 @@ Repl.prototype.getTypes = function(imports, expressions) {
             );
             if (workDir) process.chdir(workDir);
             fs.writeFileSync(tempFilePath, fileContent.join('\n') + '\n');
-            cp.execSync('elm-make --yes ' + tempFilePath, { cwd: process.cwd() });
+            cp.execSync('elm-make --yes ' + tempFilePath + ' --output ' + tempJsPath,
+                { cwd: process.cwd() });
             resolve();
         }.bind(this)
     ).then(function() {
-        if (!keepTempFile) fs.unlinkSync(tempFilePath);
+        if (!keepTempFile) {
+            fs.unlinkSync(tempFilePath);
+            fs.unlinkSync(tempJsPath);
+        }
         const buffer = fs.readFileSync(tempElmiPath);
         return elmiParser.parse(buffer);
     }).then(function(parsedIface) {
@@ -223,18 +228,20 @@ Repl.prototype.parseModule = function(moduleName) {
     const elmVer = this.options.elmVer || DEFAULT_ELM_VER;
     const workDir = this.options.workDir;
 
-    //const keepTempFile = this.options.keepTempFile || false;
+    const keepTempFile = this.options.keepTempFile || false;
     const keepElmiFile = this.options.keepElmiFile || false;
 
     const initialDir = process.cwd();
 
     const moduleElmiPath = getModuleElmiPath(this.options, moduleName);
     const modulePath = getModuleFilePath(this.options, moduleName);
+    const generatedJsPath = getGeneratedJsPath(this.options, moduleName);
 
     return new Promise(
         function(resolve, reject) {
             if (workDir) process.chdir(workDir);
-            cp.execSync('elm-make --yes ' + modulePath, { cwd: process.cwd() });
+            cp.execSync('elm-make --yes ' + modulePath + ' --output ' + generatedJsPath,
+                { cwd: process.cwd() });
             resolve(modulePath);
         }
     ).then(function() {
@@ -242,6 +249,7 @@ Repl.prototype.parseModule = function(moduleName) {
         return elmiParser.parse(buffer);
     }).then(function(parsedIface) {
         if (!keepElmiFile) fs.unlinkSync(moduleElmiPath);
+        if (!keepTempFile) fs.unlinkSync(generatedJsPath);
         if (workDir) process.chdir(initialDir);
         return parsedIface;
     }).catch(function(e) {
@@ -256,20 +264,22 @@ Repl.prototype.parseModuleText = function(userText, maybeModuleName) {
 
     const moduleName = maybeModuleName || extractModuleName(userText);
 
-    //const keepTempFile = this.options.keepTempFile || false;
+    const keepTempFile = this.options.keepTempFile || false;
     const keepElmiFile = this.options.keepElmiFile || false;
 
     const initialDir = process.cwd();
 
     const moduleElmiPath = getModuleElmiPath(this.options, moduleName);
     const modulePath = getModuleFilePath(this.options, moduleName);
+    const generatedJsPath = getGeneratedJsPath(this.options, moduleName);
 
     return new Promise(
         function(resolve, reject) {
             const fileContent = userText;
             if (workDir) process.chdir(workDir);
             fs.writeFileSync(modulePath, fileContent + '\n');
-            cp.execSync('elm-make --yes ' + modulePath, { cwd: process.cwd() });
+            cp.execSync('elm-make --yes ' + modulePath + ' --output ' + generatedJsPath,
+                { cwd: process.cwd() });
             resolve(modulePath);
         }
     ).then(function() {
@@ -277,6 +287,7 @@ Repl.prototype.parseModuleText = function(userText, maybeModuleName) {
         return elmiParser.parse(buffer);
     }).then(function(parsedIface) {
         if (!keepElmiFile) fs.unlinkSync(moduleElmiPath);
+        if (!keepTempFile) fs.unlinkSync(generatedJsPath);
         if (workDir) process.chdir(initialDir);
         return parsedIface;
     }).catch(function(e) {
@@ -375,6 +386,10 @@ function getTempFilePath(options, iterationId) {
 function getJsOutputPath(options, iterationId) {
     if (options.tempFileName) return options.tempFileName + '.js';
     return './f_o_o_b_a_r_test' + iterationId + '.js';
+}
+
+function getGeneratedJsPath(options, moduleName) {
+    return './f_o_o_b_a_r_test_' + moduleName.replace(/\./g, '/') + '.js';
 }
 
 let varsCount = 0;
