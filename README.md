@@ -9,7 +9,7 @@
 * [How to use it with CLI? (Command-Line API)](#how-to-use-it-with-cli)
 * [How to contribute?](#how-to-contribute)
 * [How it was done?](./Story.md) (_a separate page_)
-* [Security notice][#security-notes] **NB!**
+* [Security notice](#security-notice) **NB!**
 
 # Intro
 
@@ -612,9 +612,8 @@ Write a test which fails with `npm run test`, file an issue, fork the repository
 
 **NB!**
 
-Please note that the code of the modules you pass to `parseModule` is later executed using `exec` function of `child_process` and without sanitization, so that compiled Elm code would not be improperly transformed. This could lead to CWE-77 [1] known as arbitrary command injection.
+Please note that the code of the modules you pass to `parseModule` is later executed using `exec` function of `child_process` and without sanitization, so that compiled Elm code would not be improperly transformed. This could lead to [CWE-77](https://cwe.mitre.org/data/definitions/77.html][https://cwe.mitre.org/data/definitions/77.html) known as arbitrary command injection.
+
+See also: [`child_process` `exec_command` callback](https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback)
 
 Thanks for the NodeMedic-FINE project for noticing about the potentional security issue.
-
-[1] [[https://cwe.mitre.org/data/definitions/77.html][https://cwe.mitre.org/data/definitions/77.html]]
-[2] [[https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback][https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback]]
