@@ -9,6 +9,7 @@
 * [How to use it with CLI? (Command-Line API)](#how-to-use-it-with-cli)
 * [How to contribute?](#how-to-contribute)
 * [How it was done?](./Story.md) (_a separate page_)
+* [Security notice][#security-notes] **NB!**
 
 # Intro
 
@@ -355,6 +356,8 @@ TYPE number -> number -> number VALUE <function>
 
 #### `Repl.parseModule`
 
+**NB**: `Repl.parseModule` could be not safe for usage, see [Security Notice](#security-notice) below.
+
 `Repl.parseModule` allows you to parse the whole Elm Module and extract not only the types, but also imports and exports. Just point it to your directory with sources, and if you need to parse some nested module, put a dot between the names:
 
 ```javascript
@@ -604,3 +607,14 @@ General ones:
 ## How to contribute?
 
 Write a test which fails with `npm run test`, file an issue, fork the repository, make a pull request — just any of that or all together will help.
+
+# Security notice
+
+**NB!**
+
+Please note that the code of the modules you pass to `parseModule` is later executed using `exec` function of `child_process` and without sanitization, so that compiled Elm code would not be improperly transformed. This could lead to CWE-77 [1] known as arbitrary command injection.
+
+Thanks for the NodeMedic-FINE project for noticing about the potentional security issue.
+
+[1] [[https://cwe.mitre.org/data/definitions/77.html][https://cwe.mitre.org/data/definitions/77.html]]
+[2] [[https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback][https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback]]
